@@ -114,7 +114,7 @@ def doings(m):
                         avalaible_locs.append('home?'+str(kv['id']))
                     
         else:
-            avalaible_locs.append('street?'+street)
+            avalaible_locs.append('street?'+street['code'])
         
         if h['gender'] == 'male':
             em = '🚶'
