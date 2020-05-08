@@ -153,7 +153,7 @@ def doings(m):
                 return
             if h['position']['flat'] != None:
                 kv = kvs.find_one({'id':h['position']['flat']})
-                if kv['street'] != h['position']['street']:
+                if kv['street'] != newstr['code']:
                     bot.send_message(m.chat.id, 'Вы не можете попасть на эту улицу отсюда!')
                     return
             users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
