@@ -14,8 +14,25 @@ bot = telebot.TeleBot(token)
 
 
 client=MongoClient(os.environ['database'])
-db=client.
+db=client.lifesim
 users=db.users
+
+
+def human():
+    return {
+        'name':None,
+        'money':1500,
+        
+    }
+        
+
+def createuser(user):
+    return {
+        'id':user.id,
+        'name':user.first_name,
+        'username':user.username,
+        'human':human()
+    }
 
 
 def medit(message_text,chat_id, message_id,reply_markup=None,parse_mode=None):
