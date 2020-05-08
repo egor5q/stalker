@@ -17,8 +17,9 @@ client=MongoClient(os.environ['database'])
 db=client.lifesim
 users=db.users
 locs = db.locs
+kvs = db.kvs
 
-users.update_many({},P'$set':{'power':40,
+users.update_many({},{'$set':{'power':40,
         'maxpower':100,
         'sleep':100,
         'maxsleep':100}})
@@ -29,7 +30,7 @@ streets = {
         'nearlocs':['meet_street'],
         'code':'bitard_street',
         'homes':['17', '18', '30'],
-        'other_buildings':{},
+        'buildings':{},
         'humans':[]
     },
     
@@ -38,7 +39,7 @@ streets = {
         'nearlocs':['meet_street'],
         'code':'new_street',
         'homes':['101', '228'],
-        'other_buildings':{},
+        'buildings':{},
         'humans':[]
     },
     
@@ -47,12 +48,13 @@ streets = {
         'nearlocs':['new_street', 'bitard_street'],
         'code':'meet_street',
         'homes':[],
-        'other_buildings':{},
+        'buildings':{},
         'humans':[]
     }
 
 
 }
+locs.clear()
 
 for ids in streets:
     street = streets[ids]
@@ -63,9 +65,10 @@ for ids in streets:
 letters = [' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 
           'х', 'ц', 'ч', 'ш', 'щ', 'ь', 'ъ', 'ы', 'э', 'ю', 'я']
 
+emjs = ['🚶', '🚶‍♀️']
+
 h_colors = ['brown', 'gold', 'orange', 'black']
 h_lenghts = ['short', 'medium', 'long']
-
 
 @bot.message_handler(commands=['navigator'])
 def navv(m):
@@ -75,6 +78,42 @@ def navv(m):
 def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, сайт временно не работает!')
 
+@bot.message_handler(func = lambda message: message.text != None and message.text[0] in emjs)
+def doings(m):
+    if m.from_user.id != m.chat.id:
+        return
+    user = getuser(m.from_user)
+    if m.text == '🚶Передвижение' or m.text == '🚶‍♀️Передвижение':
+        avalaible_locs = []
+        h = user['human']
+        street = streets[h['position']['street']]
+        if h['position']['flat'] == None and h['position']['building'] == None:
+            for ids in street['nearlocs']:
+                avalaible_locs.append('street?'+ids)
+                
+            for ids in street['buildings']:
+                avalaible_locs.append('building?'+ids)
+            
+            for ids in street['homes']:
+                kv = street['code']+'#'+ids
+                if kv in h['keys']:
+                    avalaible_locs.append('home?'+ids)
+                    
+        else:
+            avalaible_locs.append('street?'+street)
+        
+        if h['gender'] == 'male':
+            em = '🚶'
+        elif h['gender'] == 'female':
+            em = '🚶‍♀️'
+        kb = types.ReplyKeyboardMarkup()
+            
+        for ids in avalaible_locs:
+            kb.add(types.KeyboardButton(em+to_text(ids, 'place')))
+            
+        
+    
+    
 
 @bot.message_handler(content_types = ['text'])
 def alltxts(m):
@@ -85,7 +124,7 @@ def alltxts(m):
             bot.send_message(m.chat.id, 'Здравствуй, новый житель города "Телеград". Не знаю, зачем вы сюда пожаловали, но я в чужие '+
                              'дела не лезу, как говорится. Я - Пасюк, гид в этом городе. И моя роль - заселять сюда новоприезжих, вот и всё ('+
                              'по секрету - мне за это даже не платят, хотя я стою тут 24/7 и встречаю новых людей. Делаю я это по доброте душевной '+
-                             'и просто потому, что могу себе позволить). '+
+                             'и просто потому, что могу). '+
                              'Так что заполните анкету и сообщите мне, когда будете готовы, и я покажу вам вашу новую квартиру.')
             
             kb = getstartkb(user)
@@ -253,19 +292,25 @@ def to_text(x, param):
         elif x == 'long':
             ans = 'Длинные'
           
+    elif param == 'place':
+        if x in ['bitard_street', 'meet_street', 'new_street']:
+            ans = 'Улица '+streets[x]['name']
+            
+        elif x.isdigit():
+            ans = 'Дом'
             
     
     return ans
             
         
-def human():
+def human(user):
     allstrs = []
     for ids in streets:
         if len(streets[ids]['homes']) > 0:
             allstrs.append(streets[ids])
     street = random.choice(allstrs)
     home = random.choice(street['homes'])
-    key = street['code']+'#'+home
+    key = street['code']+'#'+home+'#'+str(user.id)
     return {
         'name':None,
         'gender':random.choice(['male', 'female']),
@@ -304,10 +349,18 @@ def createuser(user):
         'id':user.id,
         'name':user.first_name,
         'username':user.username,
-        'human':human(),
+        'human':human(user),
         'newbie':True,
         'start_stats':True,
         'wait_for_stat':None
+    }
+
+def createkv(user, hom, street):
+    return {
+        'id':user.id,
+        'name':user.first_name,
+        'home':hom,
+        'street':street
     }
 
 def getuser(u):
@@ -315,6 +368,9 @@ def getuser(u):
     if user == None:
         users.insert_one(createuser(u))
         user = users.find_one({'id':u.id})
+        hom = user['human']['home']
+        street = user['human']['street']
+        kvs.insert_one(createkv(u, hom, street))
     return user
 
 def medit(message_text,chat_id, message_id,reply_markup=None,parse_mode=None):
