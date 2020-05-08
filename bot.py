@@ -20,18 +20,27 @@ users=db.users
 streets = {
     'bitard_street':{
         'name':'Битард-стрит',
-        'nearlocs':[],
+        'nearlocs':['meet_street'],
         'code':'bitard_street',
-        'homes':['17', '18', '30']
+        'homes':['17', '18', '30'],
+        'other_buildings':[]
     },
     
     'new_street':{
-        'name':'Новая улица',
-        'nearlocs':[],
+        'name':'Новая',
+        'nearlocs':['meet_street'],
         'code':'new_street',
-        'homes':['101', '228']
+        'homes':['101', '228'],
+        'other_buildings':[]
     },
     
+    'meet_street':{
+        'name': 'Встречная',
+        'nearlocs':['new_street', 'bitard_street'],
+        'code':'meet_street',
+        'homes':[],
+        'other_buildings':['pasyuk_home']
+    }
 
 
 }
@@ -238,6 +247,11 @@ def human()
         'street':street['code'],
         'home':home,
         'keys':[key],
+        'position':{
+            'street':'meet_street',
+            'flat':None,
+            'building':None
+        },
         'hunger':100,
         'maxhunger':100,
         'health':100,
