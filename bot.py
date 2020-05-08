@@ -300,11 +300,11 @@ def to_text(x, param):
         code = x.split('?')[1]
         if place == 'street':
             if x in ['bitard_street', 'meet_street', 'new_street']:
-                ans = f'Улица {streets[x]['name']}'
+                ans = 'Улица '+streets[x]['name']
         if place == 'building':
-            ans = f'Дом {code}'
+            ans = 'Дом '+str(code)
         if place == 'home':
-            ans = f'Квартира {code}'
+            ans = 'Квартира '+str(code)
     return ans
             
         
