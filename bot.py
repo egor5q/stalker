@@ -194,7 +194,7 @@ def changestats(call):
             users.update_one({'id':user['id']},{'$set':{'start_stats':False}})
                 
             time.sleep(2)
-            bot.send_message(m.chat.id, 'Чуть не забыл! По всем вопросам можете обращаться на сайт нашего города (/help). Я сам его программировал!')
+            bot.send_message(call.message.chat.id, 'Чуть не забыл! По всем вопросам можете обращаться на сайт нашего города (/help). Я сам его программировал!')
             return
     medit(text, call.message.chat.id, call.message.message_id, parse_mode = 'markdown')
 
