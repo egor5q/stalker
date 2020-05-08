@@ -92,7 +92,7 @@ def doings(m):
         return
     user = getuser(m.from_user)
     
-    if user['walking']:
+    if user['human']['walking']:
         bot.send_message(m.chat.id, 'Вы сейчас в пути!')
         return
     
@@ -171,7 +171,7 @@ def alltxts(m):
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup = kb)
             return
         
-        if user['walking']:
+        if user['human']['walking']:
             bot.send_message(m.chat.id, 'Вы сейчас в пути!')
             return
         
