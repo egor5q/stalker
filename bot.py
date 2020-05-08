@@ -297,7 +297,7 @@ def to_text(x, param):
         code = x.split('?')[1]
         if place == 'street':
             if code in ['bitard_street', 'meet_street', 'new_street']:
-                ans = 'Улица '+streets[x]['name']
+                ans = 'Улица '+streets[code]['name']
         if place == 'building':
             ans = 'Дом '+str(code)
         if place == 'home':
