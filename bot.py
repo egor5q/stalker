@@ -232,7 +232,7 @@ def to_text(x, param):
     return ans
             
         
-def human()
+def human():
     allstrs = []
     for ids in streets:
         allstrs.append(streets[ids])
