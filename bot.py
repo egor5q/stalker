@@ -274,7 +274,7 @@ def desc(user, high=False):
     if h['body']['hair_lenght'] == 'short':
         text += 'У '+gn+' короткие, '
     elif h['body']['hair_lenght'] == 'medium':
-        text += 'У '+gn+' средние, '
+        text += 'У '+gn+' средней длины '
     elif h['body']['hair_lenght'] == 'long':
         text += 'У '+gn+' длинные, '
         
