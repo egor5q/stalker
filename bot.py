@@ -296,7 +296,7 @@ def to_text(x, param):
         place = x.split('?')[0]
         code = x.split('?')[1]
         if place == 'street':
-            if x in ['bitard_street', 'meet_street', 'new_street']:
+            if place in ['bitard_street', 'meet_street', 'new_street']:
                 ans = 'Улица '+streets[x]['name']
         if place == 'building':
             ans = 'Дом '+str(code)
