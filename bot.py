@@ -112,6 +112,8 @@ def doings(m):
         for ids in avalaible_locs:
             kb.add(types.KeyboardButton(em+to_text(ids, 'place')))
             
+        bot.reply_to(m, 'Куда хотите пойти?')
+            
         
     
     
@@ -120,7 +122,7 @@ def doings(m):
 def alltxts(m):
     if m.from_user.id == m.chat.id:
         user = getuser(m.from_user)
-        if user['newbie'] == True:
+        if user['newbie']:
             users.update_one({'id':user['id']},{'$set':{'newbie':False}})
             bot.send_message(m.chat.id, 'Здравствуй, новый житель города "Телеград". Не знаю, зачем вы сюда пожаловали, но я в чужие '+
                              'дела не лезу, как говорится. Я - Пасюк, гид в этом городе. И моя роль - заселять сюда новоприезжих, вот и всё ('+
@@ -183,7 +185,7 @@ def alltxts(m):
                     allow = False
                     er_text = 'Длина волос может быть: `короткие`, `средние`, `длинные`!'
                     
-            if allow == True:        
+            if allow:        
                 users.update_one({'id':user['id']},{'$set':{'human.'+what:val, 'wait_for_stat':None}})    
                 user = getuser(m.from_user)
             
