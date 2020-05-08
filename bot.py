@@ -198,10 +198,103 @@ def endwalk_flat(user, kv):
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
     bot.send_message(user['id'], 'Вы зашли в квартиру '+str(kv['id'])+'!')
+    kv = kvs.find_one({'id':kv['id']})
+    for ids in kv['humans']:
+        if int(ids) != user['id']:
+            bot.send_message(ids, 'В квартиру заходит '+desc(user))
+            
+    text = 'В квартире вы видите следующих людей:\n\n'
+    for ids in kv['humans']:
+        if ids != user['id']:
+            text += desc(users.find_one({'id':ids}), True)+'\n\n'
+            
+    if text != 'В квартире вы видите следующих людей:\n\n':
+        bot.send_message(user['id'], text)
+    
 
     
+def desc(user, high=False):
+    text = ''
+    h = user['human']
+    telosl = 0
+    if h['gender'] == 'male':
+        if not high:
+            text += 'парень '
+        else:
+            text += 'Парень '
+    elif h['gender'] == 'female':
+        if not high:
+            text += 'девушка '
+        else:
+            text += 'Девушка '
+    if h['strenght'] <= 5:
+        telosl -= 1
+    elif h['strenght'] <= 10:
+        telosl -= 3
+    elif h['strenght'] <= 20:
+        telosl -= 6
+        
+    if h['maxhunger'] <= 60:
+        telosl -= 4
+    elif h['maxhunger'] <= 85:
+        telosl -= 2
+    elif h['maxhunger'] <= 100:
+        telosl -= 1
+    elif h['maxhunger'] <= 120:
+        telosl += 2
+    elif h['maxhunger'] <= 150:
+        telosl += 5
+    elif h['maxhunger'] <= 200:
+        telosl += 9
+        
     
-    
+    if telosl <= -7:
+        text += 'тощего телосложения, '
+    elif telosl <= -3:
+        text += 'стройного телосложения, '
+    elif telosl <= 5:
+        text += 'среднего телосложения, '
+    elif telosl <= 10:
+        text += 'полного телосложения, '
+    elif telosl > 10:
+        text += 'очень полного телосложения, '
+      
+    text += 'примерно '
+    if h['body']['height'] <= 165:
+        text += 'небольшого роста. '
+    elif h['body']['height'] <= 180:
+        text += 'среднего роста. '
+    elif h['body']['height'] > 180:
+        text += 'высокого роста. '
+        
+    if h['gender'] == 'male':
+        gn = 'него'
+    elif h['gender'] == 'female':
+        gn = 'неё'
+    if h['body']['hair_lenght'] == 'short':
+        text += 'У '+gn+' короткие, '
+    elif h['body']['hair_lenght'] == 'medium':
+        text += 'У '+gn+' средние, '
+    elif h['body']['hair_lenght'] == 'long':
+        text += 'У '+gn+' длинные, '
+        
+    if h['body']['hair_color'] == 'brown':
+        text += 'русые волосы.'
+    if h['body']['hair_color'] == 'gold':
+        text += 'золотые волосы.'
+    if h['body']['hair_color'] == 'orange':
+        text += 'рыжие волосы.'
+    if h['body']['hair_color'] == 'black':
+        text += 'чёрные волосы.'
+        
+    gnd = ' Он'
+    gnd2 = 'им'
+    if h['gender'] == 'female':
+        gnd = ' Она'
+        gnd2 = 'ей'
+    if h['sleep'] / h['maxsleep'] <= 0.4:
+        text += gnd+' выглядит уставш'+gnd2+'.'
+    return text       
     
     
 def endwalk(user, newstr, start = 'street'):
@@ -214,6 +307,19 @@ def endwalk(user, newstr, start = 'street'):
     elif start == 'flat':
         bot.send_message(user['id'], 'Вы вышли на улицу '+newstr['name']+'!')
     locs.update_one({'code':newstr['code']},{'$push':{'humans':user['id']}})
+    
+    street = locs.find_one({'code':newstr['code']})
+    for ids in street['humans']:
+        if int(ids) != user['id']:
+            bot.send_message(ids, 'На улице появляется '+desc(user))
+            
+    text = 'На улице вы видите следующих людей:\n\n'
+    for ids in street['humans']:
+        if ids != user['id']:
+            text += desc(users.find_one({'id':ids}), True)+'\n\n'
+            
+    if text != 'На улице вы видите следующих людей:\n\n':
+        bot.send_message(user['id'], text)
     
     
 @bot.message_handler(content_types = ['text'])
@@ -287,6 +393,16 @@ def alltxts(m):
                     allow = False
                     er_text = 'Длина волос может быть: `короткие`, `средние`, `длинные`!'
                     
+            elif what == 'body.height':
+                try:
+                    height = int(m.text)
+                    val = height
+                    if height < 140 or height > 200:
+                        crash += '_'
+                except:
+                    allow = False
+                    er_text = 'Рост может быть от 140 до 200 см!'
+                    
             if allow:        
                 users.update_one({'id':user['id']},{'$set':{'human.'+what:val, 'wait_for_stat':None}})    
                 user = getuser(m.from_user)
@@ -313,6 +429,8 @@ def getstartkb(user):
     kb.add(types.InlineKeyboardButton(text = 'Образование: '+to_text(h['education'], 'education').lower(), callback_data = 'change?not'))
     kb.add(types.InlineKeyboardButton(text = 'Цвет волос: '+to_text(h['body']['hair_color'], 'hair_color').lower(), callback_data = 'change?body.hair_color'))
     kb.add(types.InlineKeyboardButton(text = 'Длина волос: '+to_text(h['body']['hair_lenght'], 'hair_lenght').lower(), callback_data = 'change?body.hair_lenght'))
+    kb.add(types.InlineKeyboardButton(text = 'Рост: '+str(h['body']['height'])+'см', callback_data = 'change?body.height'))
+    
     kb.add(types.InlineKeyboardButton(text = '✅Готово', callback_data = 'change?ready'))
     
     return kb
@@ -341,6 +459,8 @@ def changestats(call):
         text = 'Теперь пришлите мне цвет ваших волос (может быть: `русый`, `золотой`, `рыжий`, `чёрный`).'
     elif what == 'body.hair_lenght':
         text = 'Теперь пришлите мне длину ваших волос (могут быть: `короткие`, `средние`, `длинные`).'
+    elif what == 'body.height':
+        text = 'Теперь пришлите мне ваш рост (от 150 до 190).'
         
     elif what == 'ready':
         h = user['human']
@@ -440,7 +560,7 @@ def human(user):
         'body':{
             'hair_color':random.choice(h_colors),
             'hair_lenght':random.choice(h_lenghts),
-            'height':random.randint(160, 190)
+            'height':random.randint(150, 190)
         }
         
     }    
