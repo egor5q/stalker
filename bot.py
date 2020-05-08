@@ -18,6 +18,11 @@ db=client.lifesim
 users=db.users
 locs = db.locs
 
+users.update_many({},P'$set':{'power':40,
+        'maxpower':100,
+        'sleep':100,
+        'maxsleep':100}})
+
 streets = {
     'bitard_street':{
         'name':'Битард-стрит',
@@ -60,6 +65,15 @@ letters = [' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й'
 
 h_colors = ['brown', 'gold', 'orange', 'black']
 h_lenghts = ['short', 'medium', 'long']
+
+
+@bot.message_handler(commands=['navigator'])
+def navv(m):
+    bot.send_message(m.chat.id, '📴Проблемы с соединением, навигатор временно не работает!')
+    
+@bot.message_handler(commands=['help'])
+def navv(m):
+    bot.send_message(m.chat.id, '📴Проблемы с соединением, сайт временно не работает!')
 
 
 @bot.message_handler(content_types = ['text'])
@@ -271,6 +285,10 @@ def human():
         'maxhealth':100,
         'strenght':random.randint(3, 3),
         'intelligence':random.randint(3, 3),
+        'power':40,
+        'maxpower':100,
+        'sleep':100,
+        'maxsleep':100,
         'education':'basic',
         'body':{
             'hair_color':random.choice(h_colors),
