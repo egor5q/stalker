@@ -296,13 +296,15 @@ def to_text(x, param):
             ans = 'Длинные'
           
     elif param == 'place':
-        if x in ['bitard_street', 'meet_street', 'new_street']:
-            ans = 'Улица '+streets[x]['name']
-            
-        elif x.isdigit():
-            ans = 'Дом'
-            
-    
+        place = x.split('?')[0]
+        code = x.split('?')[1]
+        if place == 'street':
+            if x in ['bitard_street', 'meet_street', 'new_street']:
+                ans = f'Улица {streets[x]['name']}'
+        if place == 'building':
+            ans = f'Дом {code}'
+        if place == 'home':
+            ans = f'Квартира {code}'
     return ans
             
         
