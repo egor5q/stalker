@@ -92,7 +92,8 @@ def doings(m):
     if m.from_user.id != m.chat.id:
         return
     user = getuser(m.from_user)
-    
+    if user['start_stats'] == True:
+        return
     if user['human']['walking']:
         bot.send_message(m.chat.id, 'Вы сейчас в пути!')
         return
