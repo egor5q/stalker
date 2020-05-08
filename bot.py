@@ -16,6 +16,7 @@ bot = telebot.TeleBot(token)
 client=MongoClient(os.environ['database'])
 db=client.lifesim
 users=db.users
+locs = db.locs
 
 streets = {
     'bitard_street':{
@@ -23,7 +24,8 @@ streets = {
         'nearlocs':['meet_street'],
         'code':'bitard_street',
         'homes':['17', '18', '30'],
-        'other_buildings':[]
+        'other_buildings':{},
+        'humans':[]
     },
     
     'new_street':{
@@ -31,7 +33,8 @@ streets = {
         'nearlocs':['meet_street'],
         'code':'new_street',
         'homes':['101', '228'],
-        'other_buildings':[]
+        'other_buildings':{},
+        'humans':[]
     },
     
     'meet_street':{
@@ -39,11 +42,18 @@ streets = {
         'nearlocs':['new_street', 'bitard_street'],
         'code':'meet_street',
         'homes':[],
-        'other_buildings':['pasyuk_home']
+        'other_buildings':{},
+        'humans':[]
     }
 
 
 }
+
+for ids in streets:
+    street = streets[ids]
+    if locs.find_one({'code':street['code']}) == None:
+        locs.insert_one(street)
+        
 
 letters = [' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 
           'х', 'ц', 'ч', 'ш', 'щ', 'ь', 'ъ', 'ы', 'э', 'ю', 'я']
