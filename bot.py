@@ -119,7 +119,8 @@ def alltxts(m):
                     allow = False
                     er_text = 'Длина волос может быть: `короткие`, `средние`, `длинные`!'
                     
-            users.update_one({'id':user['id']},{'$set':{what:val, 'wait_for_stat':None}})    
+            users.update_one({'id':user['id']},{'$set':{'human.'+what:val, 'wait_for_stat':None}})    
+            user = getuser(m.from_user)
             
             if allow == False:
                 bot.send_message(m.chat.id, er_text, parse_mode = 'markdown')
