@@ -54,7 +54,7 @@ streets = {
 
 
 }
-locs.clear()
+locs.remove({})
 
 for ids in streets:
     street = streets[ids]
