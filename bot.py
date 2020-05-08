@@ -148,8 +148,8 @@ def getstartkb(user):
     kb.add(types.InlineKeyboardButton(text = 'Возраст: '+str(h['age']), callback_data = 'change?age'))
     kb.add(types.InlineKeyboardButton(text = 'Наличные: '+str(h['money']), callback_data = 'change?not'))
     kb.add(types.InlineKeyboardButton(text = 'Образование: '+to_text(h['education'], 'education').lower(), callback_data = 'change?not'))
-    kb.add(types.InlineKeyboardButton(text = 'Цвет волос: '+to_text(h['body']['hair_color']), 'hair_color').lower(), callback_data = 'change?body.hair_color'))
-    kb.add(types.InlineKeyboardButton(text = 'Длина волос: '+to_text(h['body']['hair_lenght']), 'hair_lenght').lower(), callback_data = 'change?body.hair_lenght'))
+    kb.add(types.InlineKeyboardButton(text = 'Цвет волос: '+to_text(h['body']['hair_color'], 'hair_color').lower(), callback_data = 'change?body.hair_color'))
+    kb.add(types.InlineKeyboardButton(text = 'Длина волос: '+to_text(h['body']['hair_lenght'], 'hair_lenght').lower(), callback_data = 'change?body.hair_lenght'))
     kb.add(types.InlineKeyboardButton(text = '✅Готово', callback_data = 'change?ready'))
     
     return kb
