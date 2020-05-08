@@ -171,6 +171,10 @@ def doings(m):
                 bot.send_message(m.chat.id, 'Вы не можете попасть в эту квартиру отсюда!')
                 return
             
+            if kv['street'] != h['position']['street']:
+                bot.send_message(m.chat.id, 'Вы не можете попасть в эту квартиру отсюда!')
+                return
+
             users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
             threading.Timer(random.randint(50, 70), endwalk_flat, args = [user, kv]).start()
             bot.send_message(m.chat.id, 'Вы начали подниматься в квартиру '+str(which)+'. Дойдёте примерно через минуту.')
@@ -182,6 +186,7 @@ def endwalk_flat(user, kv):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
     kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
+    users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
     bot.send_message(user['id'], 'Вы зашли в квартиру '+str(kv['id'])+'!')
 
     
