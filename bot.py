@@ -91,6 +91,11 @@ def doings(m):
     if m.from_user.id != m.chat.id:
         return
     user = getuser(m.from_user)
+    
+    if user['walking']:
+        bot.send_message(m.chat.id, 'Вы сейчас в пути!')
+        return
+    
     if m.text == '🚶Передвижение' or m.text == '🚶‍♀️Передвижение':
         avalaible_locs = []
         h = user['human']
@@ -164,6 +169,10 @@ def alltxts(m):
             kb = getstartkb(user)
             bot.send_message(m.chat.id, 'Нажмите на характеристику, чтобы изменить её. Внимание! Когда вы нажмёте "✅Готово", '+
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup = kb)
+            return
+        
+        if user['walking']:
+            bot.send_message(m.chat.id, 'Вы сейчас в пути!')
             return
         
         if user['wait_for_stat'] != None and user['start_stats'] == True:
@@ -365,6 +374,7 @@ def human(user):
         'sleep':100,
         'maxsleep':100,
         'education':'basic',
+        'walking':False,
         'body':{
             'hair_color':random.choice(h_colors),
             'hair_lenght':random.choice(h_lenghts),
