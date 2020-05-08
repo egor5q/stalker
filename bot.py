@@ -20,6 +20,7 @@ locs = db.locs
 kvs = db.kvs
 
 users.update_many({},{'$set':{'human.walking':False}})
+kvs.update_many({},{'$set':{'humans':[]}})
 
 #users.update_many({},{'$set':{'power':40,
 #        'maxpower':100,
@@ -147,8 +148,12 @@ def doings(m):
                 bot.send_message(m.chat.id, 'Вы не можете попасть на эту улицу отсюда!')
                 return
             users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
-            threading.Timer(random.randint(50, 70), endwalk, args = [user, newstr]).start()
-            bot.send_message(m.chat.id, 'Вы направились в сторону улицы '+newstr['name']+'. Дойдёте примерно через минуту.')
+            if h['position']['flat'] != None:
+                threading.Timer(random.randint(50, 70), endwalk, args = [user, newstr, 'flat']).start()
+                bot.send_message(m.chat.id, 'Вы выходите из квартиры. Окажетесь на улице примерно через минуту.')
+            else:
+                threading.Timer(random.randint(50, 70), endwalk, args = [user, newstr]).start()
+                bot.send_message(m.chat.id, 'Вы направились в сторону улицы '+newstr['name']+'. Дойдёте примерно через минуту.')
             
         elif what == 'Квартира':
             try:
@@ -158,15 +163,41 @@ def doings(m):
             except:
                 bot.send_message(m.chat.id, 'От такой квартиры ключей у вас нет!')
                 return
-                
-           
             
+            h = user['human']
+            curkv = h['position']['flat']
+            curb = h['position']['building']
+            if curkv != None or curb != None:
+                bot.send_message(m.chat.id, 'Вы не можете попасть в эту квартиру отсюда!')
+                return
+            
+            users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
+            threading.Timer(random.randint(50, 70), endwalk_flat, args = [user, kv]).start()
+            bot.send_message(m.chat.id, 'Вы начали подниматься в квартиру '+str(which)+'. Дойдёте примерно через минуту.')
+            
+            
+            
+            
+def endwalk_flat(user, kv):
+    users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
+    kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
+    users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
+    bot.send_message(user['id'], 'Вы зашли в квартиру '+str(kv['id'])+'!')
+
     
-def endwalk(user, newstr):
+    
+    
+    
+    
+def endwalk(user, newstr, start = 'street'):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
     locs.update_one({'code':user['human']['position']['street']},{'$pull':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.street':newstr['code']}})
-    bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы '+newstr['name']+'!')
+    users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
+    if start == 'street':
+        bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы '+newstr['name']+'!')
+    elif start == 'flat':
+        bot.send_message(user['id'], 'Вы вышли на улицу '+newstr['name']+'!')
     locs.update_one({'code':newstr['code']},{'$push':{'humans':user['id']}})
     
     
@@ -415,7 +446,8 @@ def createkv(user, hom, street):
         'id':user.id,
         'name':user.first_name,
         'home':hom,
-        'street':street
+        'street':street,
+        'humans':[]
     }
 
 def getuser(u):
