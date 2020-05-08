@@ -112,7 +112,7 @@ def doings(m):
         for ids in avalaible_locs:
             kb.add(types.KeyboardButton(em+to_text(ids, 'place')))
             
-        bot.reply_to(m, 'Куда хотите пойти?')
+        bot.send_message(m.chat.id, 'Куда хотите пойти?', reply_markup=kb)
             
         
     
