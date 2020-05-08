@@ -129,8 +129,12 @@ def doings(m):
         bot.send_message(m.chat.id, 'Куда хотите пойти?', reply_markup=kb)
         
     else:
-        what = m.text[1:].split(' ')[0]
-        which = m.text.split(what+' ')[1]
+        try:
+            what = m.text[1:].split(' ')[0]
+            which = m.text.split(what+' ')[1]
+        except:
+            bot.send_message(m.chat.id, 'Такого места в городе нет!')
+            return
         
         if what == 'Улица':
             newstr = None
