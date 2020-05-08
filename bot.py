@@ -126,7 +126,7 @@ def doings(m):
         what = m.text[1:].split(' ')[0]
         which = m.text.split(what+' ')[1]
         
-        if what == 'street':
+        if what == 'Улица':
             newstr = None
             for ids in streets:
                 if streets[ids]['name'] == which:
