@@ -70,6 +70,12 @@ emjs = ['🚶', '🚶‍♀️']
 h_colors = ['brown', 'gold', 'orange', 'black']
 h_lenghts = ['short', 'medium', 'long']
 
+@bot.message_handler(commands=['clear_all'])
+def clearall(m):
+    if m.from_user.id == 441399484:
+        users.remove({})
+        bot.send_message(m.chat.id, 'Очистил юзеров.')
+
 @bot.message_handler(commands=['navigator'])
 def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, навигатор временно не работает!')
