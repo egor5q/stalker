@@ -19,6 +19,8 @@ users=db.users
 locs = db.locs
 kvs = db.kvs
 
+users.update_many({},{'$set':{'human.walking':False}})
+
 #users.update_many({},{'$set':{'power':40,
 #        'maxpower':100,
 #        'sleep':100,
@@ -120,8 +122,33 @@ def doings(m):
             
         bot.send_message(m.chat.id, 'Куда хотите пойти?', reply_markup=kb)
         
+    else:
+        what = m.text[1:].split(' ')[0]
+        which = m.text.split(what+' ')[1]
+        
+        if what == 'street':
+            newstr = None
+            for ids in streets:
+                if streets[ids]['name'] == which:
+                    newstr = streets[ids]
+            
+            h = user['human']
+            curstr = h['position']['street']
+            if newstr['code'] not in streets[curstr]['nearlocs']:
+                bot.send_message(m.chat.id, 'Вы не можете попасть на эту улицу отсюда!')
+                return
+            users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
+            threading.Timer(60, endwalk, args = [user, newstr]).start()
+            bot.send_message(m.chat.id, 'Вы направились в сторону улицы '+newstr['name']+'. Дойдёте примерно через минуту.')
     
-
+def endwalk(user, newstr):
+    users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
+    locs.update_one({'code':user['human']['position']['street']},{'$pull':{'humans':user['id']}})
+    users.update_one({'id':user['id']},{'$set':{'human.position.street':newstr['code']}})
+    bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы '+newstr['name']+'!')
+    locs.update_one({'code':newstr['code']},{'$push':{'humans':user['id']}})
+    
+    
 @bot.message_handler(content_types = ['text'])
 def alltxts(m):
     if m.from_user.id == m.chat.id:
