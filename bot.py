@@ -166,7 +166,7 @@ def alltxts(m):
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup = kb)
             return
         
-        if user['wait_for_stat'] != None:
+        if user['wait_for_stat'] != None and user['start_stats'] == True:
             what = user['wait_for_stat']
             allow = True
             er_text = ''
