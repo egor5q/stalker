@@ -148,9 +148,14 @@ def doings(m):
             
             h = user['human']
             curstr = h['position']['street']
-            if newstr['code'] not in streets[curstr]['nearlocs']:
+            if newstr['code'] not in streets[curstr]['nearlocs'] and h['position']['flat'] == None and h['position']['building'] == None:
                 bot.send_message(m.chat.id, 'Вы не можете попасть на эту улицу отсюда!')
                 return
+            if h['position']['flat'] != None:
+                kv = kvs.find_one({'id':h['position']['flat']})
+                if kv['street'] != h['position']['street']:
+                    bot.send_message(m.chat.id, 'Вы не можете попасть на эту улицу отсюда!')
+                    return
             users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
             if h['position']['flat'] != None:
                 threading.Timer(random.randint(50, 70), endwalk, args = [user, newstr, 'flat']).start()
