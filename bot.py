@@ -136,6 +136,10 @@ def doings(m):
             for ids in streets:
                 if streets[ids]['name'] == which:
                     newstr = streets[ids]
+                
+            if newstr == None:
+                bot.send_message(m.chat.id, 'Чего-то вы придумываете... Улицы '+which+' в этом городе нет!')
+                return
             
             h = user['human']
             curstr = h['position']['street']
@@ -143,8 +147,20 @@ def doings(m):
                 bot.send_message(m.chat.id, 'Вы не можете попасть на эту улицу отсюда!')
                 return
             users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
-            threading.Timer(60, endwalk, args = [user, newstr]).start()
+            threading.Timer(random.randint(50, 70), endwalk, args = [user, newstr]).start()
             bot.send_message(m.chat.id, 'Вы направились в сторону улицы '+newstr['name']+'. Дойдёте примерно через минуту.')
+            
+        elif what == 'Квартира':
+            try:
+                kv = kvs.find_one({'id':int(which)})
+                if kv == None:
+                    crash += 1
+            except:
+                bot.send_message(m.chat.id, 'От такой квартиры ключей у вас нет!')
+                return
+                
+           
+            
     
 def endwalk(user, newstr):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
