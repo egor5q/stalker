@@ -92,7 +92,7 @@ def alltxts(m):
                     age = int(m.text)
                     val = age
                     if age < 18 or age > 25:
-                        1 += '_'
+                        crash += '_'
                 except:
                     allow = False
                     er_text = 'Начальный возраст может быть от 18 до 25!'
@@ -235,7 +235,8 @@ def to_text(x, param):
 def human():
     allstrs = []
     for ids in streets:
-        allstrs.append(streets[ids])
+        if len(streets[ids]['homes']) > 0:
+            allstrs.append(streets[ids])
     street = random.choice(allstrs)
     home = random.choice(street['homes'])
     key = street['code']+'#'+home
