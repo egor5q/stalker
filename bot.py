@@ -19,10 +19,10 @@ users=db.users
 locs = db.locs
 kvs = db.kvs
 
-users.update_many({},{'$set':{'power':40,
-        'maxpower':100,
-        'sleep':100,
-        'maxsleep':100}})
+#users.update_many({},{'$set':{'power':40,
+#        'maxpower':100,
+#        'sleep':100,
+#        'maxsleep':100}})
 
 streets = {
     'bitard_street':{
@@ -54,7 +54,8 @@ streets = {
 
 
 }
-locs.remove({})
+
+#locs.remove({})
 
 for ids in streets:
     street = streets[ids]
@@ -94,10 +95,10 @@ def doings(m):
             for ids in street['buildings']:
                 avalaible_locs.append('building?'+ids)
             
-            for ids in street['homes']:
-                kv = street['code']+'#'+ids
-                if kv in h['keys']:
-                    avalaible_locs.append('home?'+ids)
+            for ids in h['keys']:
+                kv = kvs.find_one({'id':int(ids.split('#')[2])})
+                if kv['home'] in street['homes'] and kv['street'] == street['code']:
+                        avalaible_locs.append('home?'+str(kv['id']))
                     
         else:
             avalaible_locs.append('street?'+street)
