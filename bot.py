@@ -60,8 +60,7 @@ streets = {
 for ids in streets:
     street = streets[ids]
     if locs.find_one({'code':street['code']}) == None:
-        locs.insert_one(street)
-        
+        locs.insert_one(street)  
 
 letters = [' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 
           'х', 'ц', 'ч', 'ш', 'щ', 'ь', 'ъ', 'ы', 'э', 'ю', 'я']
@@ -110,12 +109,11 @@ def doings(m):
         kb = types.ReplyKeyboardMarkup()
             
         for ids in avalaible_locs:
+            print(ids)
             kb.add(types.KeyboardButton(em+to_text(ids, 'place')))
             
         bot.send_message(m.chat.id, 'Куда хотите пойти?', reply_markup=kb)
-            
         
-    
     
 
 @bot.message_handler(content_types = ['text'])
@@ -200,13 +198,6 @@ def alltxts(m):
                 bot.send_message(m.chat.id, 'Нажмите на характеристику, чтобы изменить её. Внимание! Когда вы нажмёте "✅Готово", '+
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup = kb)
                     
-            
-
-            
-        
-            
-        
-        
 
 def getstartkb(user):
     h = user['human']
@@ -346,8 +337,7 @@ def human(user):
             'height':random.randint(160, 190)
         }
         
-    }
-        
+    }    
 
 def createuser(user):
     return {
