@@ -419,15 +419,15 @@ def alltxts(m):
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup = kb)
         if user['human']['position']['street']:
             street = locs.find_one({'code': user['human']['position']['street']})
-            for human in street:
-                if human == m.from_user.id:
-                    continue
+            for human in street['humans']:
+           
+                   
                 bot.send_message(human, f"{user['human']['name']}: {m.text}")
         elif user['human']['position']['flat']:
             kv = kvs.find_one({'id': user['human']['position']['flat']})
-            for human in kv:  
-                if human == m.from_user.id:
-                    continue
+            for human in kv['humans']:  
+         
+                   
                 bot.send_message(human, f"{user['human']['name']}: {m.text}")
 
 def getstartkb(user):
