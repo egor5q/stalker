@@ -334,7 +334,6 @@ def endwalk_build(user, build):
     kb.add(types.KeyboardButton(em+'Передвижение'))
     if build['type'] == 'shop':
         bot.send_message(user['id'], 'Вы зашли в магазин '+build['name']+'!', reply_markup = kb)
-        kb = types.InlineKeyboardMarkup()
         kb = getshop(build)
     build = locs.find_one({'code':build['street']})['buildings'][build['code']]
     for ids in build['humans']:
@@ -354,7 +353,9 @@ def endwalk_build(user, build):
             bot.send_message(user['id'], text)
 
 
-
+def getshop(shop):
+    pass
+            
     
 def desc(user, high=False):
     text = ''
