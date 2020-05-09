@@ -85,6 +85,7 @@ streets = {
             'sitniy':{
                 'name':'Сытный',
                 'type':'shop',
+                'street':'shop_street',
                 'humans':[],
                 'code':'sitniy',
                 'products':{
@@ -111,7 +112,7 @@ streets = {
 
 
 
-#locs.remove({})
+locs.remove({'code':'shop_street'})
 
 for ids in streets:
     street = streets[ids]
