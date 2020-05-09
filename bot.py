@@ -56,6 +56,7 @@ def product(p, cost, give_desc = False):
         return desc
     return obj
 
+
 streets = {
     'bitard_street':{
         'name':'Битард-стрит',
@@ -109,6 +110,7 @@ streets = {
 }
 
 
+
 #locs.remove({})
 
 for ids in streets:
@@ -125,6 +127,8 @@ emjs = ['🚶', '🚶‍♀️']
 h_colors = ['brown', 'gold', 'orange', 'black']
 h_lenghts = ['short', 'medium', 'long']
 
+
+
 @bot.message_handler(commands=['clear_all'])
 def clearall(m):
     if m.from_user.id == 441399484:
@@ -132,14 +136,19 @@ def clearall(m):
         kvs.remove({})
         bot.send_message(m.chat.id, 'Очистил юзеров и квартиры.')
 
+        
 @bot.message_handler(commands=['navigator'])
 def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, навигатор временно не работает!')
+
+    
     
 @bot.message_handler(commands=['help'])
 def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, сайт временно не работает!')
 
+
+    
 @bot.message_handler(func = lambda message: message.text != None and message.text[0] in emjs)
 def doings(m):
     if m.from_user.id != m.chat.id:
@@ -168,7 +177,8 @@ def doings(m):
                 if kv['home'] in street['homes'] and kv['street'] == street['code']:
                         avalaible_locs.append('home?'+str(kv['id']))
                         
-       
+    
+    
     
         else:
             avalaible_locs.append('street?'+street['code'])
@@ -247,14 +257,19 @@ def doings(m):
             threading.Timer(random.randint(50, 70), endwalk_flat, args = [user, kv]).start()
             bot.send_message(m.chat.id, 'Вы начали подниматься в квартиру '+str(which)+'. Дойдёте примерно через минуту.')
 
+
+            
+
             
     
   
 
 
+
         
             
-            
+
+        
 def endwalk_flat(user, kv):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
     kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
@@ -280,6 +295,7 @@ def endwalk_flat(user, kv):
         bot.send_message(user['id'], text)
     
 
+    
     
 def desc(user, high=False):
     text = ''
@@ -363,7 +379,8 @@ def desc(user, high=False):
     if h['sleep'] / h['maxsleep'] <= 0.4:
         text += gnd+' выглядит уставш'+gnd2+'.'
     return text       
-    
+
+
     
 def endwalk(user, newstr, start = 'street'):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
@@ -398,6 +415,8 @@ def endwalk(user, newstr, start = 'street'):
     if text != 'На улице вы видите следующих людей:\n\n':
         bot.send_message(user['id'], text)
     
+
+
     
 @bot.message_handler(content_types = ['text'])
 def alltxts(m):
@@ -410,16 +429,19 @@ def alltxts(m):
                              'по секрету - мне за это даже не платят, хотя я стою тут 24/7 и встречаю новых людей. Делаю я это по доброте душевной '+
                              'и просто потому, что могу). '+
                              'Так что заполните анкету и сообщите мне, когда будете готовы, и я покажу вам вашу новую квартиру.')
+
             
             kb = getstartkb(user)
             bot.send_message(m.chat.id, 'Нажмите на характеристику, чтобы изменить её. Внимание! Когда вы нажмёте "✅Готово", '+
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup = kb)
             return
+
         
         if user['human']['walking']:
             bot.send_message(m.chat.id, 'Вы сейчас в пути!')
             return
         
+ 
         if user['wait_for_stat'] != None and user['start_stats'] == True:
             what = user['wait_for_stat']
             allow = True
@@ -469,7 +491,8 @@ def alltxts(m):
                 if m.text.lower() not in ['короткие', 'средние', 'длинные']:
                     allow = False
                     er_text = 'Длина волос может быть: `короткие`, `средние`, `длинные`!'
-                    
+             
+
             elif what == 'body.height':
                 try:
                     height = int(m.text)
@@ -479,11 +502,15 @@ def alltxts(m):
                 except:
                     allow = False
                     er_text = 'Рост может быть от 140 до 200 см!'
+
                     
+            
             if allow:        
                 users.update_one({'id':user['id']},{'$set':{'human.'+what:val, 'wait_for_stat':None}})    
                 user = getuser(m.from_user)
-            
+
+                
+
             if allow == False:
                 bot.send_message(m.chat.id, er_text, parse_mode = 'markdown')
                 kb = getstartkb(user)
@@ -494,19 +521,21 @@ def alltxts(m):
                 kb = getstartkb(user)
                 bot.send_message(m.chat.id, 'Нажмите на характеристику, чтобы изменить её. Внимание! Когда вы нажмёте "✅Готово", '+
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup = kb)
-                
+
+
         if user['human']['position']['street'] != None and user['human']['position']['flat'] == None and user['human']['position']['building'] == None:
-            street = locs.find_one({'code': user['human']['position']['street']})
-            for human in street['humans']:
-                h = users.find_one({'id':human})['human']
+            street = locs.find_one({'code':user['human']['position']['street']})
+            for hh in street['humans']:
+                h = users.find_one({'id':hh})['human']
                 if h['position']['flat'] == None and h['position']['building'] == None:
-                    bot.send_message(human, f"{user['human']['name']}: {m.text}")
-                                 
+                    bot.send_message(hh, user['human']['name']+': '+m.text) 
+
         elif user['human']['position']['flat'] != None:
             kv = kvs.find_one({'id': user['human']['position']['flat']})
-            for human in kv['humans']:  
-                bot.send_message(human, f"{user['human']['name']}: {m.text}")
-
+            for h in kv['humans']:  
+                bot.send_message(h, user['human']['name']+': '+m.text)
+                                                           
+                                 
 def getstartkb(user):
     h = user['human']
     kb = types.InlineKeyboardMarkup()
@@ -517,13 +546,12 @@ def getstartkb(user):
     kb.add(types.InlineKeyboardButton(text = 'Образование: '+to_text(h['education'], 'education').lower(), callback_data = 'change?not'))
     kb.add(types.InlineKeyboardButton(text = 'Цвет волос: '+to_text(h['body']['hair_color'], 'hair_color').lower(), callback_data = 'change?body.hair_color'))
     kb.add(types.InlineKeyboardButton(text = 'Длина волос: '+to_text(h['body']['hair_lenght'], 'hair_lenght').lower(), callback_data = 'change?body.hair_lenght'))
-    kb.add(types.InlineKeyboardButton(text = 'Рост: '+str(h['body']['height'])+'см', callback_data = 'change?body.height'))
-    
+    kb.add(types.InlineKeyboardButton(text = 'Рост: '+str(h['body']['height'])+'см', callback_data = 'change?body.height')) 
     kb.add(types.InlineKeyboardButton(text = '✅Готово', callback_data = 'change?ready'))
-    
     return kb
-        
-    
+
+
+                                 
 @bot.callback_query_handler(func = lambda call: call.data.split('?')[0] == 'change')
 def changestats(call):
     user = users.find_one({'id':call.from_user.id})
@@ -568,7 +596,8 @@ def changestats(call):
             return
     medit(text, call.message.chat.id, call.message.message_id, parse_mode = 'markdown')
 
-        
+
+                                 
 def to_text(x, param):
     ans = 'Не определено (напишите @Loshadkin)'
     if param == 'gender':
