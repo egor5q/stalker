@@ -589,7 +589,7 @@ def alltxts(m):
             street = locs.find_one({'code':user['human']['position']['street']})
             for ids in street['buildings']:
                 if street['buildings'][ids]['code'] == user['human']['position']['building']:
-                    build = street['buildings'][ids]['code']
+                    build = street['buildings'][ids]
             for h in build['humans']:  
                 bot.send_message(h, user['human']['name']+': '+m.text)
                                                            
