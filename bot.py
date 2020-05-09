@@ -420,11 +420,11 @@ def alltxts(m):
         if user['human']['position']['street']:
             street = locs.find_one({'code': user['human']['position']['street']})
             for human in street:
-                bot.send_message(human, f'{user['name']}: {m.text}')
+                bot.send_message(human, f'{user['human']['name']}: {m.text}')
         elif user['human']['position']['flat']:
             kv = kvs.find_one({'id': user['human']['position']['flat']})
             for human in kv:
-                bot.send_message(human, f'{user['name']}: {m.text}')
+                bot.send_message(human, f'{user['human']['name']}: {m.text}')
 
 def getstartkb(user):
     h = user['human']
