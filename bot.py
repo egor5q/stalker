@@ -266,7 +266,7 @@ def desc(user, high=False):
     elif telosl > 10:
         text += 'очень полного телосложения, '
       
-    text += 'примерно '
+    text += ''
     if h['body']['height'] <= 165:
         text += 'небольшого роста. '
     elif h['body']['height'] <= 180:
