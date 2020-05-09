@@ -310,7 +310,7 @@ def endwalk_flat(user, kv):
     
 def endwalk_build(user, build):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
-    locs.update_one({'code':build['street']},{'$push':{'humans':user['id']}})
+    locs.update_one({'code':build['street']},{'$push':{'buildings.'+build['code']+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':build['code']}})
     kb = types.ReplyKeyboardMarkup()
@@ -319,7 +319,7 @@ def endwalk_build(user, build):
         em = '🚶‍♀️'
     kb.add(types.KeyboardButton(em+'Передвижение'))
     if build['type'] == 'shop':
-        bot.send_message(user['id'], 'Вы зашли в магазин '+shop['name']+'!', reply_markup = kb)
+        bot.send_message(user['id'], 'Вы зашли в магазин '+build['name']+'!', reply_markup = kb)
     build = locs.find_one({'code':build['street']})['buildings'][build['code']]
     for ids in build['humans']:
         if int(ids) != user['id']:
