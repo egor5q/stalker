@@ -308,6 +308,8 @@ def endwalk(user, newstr, start = 'street'):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
     locs.update_one({'code':user['human']['position']['street']},{'$pull':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.street':newstr['code']}})
+    if start == 'flat':
+        kvs.update_one({'id':user['human']['position']['flat']},{'$pull':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
     kb = types.ReplyKeyboardMarkup()
     em = '🚶'
@@ -432,12 +434,12 @@ def alltxts(m):
                 bot.send_message(m.chat.id, 'Нажмите на характеристику, чтобы изменить её. Внимание! Когда вы нажмёте "✅Готово", '+
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup = kb)
                 
-        if user['human']['position']['street'] and user['human']['position']['flat'] == None and user['human']['position']['building'] == None:
+        if user['human']['position']['street'] != None and user['human']['position']['flat'] == None and user['human']['position']['building'] == None:
             street = locs.find_one({'code': user['human']['position']['street']})
             for human in street['humans']:
                 bot.send_message(human, f"{user['human']['name']}: {m.text}")
                                  
-        elif user['human']['position']['flat']:
+        elif user['human']['position']['flat'] != None:
             kv = kvs.find_one({'id': user['human']['position']['flat']})
             for human in kv['humans']:  
                 bot.send_message(human, f"{user['human']['name']}: {m.text}")
