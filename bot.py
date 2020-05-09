@@ -20,7 +20,8 @@ locs = db.locs
 kvs = db.kvs
 
 users.update_many({},{'$set':{'human.walking':False}})
-kvs.update_many({},{'$set':{'humans':[]}})
+
+#kvs.update_many({},{'$set':{'humans':[]}})
 
 #users.update_many({},{'$set':{'power':40,
 #        'maxpower':100,
