@@ -77,7 +77,8 @@ h_lenghts = ['short', 'medium', 'long']
 def clearall(m):
     if m.from_user.id == 441399484:
         users.remove({})
-        bot.send_message(m.chat.id, 'Очистил юзеров.')
+        kvs.remove({})
+        bot.send_message(m.chat.id, 'Очистил юзеров и квартиры.')
 
 @bot.message_handler(commands=['navigator'])
 def navv(m):
@@ -197,6 +198,7 @@ def endwalk_flat(user, kv):
     kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
+    
     bot.send_message(user['id'], 'Вы зашли в квартиру '+str(kv['id'])+'!')
     kv = kvs.find_one({'id':kv['id']})
     for ids in kv['humans']:
@@ -310,8 +312,10 @@ def endwalk(user, newstr, start = 'street'):
     
     street = locs.find_one({'code':newstr['code']})
     for ids in street['humans']:
-        if int(ids) != user['id']:
-            bot.send_message(ids, 'На улице появляется '+desc(user))
+        user2 = users.find_one({'id':ids})
+        if user2['human']['position']['flat'] == None and user2['human']['position']['building'] == None:
+            if int(ids) != user['id']:
+                bot.send_message(ids, 'На улице появляется '+desc(user))
             
     text = 'На улице вы видите следующих людей:\n\n'
     for ids in street['humans']:
@@ -417,17 +421,15 @@ def alltxts(m):
                 kb = getstartkb(user)
                 bot.send_message(m.chat.id, 'Нажмите на характеристику, чтобы изменить её. Внимание! Когда вы нажмёте "✅Готово", '+
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup = kb)
-        if user['human']['position']['street']:
+                
+        if user['human']['position']['street'] and user['human']['position']['flat'] == None and user['human']['position']['building'] == None:
             street = locs.find_one({'code': user['human']['position']['street']})
             for human in street['humans']:
-           
-                   
                 bot.send_message(human, f"{user['human']['name']}: {m.text}")
+                                 
         elif user['human']['position']['flat']:
             kv = kvs.find_one({'id': user['human']['position']['flat']})
             for human in kv['humans']:  
-         
-                   
                 bot.send_message(human, f"{user['human']['name']}: {m.text}")
 
 def getstartkb(user):
