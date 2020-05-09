@@ -201,7 +201,7 @@ def endwalk_flat(user, kv):
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
     kb = types.ReplyKeyboardMarkup()
     em = '🚶'
-    if user['gender'] == 'female':
+    if user['human']['gender'] == 'female':
         em = '🚶‍♀️'
     kb.add(types.KeyboardButton(em+'Передвижение'))
     bot.send_message(user['id'], 'Вы зашли в квартиру '+str(kv['id'])+'!', reply_markup = kb)
@@ -311,7 +311,7 @@ def endwalk(user, newstr, start = 'street'):
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
     kb = types.ReplyKeyboardMarkup()
     em = '🚶'
-    if user['gender'] == 'female':
+    if user['human']['gender'] == 'female':
         em = '🚶‍♀️'
     kb.add(types.KeyboardButton(em+'Передвижение'))
     if start == 'street':
