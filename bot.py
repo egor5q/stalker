@@ -23,9 +23,9 @@ users.update_many({},{'$set':{'human.walking':False}})
 
 #kvs.update_many({},{'$set':{'humans':[]}})
 
-users.update_many({},{'$set':{'inv':[],
-        'inv_maxweight':50,
-        'shop_inv':[]}})
+#users.update_many({},{'$set':{'inv':[],
+#        'inv_maxweight':50,
+#        'shop_inv':[]}})
 
 def product(p, cost, give_desc = False):
     name = 'Не опознано'
@@ -114,7 +114,7 @@ streets = {
 
 
 
-locs.remove({'code':'shop_street'})
+#locs.remove({'code':'shop_street'})
 
 for ids in streets:
     street = streets[ids]
