@@ -31,6 +31,7 @@ def product(p, cost, give_desc = False):
     name = 'Не опознано'
     value = 0
     desc = 'Неизвестно'
+    code = p
     if p == 'bread':
         name = 'Хлеб'
         value = 1
@@ -50,7 +51,8 @@ def product(p, cost, give_desc = False):
     obj = {
         'cost':cost,
         'value':value,
-        'name':name
+        'name':name,
+        'code':code
     }
     if give_desc:
         return desc
@@ -112,12 +114,21 @@ streets = {
 
 
 
-#locs.remove({'code':'shop_street'})
+locs.remove({'code':'shop_street'})
 
 for ids in streets:
     street = streets[ids]
     if locs.find_one({'code':street['code']}) == None:
         locs.insert_one(street)  
+        
+for ids in locs.find({}):
+    for idss in ids['buildings']:
+        b = ids['buildings'][idss]
+        if b['type'] == 'shop':
+            for idsss in streets[ids['code']]['buildings'][b['code']]['products']:
+                p = streets[ids['code']]['buildings'][b['code']]['products'][idsss]
+                if p['code'] not in b['products']:
+                    locs.update_one({'code':ids['code']},{'$set':{'buildings.'+b['code']+'.products.'+p['code']:p}})
 
 letters = [' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 
           'х', 'ц', 'ч', 'ш', 'щ', 'ь', 'ъ', 'ы', 'э', 'ю', 'я']
@@ -323,6 +334,8 @@ def endwalk_build(user, build):
     kb.add(types.KeyboardButton(em+'Передвижение'))
     if build['type'] == 'shop':
         bot.send_message(user['id'], 'Вы зашли в магазин '+build['name']+'!', reply_markup = kb)
+        kb = types.InlineKeyboardMarkup()
+        kb = getshop(build)
     build = locs.find_one({'code':build['street']})['buildings'][build['code']]
     for ids in build['humans']:
         if int(ids) != user['id']:
