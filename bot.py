@@ -335,6 +335,7 @@ def endwalk_build(user, build):
     if build['type'] == 'shop':
         bot.send_message(user['id'], 'Вы зашли в магазин '+build['name']+'!', reply_markup = kb)
         kb = getshop(build)
+        bot.send_message(m.chat.id, 'На полках магазина вы видите следующий ассортимент:', reply_markup = kb)
     build = locs.find_one({'code':build['street']})['buildings'][build['code']]
     for ids in build['humans']:
         if int(ids) != user['id']:
@@ -354,7 +355,11 @@ def endwalk_build(user, build):
 
 
 def getshop(shop):
-    pass
+    kb = types.InlineKeyboardMarkup()
+    for ids in shop['products']:
+        pr = shop['products'][ids]
+        kb.add(types.InlineKeyboardButton(text = pr['name'], callback_data = 'show?'+pr['code']))
+    return kb
             
     
 def desc(user, high=False):
@@ -623,7 +628,33 @@ def getstartkb(user):
     return kb
 
 
-                                 
+@bot.callback_query_handler(func = lambda call: call.data.split('?')[0] == 'show')
+def shopping(call):
+  try:
+    user = users.find_one({'id':call.from_user.id})
+    if user == None:
+        return
+    h = user['human']
+    if h['position']['building'] == None:
+        medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
+        return
+    shop = None
+    for ids in streets[h['position']['street']]['buildings']:
+        if streets[h['position']['street']]['buildings'][ids]['code'] == h['position']['building']:
+            shop = streets[h['position']['street']]['buildings'][ids]
+    if shop == None:
+        medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
+        return
+    pr = call.data.split('?')[1]
+    if pr not in shop['products']:
+        medit('Такого продукта в магазине нет!', call.message.chat.id, call.message.message_id)
+        return
+    kb = types.InlineKeyboardMarkup()
+    kb.add(types.InlineKeyboardButton(text = '?', callback_data = '??'))
+    medit(product(pr, 0, True)+'\nЦена: '+shop['products'][pr]['cost']+'💶', call.message.chat.id, call.message.message_id, reply_markup = kb)
+  except:
+    pass
+    
 @bot.callback_query_handler(func = lambda call: call.data.split('?')[0] == 'change')
 def changestats(call):
     user = users.find_one({'id':call.from_user.id})
