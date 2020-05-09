@@ -112,7 +112,7 @@ streets = {
 
 
 
-locs.remove({'code':'shop_street'})
+#locs.remove({'code':'shop_street'})
 
 for ids in streets:
     street = streets[ids]
@@ -675,7 +675,7 @@ def to_text(x, param):
         place = x.split('?')[0]
         code = x.split('?')[1]
         if place == 'street':
-            if code in ['bitard_street', 'meet_street', 'new_street']:
+            if code in ['bitard_street', 'meet_street', 'new_street', 'shop_street']:
                 ans = 'Улица '+streets[code]['name']
         if place == 'building':
             build = None
