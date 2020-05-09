@@ -434,6 +434,9 @@ def endwalk(user, newstr, start = 'street'):
     users.update_one({'id':user['id']},{'$set':{'human.position.street':newstr['code']}})
     if start == 'flat':
         kvs.update_one({'id':user['human']['position']['flat']},{'$pull':{'humans':user['id']}})
+    if start == 'building':
+        b = user['human']['position']['building']
+        locs.update_one({'code':user['human']['position']['street']},{'$pull':{'buildings.'+b['code']+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
     kb = types.ReplyKeyboardMarkup()
     em = '🚶'
@@ -579,6 +582,15 @@ def alltxts(m):
         elif user['human']['position']['flat'] != None:
             kv = kvs.find_one({'id': user['human']['position']['flat']})
             for h in kv['humans']:  
+                bot.send_message(h, user['human']['name']+': '+m.text)
+                
+        elif user['human']['position']['building'] != None:
+            build = None
+            street = locs.find_one({'code':user['human']['position']['street']})
+            for ids in street['buildings']:
+                if street['buildings'][ids]['code'] == user['human']['position']['building']:
+                    build = street['buildings'][ids]['code']
+            for h in build['humans']:  
                 bot.send_message(h, user['human']['name']+': '+m.text)
                                                            
                                  
