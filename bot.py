@@ -436,7 +436,7 @@ def endwalk(user, newstr, start = 'street'):
         kvs.update_one({'id':user['human']['position']['flat']},{'$pull':{'humans':user['id']}})
     if start == 'building':
         b = user['human']['position']['building']
-        locs.update_one({'code':user['human']['position']['street']},{'$pull':{'buildings.'+b['code']+'.humans':user['id']}})
+        locs.update_one({'code':user['human']['position']['street']},{'$pull':{'buildings.'+b+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
     kb = types.ReplyKeyboardMarkup()
     em = '🚶'
