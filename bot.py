@@ -230,6 +230,9 @@ def doings(m):
             if h['position']['flat'] != None:
                 threading.Timer(random.randint(50, 70), endwalk, args = [user, newstr, 'flat']).start()
                 bot.send_message(m.chat.id, 'Вы выходите из квартиры. Окажетесь на улице примерно через минуту.')
+            elif h['position']['building'] != None:
+                threading.Timer(random.randint(50, 70), endwalk, args = [user, newstr, 'building']).start()
+                bot.send_message(m.chat.id, 'Вы выходите из здания. Окажетесь на улице примерно через минуту.')
             else:
                 threading.Timer(random.randint(50, 70), endwalk, args = [user, newstr]).start()
                 bot.send_message(m.chat.id, 'Вы направились в сторону улицы '+newstr['name']+'. Дойдёте примерно через минуту.')
@@ -439,7 +442,7 @@ def endwalk(user, newstr, start = 'street'):
     kb.add(types.KeyboardButton(em+'Передвижение'))
     if start == 'street':
         bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы '+newstr['name']+'!', reply_markup = kb)
-    elif start == 'flat':
+    elif start == 'flat' or start=='building':
         bot.send_message(user['id'], 'Вы вышли на улицу '+newstr['name']+'!', reply_markup = kb)
     locs.update_one({'code':newstr['code']},{'$push':{'humans':user['id']}})
     
