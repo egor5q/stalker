@@ -167,9 +167,9 @@ def doings(m):
         if h['position']['flat'] == None and h['position']['building'] == None:
             for ids in street['nearlocs']:
                 avalaible_locs.append('street?'+ids)
-                
+            
             for ids in street['buildings']:
-                avalaible_locs.append('building?'+ids)
+                avalaible_locs.append('building?'+street['buildings'][ids]['code'])
                 
             
             for ids in h['keys']:
@@ -253,21 +253,32 @@ def doings(m):
                 bot.send_message(m.chat.id, 'Вы не можете попасть в эту квартиру отсюда!')
                 return
 
+        
             users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
             threading.Timer(random.randint(50, 70), endwalk_flat, args = [user, kv]).start()
             bot.send_message(m.chat.id, 'Вы начали подниматься в квартиру '+str(which)+'. Дойдёте примерно через минуту.')
+                
+        elif what == 'Магазин':
+            h = user['human']
+            curkv = h['position']['flat']
+            curb = h['position']['building']
+            curs = streets[h['position']['street']]
+            shop = None
+            for ids in curs['buildings']:
+                if curs['buildings'][ids]['name'] == which:
+                    shop = curs['buildings'][ids]
+            if shop == None:
+                bot.send_message(m.chat.id, 'Такого магазина на этой улице нет!')
+                return
 
+            if curkv != None or curb != None:
+                bot.send_message(m.chat.id, 'Вы не можете попасть в этот магазин отсюда!')
+                return
 
             
-
-            
-    
-  
-
-
-
-        
-            
+            users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
+            threading.Timer(random.randint(50, 70), endwalk_build, args = [user, shop]).start()
+            bot.send_message(m.chat.id, 'Вы направились в магазин '+str(which)+'. Дойдёте примерно через минуту.')    
 
         
 def endwalk_flat(user, kv):
@@ -293,9 +304,40 @@ def endwalk_flat(user, kv):
             
     if text != 'В квартире вы видите следующих людей:\n\n':
         bot.send_message(user['id'], text)
+        
+        
     
+def endwalk_build(user, build):
+    users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
+    locs.update_one({'code':build['street']},{'$push':{'humans':user['id']}})
+    users.update_one({'id':user['id']},{'$set':{'human.position.flat':None}})
+    users.update_one({'id':user['id']},{'$set':{'human.position.building':build['code']}})
+    kb = types.ReplyKeyboardMarkup()
+    em = '🚶'
+    if user['human']['gender'] == 'female':
+        em = '🚶‍♀️'
+    kb.add(types.KeyboardButton(em+'Передвижение'))
+    if build['type'] == 'shop':
+        bot.send_message(user['id'], 'Вы зашли в магазин '+shop['name']+'!', reply_markup = kb)
+    build = locs.find_one({'code':build['street']})['buildings'][build['code']]
+    for ids in build['humans']:
+        if int(ids) != user['id']:
+            if build['type'] == 'shop':
+                bot.send_message(ids, 'В магазин заходит '+desc(user))
+                
+    if build['type'] == 'shop':        
+        text = 'В магазине вы видите следующих людей:\n\n'
+        
+    for ids in build['humans']:
+        if ids != user['id']:
+            text += desc(users.find_one({'id':ids}), True)+'\n\n'
+            
+    if build['type'] == 'shop':        
+        if text != 'В магазине вы видите следующих людей:\n\n':
+            bot.send_message(user['id'], text)
 
-    
+
+
     
 def desc(user, high=False):
     text = ''
