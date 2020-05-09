@@ -199,8 +199,12 @@ def endwalk_flat(user, kv):
     kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
-    
-    bot.send_message(user['id'], 'Вы зашли в квартиру '+str(kv['id'])+'!')
+    kb = types.ReplyKeyboardMarkup()
+    em = '🚶'
+    if user['gender'] == 'female':
+        em = '🚶‍♀️'
+    kb.add(types.KeyboardButton(em+'Передвижение'))
+    bot.send_message(user['id'], 'Вы зашли в квартиру '+str(kv['id'])+'!', reply_markup = kb)
     kv = kvs.find_one({'id':kv['id']})
     for ids in kv['humans']:
         if int(ids) != user['id']:
@@ -305,10 +309,15 @@ def endwalk(user, newstr, start = 'street'):
     locs.update_one({'code':user['human']['position']['street']},{'$pull':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.street':newstr['code']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
+    kb = types.ReplyKeyboardMarkup()
+    em = '🚶'
+    if user['gender'] == 'female':
+        em = '🚶‍♀️'
+    kb.add(types.KeyboardButton(em+'Передвижение'))
     if start == 'street':
-        bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы '+newstr['name']+'!')
+        bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы '+newstr['name']+'!', reply_markup = kb)
     elif start == 'flat':
-        bot.send_message(user['id'], 'Вы вышли на улицу '+newstr['name']+'!')
+        bot.send_message(user['id'], 'Вы вышли на улицу '+newstr['name']+'!', reply_markup = kb)
     locs.update_one({'code':newstr['code']},{'$push':{'humans':user['id']}})
     
     street = locs.find_one({'code':newstr['code']})
