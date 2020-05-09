@@ -335,7 +335,7 @@ def endwalk_build(user, build):
     if build['type'] == 'shop':
         bot.send_message(user['id'], 'Вы зашли в магазин '+build['name']+'!', reply_markup = kb)
         kb = getshop(build)
-        bot.send_message(m.chat.id, 'На полках магазина вы видите следующий ассортимент:', reply_markup = kb)
+        bot.send_message(user['id'], 'На полках магазина вы видите следующий ассортимент:', reply_markup = kb)
     build = locs.find_one({'code':build['street']})['buildings'][build['code']]
     for ids in build['humans']:
         if int(ids) != user['id']:
