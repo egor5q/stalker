@@ -23,15 +23,43 @@ users.update_many({},{'$set':{'human.walking':False}})
 
 #kvs.update_many({},{'$set':{'humans':[]}})
 
-#users.update_many({},{'$set':{'power':40,
-#        'maxpower':100,
-#        'sleep':100,
-#        'maxsleep':100}})
+users.update_many({},{'$set':{'inv':[],
+        'inv_maxweight':50,
+        'shop_inv':[]}})
+
+def product(p, cost, give_desc = False):
+    name = 'Не опознано'
+    value = 0
+    desc = 'Неизвестно'
+    if p == 'bread':
+        name = 'Хлеб'
+        value = 1
+        desc = 'Обычный хлеб. Восстанавливает 1🍗.'
+        
+    elif p == 'sousage':
+        name = 'Сосиски'
+        value = 4
+        desc = 'Сосиски из свинины. Восстанавливают 4🍗.'
+        
+    elif p == 'conserves':
+        name = 'Рыбные консервы'
+        value = 3
+        desc = 'Дешёвые консервы. Для тех, кто не очень богат. Восстанавливают 3🍗.'
+    
+    
+    obj = {
+        'cost':cost,
+        'value':value,
+        'name':name
+    }
+    if give_desc:
+        return desc
+    return obj
 
 streets = {
     'bitard_street':{
         'name':'Битард-стрит',
-        'nearlocs':['meet_street'],
+        'nearlocs':['meet_street', 'shop_street'],
         'code':'bitard_street',
         'homes':['17', '18', '30'],
         'buildings':{},
@@ -40,10 +68,31 @@ streets = {
     
     'new_street':{
         'name':'Новая',
-        'nearlocs':['meet_street'],
+        'nearlocs':['meet_street', 'shop_street'],
         'code':'new_street',
         'homes':['101', '228'],
         'buildings':{},
+        'humans':[]
+    },
+    
+    'shop_street':{
+        'name':'Торговая',
+        'nearlocs':['bitard_street', 'new_street'],
+        'code':'shop_street',
+        'homes':['290', '311', '81'],
+        'buildings':{
+            'sitniy':{
+                'name':'Сытный',
+                'type':'shop',
+                'humans':[],
+                'code':'sitniy',
+                'products':{
+                    'bread':product('bread', 50),
+                    'sousage':product('sousage', 300),
+                    'conserves':product('conserves', 150)
+                }
+            }
+                    },
         'humans':[]
     },
     
@@ -59,6 +108,7 @@ streets = {
 
 }
 
+
 #locs.remove({})
 
 for ids in streets:
@@ -70,6 +120,7 @@ letters = [' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й'
           'х', 'ц', 'ч', 'ш', 'щ', 'ь', 'ъ', 'ы', 'э', 'ю', 'я']
 
 emjs = ['🚶', '🚶‍♀️']
+
 
 h_colors = ['brown', 'gold', 'orange', 'black']
 h_lenghts = ['short', 'medium', 'long']
@@ -110,15 +161,19 @@ def doings(m):
                 
             for ids in street['buildings']:
                 avalaible_locs.append('building?'+ids)
+                
             
             for ids in h['keys']:
                 kv = kvs.find_one({'id':int(ids.split('#')[2])})
                 if kv['home'] in street['homes'] and kv['street'] == street['code']:
                         avalaible_locs.append('home?'+str(kv['id']))
-                    
+                        
+       
+    
         else:
             avalaible_locs.append('street?'+street['code'])
-        
+
+
         if h['gender'] == 'male':
             em = '🚶'
         elif h['gender'] == 'female':
@@ -148,6 +203,7 @@ def doings(m):
             if newstr == None:
                 bot.send_message(m.chat.id, 'Чего-то вы придумываете... Улицы '+which+' в этом городе нет!')
                 return
+            
             
             h = user['human']
             curstr = h['position']['street']
@@ -190,8 +246,13 @@ def doings(m):
             users.update_one({'id':user['id']},{'$set':{'human.walking':True}})
             threading.Timer(random.randint(50, 70), endwalk_flat, args = [user, kv]).start()
             bot.send_message(m.chat.id, 'Вы начали подниматься в квартиру '+str(which)+'. Дойдёте примерно через минуту.')
+
             
-            
+    
+  
+
+
+        
             
             
 def endwalk_flat(user, kv):
@@ -545,7 +606,15 @@ def to_text(x, param):
             if code in ['bitard_street', 'meet_street', 'new_street']:
                 ans = 'Улица '+streets[code]['name']
         if place == 'building':
-            ans = 'Дом '+str(code)
+            build = None
+            if code in ['sitniy']:
+                txt = 'Магазин'
+                for ids in streets:
+                    if code in streets[ids]['buildings']:
+                        build = streets[ids]['buildings'][code]
+            if build == None:
+                return '?'
+            ans = txt+' '+build['name']
         if place == 'home':
             ans = 'Квартира '+str(code)
     return ans
@@ -584,6 +653,9 @@ def human(user):
         'maxsleep':100,
         'education':'basic',
         'walking':False,
+        'inv':[],
+        'inv_maxweight':50,
+        'shop_inv':[],
         'body':{
             'hair_color':random.choice(h_colors),
             'hair_lenght':random.choice(h_lenghts),
@@ -592,6 +664,7 @@ def human(user):
         
     }    
 
+                                 
 def createuser(user):
     return {
         'id':user.id,
