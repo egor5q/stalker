@@ -438,7 +438,7 @@ def alltxts(m):
             street = locs.find_one({'code': user['human']['position']['street']})
             for human in street['humans']:
                 h = users.find_one({'id':human})['human']
-                if h['location']['flat'] == None and h['location']['building'] == None:
+                if h['position']['flat'] == None and h['position']['building'] == None:
                     bot.send_message(human, f"{user['human']['name']}: {m.text}")
                                  
         elif user['human']['position']['flat'] != None:
