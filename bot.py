@@ -519,7 +519,9 @@ def endwalk(user, newstr, start = 'street'):
     text = 'На улице вы видите следующих людей:\n\n'
     for ids in street['humans']:
         if ids != user['id']:
-            text += desc(users.find_one({'id':ids}), True)+'\n\n'
+            user2 = users.find_one({'id':ids})
+            if user2['human']['position']['flat'] == None and user2['human']['position']['building'] == None:
+                text += desc(users.find_one({'id':ids}), True)+'\n\n'
             
     if text != 'На улице вы видите следующих людей:\n\n':
         bot.send_message(user['id'], text)
