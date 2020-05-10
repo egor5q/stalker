@@ -695,7 +695,7 @@ def shopping1(call):
             medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
             return
         kb = getshop(shop)
-        medit('На полках магазина вы видите следующий ассортимент:', call.message.chat.id, call.message.chat.id, reply_markup = kb)
+        medit('На полках магазина вы видите следующий ассортимент:', call.message.chat.id, call.message.message_id, reply_markup = kb)
         
     elif act == 'my_buys':
         shop = currentshop(h)
