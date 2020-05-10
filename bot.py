@@ -223,8 +223,11 @@ def doings(m):
         
     else:
         try:
-            what = m.text[1:].split(' ')[0]
-            which = m.text.split(what+' ')[1]
+            emjloc = 0
+            if user['human']['gender'] == 'female':
+                emjloc = 1
+            what = m.text.split(emjs[emjloc])[1].split(' ')[0]
+            which = m.text.split(what + ' ')[1]
         except:
             bot.send_message(m.chat.id, 'Такого места в городе нет!')
             return
