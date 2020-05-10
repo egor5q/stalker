@@ -23,9 +23,9 @@ users.update_many({},{'$set':{'human.walking':False}})
 
 #kvs.update_many({},{'$set':{'humans':[]}})
 
-users.update_many({},{'$set':{'human.inv':[],
-        'human.inv_maxweight':50,
-        'human.shop_inv':[]}})
+#users.update_many({},{'$set':{'human.inv':[],
+#        'human.inv_maxweight':50,
+#        'human.shop_inv':[]}})
 
 def currentshop(h):
     shop = None
