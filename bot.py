@@ -729,7 +729,7 @@ def shopping1(call):
             medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
             return
         for ids in user['shop_inv']:
-            cost += product(ids, shop['products'][ids]['cost'])['cost']
+            cost += shop['products'][ids]['cost']
         if cost > h['money']:
             bot.answer_callback_query(call.id, 'Кассир: у вас недостаточно денег (сумма ваших покупок - '+str(cost)+'💶)!', show_alert = True)
             return
