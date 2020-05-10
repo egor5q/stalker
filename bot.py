@@ -353,7 +353,7 @@ def endwalk_build(user, build):
     kb.add(types.KeyboardButton(em+'Передвижение'))
     if build['type'] == 'shop':
         bot.send_message(user['id'], 'Вы зашли в магазин '+build['name']+'!', reply_markup = kb)
-        kb = getshop(build)
+        kb = getshop(build, user)
         bot.send_message(user['id'], 'На полках магазина вы видите следующий ассортимент:', reply_markup = kb)
     build = locs.find_one({'code':build['street']})['buildings'][build['code']]
     for ids in build['humans']:
@@ -373,13 +373,20 @@ def endwalk_build(user, build):
             bot.send_message(user['id'], text)
 
 
-def getshop(shop):
+def getshop(shop, user=None):
     kb = types.InlineKeyboardMarkup()
     for ids in shop['products']:
         pr = shop['products'][ids]
         kb.add(types.InlineKeyboardButton(text = pr['name'], callback_data = 'show?'+pr['code']))
     kb.add(types.InlineKeyboardButton(text = '🛒Ваша телега', callback_data = 'shop?my_buys'))
-    kb.add(types.InlineKeyboardButton(text = '✅Завершить покупки', callback_data = 'shop?buy_ready'))
+    cost = 0
+    if user != None:
+        for ids in user['human']['shop_inv']:
+            cost += shop['products'][ids]['cost']
+    if user != None:
+        kb.add(types.InlineKeyboardButton(text = '✅Завершить покупки ('+str(cost)+'💶)', callback_data = 'shop?buy_ready'))
+    else:
+        kb.add(types.InlineKeyboardButton(text = '✅Завершить покупки', callback_data = 'shop?buy_ready'))
     return kb
 
 def getweight(x, obj='product'):
@@ -694,7 +701,7 @@ def shopping1(call):
         if shop == None:
             medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
             return
-        kb = getshop(shop)
+        kb = getshop(shop, user)
         medit('На полках магазина вы видите следующий ассортимент:', call.message.chat.id, call.message.message_id, reply_markup = kb)
         
     elif act == 'my_buys':
@@ -728,7 +735,7 @@ def shopping1(call):
         if shop == None:
             medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
             return
-        for ids in user['shop_inv']:
+        for ids in user['human']['shop_inv']:
             cost += shop['products'][ids]['cost']
         if cost > h['money']:
             bot.answer_callback_query(call.id, 'Кассир: у вас недостаточно денег (сумма ваших покупок - '+str(cost)+'💶)!', show_alert = True)
