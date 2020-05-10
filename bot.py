@@ -650,10 +650,10 @@ def shopping(call):
         medit('Такого продукта в магазине нет!', call.message.chat.id, call.message.message_id)
         return
     kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text = '?', callback_data = '??'))
+    kb.add(types.InlineKeyboardButton(text = 'Вернуться к полкам', callback_data = 'shop?mainmenu'))
     medit(product(pr, 0, True)+'\nЦена: '+shop['products'][pr]['cost']+'💶', call.message.chat.id, call.message.message_id, reply_markup = kb)
   except:
-    pass
+    print(traceback.format_exc())
     
 @bot.callback_query_handler(func = lambda call: call.data.split('?')[0] == 'change')
 def changestats(call):
