@@ -651,7 +651,7 @@ def shopping(call):
         return
     kb = types.InlineKeyboardMarkup()
     kb.add(types.InlineKeyboardButton(text = 'Вернуться к полкам', callback_data = 'shop?mainmenu'))
-    medit(product(pr, 0, True)+'\nЦена: '+shop['products'][pr]['cost']+'💶', call.message.chat.id, call.message.message_id, reply_markup = kb)
+    medit(product(pr, 0, True)+'\nЦена: '+str(shop['products'][pr]['cost'])+'💶', call.message.chat.id, call.message.message_id, reply_markup = kb)
   except:
     print(traceback.format_exc())
     
