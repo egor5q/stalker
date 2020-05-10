@@ -27,32 +27,45 @@ users.update_many({},{'$set':{'human.walking':False}})
 #        'inv_maxweight':50,
 #        'shop_inv':[]}})
 
+def currentshop(h):
+    shop = None
+    for ids in streets[h['position']['street']]['buildings']:
+        if streets[h['position']['street']]['buildings'][ids]['code'] == h['position']['building']:
+            shop = streets[h['position']['street']]['buildings'][ids]
+    return shop
+    
+
 def product(p, cost, give_desc = False):
     name = 'Не опознано'
     value = 0
     desc = 'Неизвестно'
     code = p
+    weight = 1
     if p == 'bread':
         name = 'Хлеб'
         value = 1
         desc = 'Обычный хлеб. Восстанавливает 1🍗.'
+        weight = 2
         
     elif p == 'sousage':
         name = 'Сосиски'
         value = 4
         desc = 'Сосиски из свинины. Восстанавливают 4🍗.'
+        weight = 6
         
     elif p == 'conserves':
         name = 'Рыбные консервы'
         value = 3
         desc = 'Дешёвые консервы. Для тех, кто не очень богат. Восстанавливают 3🍗.'
+        weight = 5
     
     
     obj = {
         'cost':cost,
         'value':value,
         'name':name,
-        'code':code
+        'code':code,
+        'weight':weight
     }
     if give_desc:
         return desc
@@ -298,6 +311,9 @@ def doings(m):
         
 def endwalk_flat(user, kv):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
+    if len(user['human']['shop_inv']) > 0:
+        bot.send_message(user['id'], 'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
+        return
     kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
@@ -324,6 +340,9 @@ def endwalk_flat(user, kv):
     
 def endwalk_build(user, build):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
+    if len(user['human']['shop_inv']) > 0:
+        bot.send_message(user['id'], 'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
+        return
     locs.update_one({'code':build['street']},{'$push':{'buildings.'+build['code']+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':build['code']}})
@@ -359,7 +378,13 @@ def getshop(shop):
     for ids in shop['products']:
         pr = shop['products'][ids]
         kb.add(types.InlineKeyboardButton(text = pr['name'], callback_data = 'show?'+pr['code']))
+    kb.add(types.InlineKeyboardButton(text = '🛒Ваша телега', callback_data = 'shop?my_buys'))
+    kb.add(types.InlineKeyboardButton(text = '✅Завершить покупки', callback_data = 'shop?buy_ready'))
     return kb
+
+def getweight(x, obj='product'):
+    if obj == 'product':
+        return product(x, 0)['weight']
             
     
 def desc(user, high=False):
@@ -449,6 +474,9 @@ def desc(user, high=False):
     
 def endwalk(user, newstr, start = 'street'):
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
+    if len(user['human']['shop_inv']) > 0:
+        bot.send_message(user['id'], 'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
+        return
     locs.update_one({'code':user['human']['position']['street']},{'$pull':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.street':newstr['code']}})
     if start == 'flat':
@@ -628,6 +656,72 @@ def getstartkb(user):
     return kb
 
 
+@bot.callback_query_handler(func = lambda call: call.data.split('?')[0] == 'shop')
+def shopping1(call):
+    user = users.find_one({'id':call.from_user.id})
+    if user == None:
+        return
+    h = user['human']
+    act = call.data.split('?')[1]
+    if act == 'buy':
+        what = call.data.split('?')[2]
+        if h['position']['building'] == None:
+            medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
+            return
+        shop = currentshop(h)
+        if shop == None:
+            medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
+            return
+        pr = what
+        if pr not in shop['products']:
+            medit('Такого продукта в магазине нет!', call.message.chat.id, call.message.message_id)
+            return
+        weight = 0
+        for ids in h['inv']:
+            weight += getweight(ids, 'product')
+        for ids in h['shop_inv']:
+            weight += getweight(ids, 'product')
+        weight += getweight(pr)
+        if weight > (h['inv_maxweight'] + h['strenght']):
+            bot.answer_callback_query(call.id, 'Вы не можете нести такой вес!', show_alert = True)
+            return
+        prod = product(pr, 0)
+        users.update_one({'id':user['id']},{'$push':{'human.shop_inv':pr}})
+        bot.answer_callback_query(call.id, 'Вы положили продукт в телегу для покупок.')
+        
+    elif act == 'mainmenu':
+        shop = currentshop(h)
+        if shop == None:
+            medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
+            return
+        kb = getshop(shop)
+        medit('На полках магазина вы видите следующий ассортимент:', call.message.chat.id, call.message.chat.id, reply_markup = kb)
+        
+    elif act == 'my_buys':
+        shop = currentshop(h)
+        if shop == None:
+            medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
+            return
+        
+        
+    elif act == 'buy_ready':
+        cost = 0
+        shop = currentshop(h)
+        if shop == None:
+            medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
+            return
+        for ids in user['shop_inv']:
+            cost += product(ids, shop['products'][ids]['cost'])['cost']
+        if cost > h['money']:
+            bot.answer_callback_query(call.id, 'Кассир: у вас недостаточно денег (сумма ваших покупок - '+str(cost)+'💶)!', show_alert = True)
+            return
+        users.update_one({'id':user['id']},{'$push':{'human.inv':{'$each':h['shop_inv']}}})
+        users.update_one({'id':user['id']},{'$set':{'human.shop_inv':[]}})
+        users.update_one({'id':user['id']},{'$inc':{'human.money':-cost}})
+        medit('Кассир: с вас '+str(cost)+'💶. Спасибо за покупку, приходите ещё!', call.message.chat.id, call.message.message_id)
+        
+    
+
 @bot.callback_query_handler(func = lambda call: call.data.split('?')[0] == 'show')
 def shopping(call):
   try:
@@ -650,6 +744,7 @@ def shopping(call):
         medit('Такого продукта в магазине нет!', call.message.chat.id, call.message.message_id)
         return
     kb = types.InlineKeyboardMarkup()
+    kb.add(types.InlineKeyboardButton(text = 'Купить', callback_data = 'shop?buy?'+pr))
     kb.add(types.InlineKeyboardButton(text = 'Вернуться к полкам', callback_data = 'shop?mainmenu'))
     medit(product(pr, 0, True)+'\nЦена: '+str(shop['products'][pr]['cost'])+'💶', call.message.chat.id, call.message.message_id, reply_markup = kb)
   except:
