@@ -702,6 +702,25 @@ def shopping1(call):
         if shop == None:
             medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
             return
+        kb = getbuylist(h)
+        medit('Нажмите на продукт для того, чтобы убрать его из телеги.', call.message.chat.id, call.message.message_id, reply_markup = kb)
+        
+    elif act == 'remove':
+        shop = currentshop(h)
+        if shop == None:
+            medit('Вы сейчас не в магазине!', call.message.chat.id, call.message.message_id)
+            return
+        pr = call.data.split('?')[2]
+        if pr not in h['shop_inv']:
+            bot.answer_callback_query(call.id, 'У вас в телеге нет такого продукта!', show_alert = True)
+            return
+        newlist = h['shop_inv']
+        newlist.remove(pr)
+        h['shop_inv'].remove(pr)
+        users.update_one({'id':user['id']},{'$set':{'human.shop_inv':newlist}})
+        bot.answer_callback_query(call.id, 'Вы убрали продукт из телеги и поставили обратно на полку.')
+        kb = getbuylist(h)
+        medit('Нажмите на продукт для того, чтобы убрать его из телеги.', call.message.chat.id, call.message.message_id, reply_markup = kb)
         
         
     elif act == 'buy_ready':
@@ -720,6 +739,13 @@ def shopping1(call):
         users.update_one({'id':user['id']},{'$inc':{'human.money':-cost}})
         medit('Кассир: с вас '+str(cost)+'💶. Спасибо за покупку, приходите ещё!', call.message.chat.id, call.message.message_id)
         
+    
+def getbuylist(h):
+    kb = types.InlineKeyboardMarkup()
+    for ids in h['shop_inv']:
+        kb.add(types.InlineKeyboardButton(text = product(ids, 0)['name'], callback_data = 'shop?remove?'+ids))
+    kb.add(types.InlineKeyboardButton(text = '↩Вернуться к полкам', callback_data = 'shop?mainmenu'))
+    return kb
     
 
 @bot.callback_query_handler(func = lambda call: call.data.split('?')[0] == 'show')
@@ -745,7 +771,7 @@ def shopping(call):
         return
     kb = types.InlineKeyboardMarkup()
     kb.add(types.InlineKeyboardButton(text = 'Купить', callback_data = 'shop?buy?'+pr))
-    kb.add(types.InlineKeyboardButton(text = 'Вернуться к полкам', callback_data = 'shop?mainmenu'))
+    kb.add(types.InlineKeyboardButton(text = '↩Вернуться к полкам', callback_data = 'shop?mainmenu'))
     medit(product(pr, 0, True)+'\nЦена: '+str(shop['products'][pr]['cost'])+'💶', call.message.chat.id, call.message.message_id, reply_markup = kb)
   except:
     print(traceback.format_exc())
