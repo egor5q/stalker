@@ -687,7 +687,7 @@ def shopping1(call):
             return
         prod = product(pr, 0)
         users.update_one({'id':user['id']},{'$push':{'human.shop_inv':pr}})
-        bot.answer_callback_query(call.id, 'Вы положили продукт в телегу для покупок.')
+        bot.answer_callback_query(call.id, 'Вы положили продукт в телегу для покупок.', show_alert = True)
         
     elif act == 'mainmenu':
         shop = currentshop(h)
@@ -716,7 +716,6 @@ def shopping1(call):
             return
         newlist = h['shop_inv']
         newlist.remove(pr)
-        h['shop_inv'].remove(pr)
         users.update_one({'id':user['id']},{'$set':{'human.shop_inv':newlist}})
         bot.answer_callback_query(call.id, 'Вы убрали продукт из телеги и поставили обратно на полку.')
         kb = getbuylist(h)
