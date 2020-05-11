@@ -21,15 +21,7 @@ kvs = db.kvs
 
 users.update_many({},{'$set':{'human.walking':False}})
 
-#kvs.update_many({},{'$set':{'objects':{
-#            'fridge':{
-#                'maxweight':500,
-#                'inv':[],
-#                'money_hour':1,
-#                'type':'fridge',
-#                'code':'fridge'
-#            }
-#        }}})
+kvs.update_many({},{'$set':{'locked':False}})
 #for ids in kvs.find({}):
 #    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
                    
@@ -203,6 +195,7 @@ def doings_fridge(m):
         bot.send_message(m.chat.id, 'Выберите продукты, чтобы положить/взять.', reply_markup = kb)
         
 def get_fridge(user):
+    user = users.find_one({'id':user['id']})
     h = user['human']
     kb = types.InlineKeyboardMarkup()
     br = ''
@@ -213,7 +206,7 @@ def get_fridge(user):
         kv = kvs.find_one({'id':int(h['position']['flat'])})
         if kv == None:
             return None
-        for ids in kv['objects']['fridge']:
+        for ids in kv['objects']['fridge']['inv']:
             kb.add(types.InlineKeyboardButton(text = product(ids)['name'], callback_data = 'fridge?take?'+ids))
     elif h['kl'] == True:
         br = '☑'
