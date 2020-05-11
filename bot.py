@@ -997,6 +997,7 @@ def createkv(user, hom, street):
                 'money_hour':1,
                 'type':'fridge',
                 'code':'fridge'
+            }
         },
         'humans':[]
     }
