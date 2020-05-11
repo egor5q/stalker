@@ -33,7 +33,7 @@ users.update_many({},{'$set':{'human.walking':False}})
 #for ids in kvs.find({}):
 #    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
                    
-users.update_many({},{'$set':{'human.kl':True, 'human.br':False}})
+#users.update_many({},{'$set':{'human.kl':True, 'human.br':False}})
 
 
 
