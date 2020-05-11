@@ -21,11 +21,23 @@ kvs = db.kvs
 
 users.update_many({},{'$set':{'human.walking':False}})
 
-#kvs.update_many({},{'$set':{'humans':[]}})
-
+kvs.update_many({},{'$set':{'objects':{
+            'fridge':{
+                'maxweight':500,
+                'inv':[],
+                'money_hour':1,
+                'type':'fridge',
+                'code':'fridge'
+            }
+        }}})
+for ids in kvs.find({}):
+    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
+                   
 #users.update_many({},{'$set':{'human.inv':[],
 #        'human.inv_maxweight':50,
 #        'human.shop_inv':[]}})
+
+
 
 def currentshop(h):
     shop = None
@@ -35,7 +47,7 @@ def currentshop(h):
     return shop
     
 
-def product(p, cost, give_desc = False):
+def product(p, cost=0, give_desc = False):
     name = 'Не опознано'
     value = 0
     desc = 'Неизвестно'
@@ -148,10 +160,19 @@ letters = [' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й'
 
 emjs = ['🚶', '🚶‍♀️']
 
-
 h_colors = ['brown', 'gold', 'orange', 'black']
 h_lenghts = ['short', 'medium', 'long']
 
+def reply_kb(user):
+    kb = types.ReplyKeyboardMarkup()
+    em = '🚶'
+    if user['human']['gender'] == 'female':
+        em = '🚶‍♀️'
+    kb.add(types.KeyboardButton(em+'Передвижение'))
+    h = user['human']
+    if h['position']['flat'] != None:
+        kb.add(types.KeyboardButton('🗄'+'Холодильник'))
+    return kb
 
 
 @bot.message_handler(commands=['clear_all'])
@@ -171,8 +192,38 @@ def navv(m):
 @bot.message_handler(commands=['help'])
 def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, сайт временно не работает!')
+    
 
+@bot.message_handler(func = lambda message: message.text != None and message.text[0] in ['🗄'])
+def doings_fridge(m):
+    if m.text == '🗄Холодильник':
+        
+def get_fridge(h):
+    kb = types.InlineKeyboardMarkup()
+    br = ''
+    kl = ''
+    if h['br'] == True:
+        br = '✅'
+        kl = '☑'
+        
+    elif h['kl'] == True:
+        br = '☑'
+        kl = '✅'
+        for ids in h['inv']:
+            x = gettype(ids)
+            if x == 'product':
+                kb.add(types.InlineKeyboardButton(text = product(ids)['name'], callback_data = 'fridge?put?'+ids))
+    kb.add(types.InlineKeyboardButton(text = br+'Брать продукты', callback_data = 'shop?mainmenu'), types.InlineKeyboardButton(text = kl+'Класть продукты', callback_data = 'shop?mainmenu'))
+    return kb      
 
+def gettype(x):
+    typee = '?'
+    a = product(x)
+    if a['name'] == 'Не опознано':
+        pass
+    else:
+        typee = 'product'
+    return typee
     
 @bot.message_handler(func = lambda message: message.text != None and message.text[0] in emjs)
 def doings(m):
@@ -321,11 +372,7 @@ def endwalk_flat(user, kv):
     kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
-    kb = types.ReplyKeyboardMarkup()
-    em = '🚶'
-    if user['human']['gender'] == 'female':
-        em = '🚶‍♀️'
-    kb.add(types.KeyboardButton(em+'Передвижение'))
+    kb = reply_kb(user)
     bot.send_message(user['id'], 'Вы зашли в квартиру '+str(kv['id'])+'!', reply_markup = kb)
     kv = kvs.find_one({'id':kv['id']})
     for ids in kv['humans']:
@@ -351,11 +398,8 @@ def endwalk_build(user, build):
     locs.update_one({'code':build['street']},{'$push':{'buildings.'+build['code']+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':build['code']}})
-    kb = types.ReplyKeyboardMarkup()
-    em = '🚶'
-    if user['human']['gender'] == 'female':
-        em = '🚶‍♀️'
-    kb.add(types.KeyboardButton(em+'Передвижение'))
+    kb = reply_kb(user)
+    
     if build['type'] == 'shop':
         bot.send_message(user['id'], 'Вы зашли в магазин '+build['name']+'!', reply_markup = kb)
         kb = getshop(build, user)
@@ -498,11 +542,7 @@ def endwalk(user, newstr, start = 'street'):
         b = user['human']['position']['building']
         locs.update_one({'code':user['human']['position']['street']},{'$pull':{'buildings.'+b+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
-    kb = types.ReplyKeyboardMarkup()
-    em = '🚶'
-    if user['human']['gender'] == 'female':
-        em = '🚶‍♀️'
-    kb.add(types.KeyboardButton(em+'Передвижение'))
+    kb = reply_kb(user)
     if start == 'street':
         bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы '+newstr['name']+'!', reply_markup = kb)
     elif start == 'flat' or start=='building':
@@ -949,6 +989,14 @@ def createkv(user, hom, street):
         'name':user.first_name,
         'home':hom,
         'street':street,
+        'objects':{
+            'fridge':{
+                'maxweight':500,
+                'inv':[],
+                'money_hour':1,
+                'type':'fridge',
+                'code':'fridge'
+        },
         'humans':[]
     }
 
