@@ -197,6 +197,7 @@ def navv(m):
 @bot.message_handler(func = lambda message: message.text != None and message.text[0] in ['🗄'])
 def doings_fridge(m):
     if m.text == '🗄Холодильник':
+        pass
         
 def get_fridge(h):
     kb = types.InlineKeyboardMarkup()
