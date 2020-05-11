@@ -33,9 +33,7 @@ users.update_many({},{'$set':{'human.walking':False}})
 #for ids in kvs.find({}):
 #    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
                    
-#users.update_many({},{'$set':{'human.inv':[],
-#        'human.inv_maxweight':50,
-#        'human.shop_inv':[]}})
+users.update_many({},{'$set':{'human.kl':True, 'human.br':False}})
 
 
 
@@ -199,14 +197,17 @@ def doings_fridge(m):
     if m.text == '🗄Холодильник':
         pass
         
-def get_fridge(h):
+def get_fridge(user):
+    h = user['human']
     kb = types.InlineKeyboardMarkup()
     br = ''
     kl = ''
     if h['br'] == True:
         br = '✅'
         kl = '☑'
-        
+        kv = kvs.find_one({'id':user['id']})
+        for ids in kv['objects']['fridge']:
+            kb.add(types.InlineKeyboardButton(text = product(ids)['name'], callback_data = 'fridge?take?'+ids))
     elif h['kl'] == True:
         br = '☑'
         kl = '✅'
@@ -214,7 +215,7 @@ def get_fridge(h):
             x = gettype(ids)
             if x == 'product':
                 kb.add(types.InlineKeyboardButton(text = product(ids)['name'], callback_data = 'fridge?put?'+ids))
-    kb.add(types.InlineKeyboardButton(text = br+'Брать продукты', callback_data = 'shop?mainmenu'), types.InlineKeyboardButton(text = kl+'Класть продукты', callback_data = 'shop?mainmenu'))
+    kb.add(types.InlineKeyboardButton(text = br+'Брать продукты', callback_data = 'fridge?set_br'), types.InlineKeyboardButton(text = kl+'Класть продукты', callback_data = 'fridge?set_kl'))
     return kb      
 
 def gettype(x):
@@ -225,6 +226,7 @@ def gettype(x):
     else:
         typee = 'product'
     return typee
+
     
 @bot.message_handler(func = lambda message: message.text != None and message.text[0] in emjs)
 def doings(m):
@@ -964,6 +966,8 @@ def human(user):
         'inv':[],
         'inv_maxweight':50,
         'shop_inv':[],
+        'kl':True,
+        'br':False,
         'body':{
             'hair_color':random.choice(h_colors),
             'hair_lenght':random.choice(h_lenghts),
