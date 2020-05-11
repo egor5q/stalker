@@ -451,6 +451,12 @@ def endwalk_flat(user, kv):
     if len(user['human']['shop_inv']) > 0:
         bot.send_message(user['id'], 'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
         return
+    h = user['human']
+    curstr = locs.find_one({'code':h['position']['street']})
+    
+    for ids in curstr['humans']:
+        if ids != user['id']:
+            bot.send_message(ids, h['name']+' покидает улицу!')
     kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
@@ -478,6 +484,11 @@ def endwalk_build(user, build):
     if len(user['human']['shop_inv']) > 0:
         bot.send_message(user['id'], 'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
         return
+    
+    curstr = locs.find_one({'code':h['position']['street']})
+    for ids in curstr['humans']:
+        if ids != user['id']:
+            bot.send_message(ids, h['name']+' покидает улицу!')
     locs.update_one({'code':build['street']},{'$push':{'buildings.'+build['code']+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':build['code']}})
@@ -622,9 +633,18 @@ def endwalk(user, newstr, start = 'street'):
     users.update_one({'id':user['id']},{'$set':{'human.position.street':newstr['code']}})
     if start == 'flat':
         kvs.update_one({'id':user['human']['position']['flat']},{'$pull':{'humans':user['id']}})
+        curflat = kvs.find_one({'code':h['position']['flat']})
+        for ids in curflat['humans']:
+            if ids != user['id']:
+                bot.send_message(ids, h['name']+' покидает квартиру!')
     if start == 'building':
         b = user['human']['position']['building']
+        h = user['human']
         locs.update_one({'code':user['human']['position']['street']},{'$pull':{'buildings.'+b+'.humans':user['id']}})
+        curstr = locs.find_one({'code':h['position']['street']})
+        for ids in curstr['buildings'][b]['humans']:
+            if ids != user['id']:
+                bot.send_message(ids, h['name']+' покидает здание!')
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
     user = users.find_one({'id':user['id']})
     kb = reply_kb(user)
