@@ -21,17 +21,17 @@ kvs = db.kvs
 
 users.update_many({},{'$set':{'human.walking':False}})
 
-kvs.update_many({},{'$set':{'objects':{
-            'fridge':{
-                'maxweight':500,
-                'inv':[],
-                'money_hour':1,
-                'type':'fridge',
-                'code':'fridge'
-            }
-        }}})
-for ids in kvs.find({}):
-    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
+#kvs.update_many({},{'$set':{'objects':{
+#            'fridge':{
+#                'maxweight':500,
+#                'inv':[],
+#                'money_hour':1,
+#                'type':'fridge',
+#                'code':'fridge'
+#            }
+#        }}})
+#for ids in kvs.find({}):
+#    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
                    
 #users.update_many({},{'$set':{'human.inv':[],
 #        'human.inv_maxweight':50,
