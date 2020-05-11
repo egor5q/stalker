@@ -231,6 +231,10 @@ def fridgeacts(call):
     if user == None:
         return
     h = user['human']
+    kv = kvs.find_one({'id':h['position']['flat']})
+    if kv == None:
+        medit('Вы сейчас не в квартире!', call.message.chat.id, call.message.message_id)
+        return
     kb = get_fridge(user)
     if kb == None:
         medit('Вы сейчас не в квартире!', call.message.chat.id, call.message.message_id)
@@ -454,6 +458,7 @@ def endwalk_flat(user, kv):
     kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
+    user = users.find_one({'id':user['id']})
     kb = reply_kb(user)
     bot.send_message(user['id'], 'Вы зашли в квартиру '+str(kv['id'])+'!', reply_markup = kb)
     kv = kvs.find_one({'id':kv['id']})
@@ -480,6 +485,7 @@ def endwalk_build(user, build):
     locs.update_one({'code':build['street']},{'$push':{'buildings.'+build['code']+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':build['code']}})
+    user = users.find_one({'id':user['id']})
     kb = reply_kb(user)
     
     if build['type'] == 'shop':
@@ -624,6 +630,7 @@ def endwalk(user, newstr, start = 'street'):
         b = user['human']['position']['building']
         locs.update_one({'code':user['human']['position']['street']},{'$pull':{'buildings.'+b+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
+    user = users.find_one({'id':user['id']})
     kb = reply_kb(user)
     if start == 'street':
         bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы '+newstr['name']+'!', reply_markup = kb)
