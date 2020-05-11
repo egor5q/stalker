@@ -197,6 +197,9 @@ def doings_fridge(m):
     user = getuser(m.from_user)
     if m.text == '🗄Холодильник':
         kb = get_fridge(user)
+        if kb == None:
+            bot.send_message(m.chat.id, 'Вы не в квартире!')
+            return
         bot.send_message(m.chat.id, 'Выберите продукты, чтобы положить/взять.', reply_markup = kb)
         
 def get_fridge(user):
@@ -207,7 +210,9 @@ def get_fridge(user):
     if h['br'] == True:
         br = '✅'
         kl = '☑'
-        kv = kvs.find_one({'id':user['id']})
+        kv = kvs.find_one({'id':int(h['position']['flat'])})
+        if kv == None:
+            return None
         for ids in kv['objects']['fridge']:
             kb.add(types.InlineKeyboardButton(text = product(ids)['name'], callback_data = 'fridge?take?'+ids))
     elif h['kl'] == True:
@@ -220,6 +225,78 @@ def get_fridge(user):
     kb.add(types.InlineKeyboardButton(text = br+'Брать продукты', callback_data = 'fridge?set_br'), types.InlineKeyboardButton(text = kl+'Класть продукты', callback_data = 'fridge?set_kl'))
     return kb      
 
+@bot.callback_query_handler(func = lambda call: call.data.split('?')[0] == 'fridge')
+def fridgeacts(call):
+    user = users.find_one({'id':call.from_user.id})
+    if user == None:
+        return
+    h = user['human']
+    kb = get_fridge(user)
+    if kb == None:
+        medit('Вы сейчас не в квартире!', call.message.chat.id, call.message.message_id)
+        return
+    act = call.data.split('?')[1]
+    if act == 'set_br':
+        users.update_one({'id':user['id']},{'$set':{'human.br':True, 'human.kl':False}})
+        bot.answer_callback_query(call.id, 'Выбрано - брать продукты!', show_alert = True)
+        kb = get_fridge(user)
+        medit('Выберите продукты, чтобы положить/взять.', call.message.chat.id, call.message.message_id, reply_markup = kb)
+        
+    elif act == 'set_kl':
+        users.update_one({'id':user['id']},{'$set':{'human.br':False, 'human.kl':True}})
+        bot.answer_callback_query(call.id, 'Выбрано - класть продукты!', show_alert = True)
+        kb = get_fridge(user)
+        medit('Выберите продукты, чтобы положить/взять.', call.message.chat.id, call.message.message_id, reply_markup = kb)
+        
+    elif act == 'put':
+        what = call.data.split('?')[2]
+        if what not in h['inv']:
+            bot.answer_callback_query(call.id, 'У вас этого нет!', show_alert = True)
+            return
+        kv = kvs.find_one({'id':h['position']['flat']})
+        weight = product(what)['weight']
+        alred = 0
+        for ids in kv['objects']['fridge']['inv']:
+            alred += product(ids)['weight']
+        if kv['objects']['fridge']['maxweight']-alred < weight:
+            bot.answer_callback_query(call.id, 'В холодильнике недостаточно места!', show_alert = True)
+            return
+        inv = h['inv']
+        inv.remove(what)
+        kvs.update_one({'id':kv['id']},{'$push':{'inv':what}})
+        users.update_one({'id':user['id']},{'$set':{'human.inv':inv}})
+        bot.answer_callback_query(call.id, 'Вы положили продукт в холодильник!', show_alert = True)
+        user = users.find_one({'id':user['id']})
+        kb = get_fridge(user)
+        medit('Выберите продукты, чтобы положить/взять.', call.message.chat.id, call.message.message_id, reply_markup = kb)
+        
+    elif act == 'take':
+        kv = kvs.find_one({'id':h['position']['flat']})
+        what = call.data.split('?')[2]
+        if what not in kv['objects']['fridge']['inv']:
+            bot.answer_callback_query(call.id, 'В холодильнике этого нет!', show_alert = True)
+            return
+        weight = product(what)['weight']
+        alred = 0
+        for ids in h['inv']:
+            alred += product(ids)['weight']
+        if h['maxweight']-alred < weight:
+            bot.answer_callback_query(call.id, 'Вы не можете столько нести!', show_alert = True)
+            return
+        inv = kv['objects']['fridge']['inv']
+        inv.remove(what)
+        kvs.update_one({'id':kv['id']},{'$set':{'objects.fridge.inv':inv}})
+        users.update_one({'id':user['id']},{'$push':{'human.inv':what}})
+        bot.answer_callback_query(call.id, 'Вы взяли продукт из холодильника!', show_alert = True)
+        user = users.find_one({'id':user['id']})
+        kb = get_fridge(user)
+        medit('Выберите продукты, чтобы положить/взять.', call.message.chat.id, call.message.message_id, reply_markup = kb)
+        
+    
+        
+        
+  
+  
 def gettype(x):
     typee = '?'
     a = product(x)
