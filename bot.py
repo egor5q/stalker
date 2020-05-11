@@ -194,8 +194,10 @@ def navv(m):
 
 @bot.message_handler(func = lambda message: message.text != None and message.text[0] in ['🗄'])
 def doings_fridge(m):
+    user = getuser(m.from_user)
     if m.text == '🗄Холодильник':
-        pass
+        kb = get_fridge(user)
+        bot.send_message(m.chat.id, 'Выберите продукты, чтобы положить/взять.', reply_markup = kb)
         
 def get_fridge(user):
     h = user['human']
@@ -865,9 +867,10 @@ def changestats(call):
             bot.answer_callback_query(call.id, 'Нельзя начать с пустым именем!', show_alert = True)
             return
         else:
+            kb = reply_kb(user)
             medit('Хорошо! Я вас зарегистрировал, '+h['name']+'. Ваша квартира будет находиться по адресу: улица '+
                   streets[h['street']]['name']+', дом '+h['home']+'. Надеюсь, сами доберётесь. Сейчас вы находитесь на улице Встречная! '+
-                  'Чтобы найти какое-то место, вы всегда можете воспользоваться навигатором (/navigator) на своём устройстве. Успехов!', call.message.chat.id, call.message.message_id)
+                  'Чтобы найти какое-то место, вы всегда можете воспользоваться навигатором (/navigator) на своём устройстве. Успехов!', call.message.chat.id, call.message.message_id, reply_markup = kb)
             
             users.update_one({'id':user['id']},{'$set':{'start_stats':False}})
             users.update_one({'id':user['id']},{'$set':{'wait_for_stat':False}})
