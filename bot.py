@@ -456,7 +456,10 @@ def endwalk_flat(user, kv):
     
     for ids in curstr['humans']:
         if ids != user['id']:
-            bot.send_message(ids, h['name']+' покидает улицу!')
+            user2 = users.find_one({'id':ids})
+            h2 = user2['human']
+            if h2['position']['flat'] == None and h2['position']['building'] == None:
+                bot.send_message(ids, h['name']+' покидает улицу!')
     kvs.update_one({'id':kv['id']},{'$push':{'humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':kv['id']}})
@@ -488,7 +491,10 @@ def endwalk_build(user, build):
     curstr = locs.find_one({'code':h['position']['street']})
     for ids in curstr['humans']:
         if ids != user['id']:
-            bot.send_message(ids, h['name']+' покидает улицу!')
+            user2 = users.find_one({'id':ids})
+            h2 = user2['human']
+            if h2['position']['flat'] == None and h2['position']['building'] == None:
+                bot.send_message(ids, h['name']+' покидает улицу!')
     locs.update_one({'code':build['street']},{'$push':{'buildings.'+build['code']+'.humans':user['id']}})
     users.update_one({'id':user['id']},{'$set':{'human.position.flat':None}})
     users.update_one({'id':user['id']},{'$set':{'human.position.building':build['code']}})
@@ -645,6 +651,17 @@ def endwalk(user, newstr, start = 'street'):
         for ids in curstr['buildings'][b]['humans']:
             if ids != user['id']:
                 bot.send_message(ids, h['name']+' покидает здание!')
+                
+    if start == 'street':
+        h = user['human']
+        curstr = locs.find_one({'code':h['position']['street']})
+        for ids in curstr['humans']:
+            if ids != user['id']:
+                user2 = users.find_one({'id':ids})
+                h2 = user2['human']
+                if h2['position']['flat'] == None and h2['position']['building'] == None:
+                    bot.send_message(ids, h['name']+' покидает улицу!')
+                    
     users.update_one({'id':user['id']},{'$set':{'human.position.building':None, 'human.position.flat':None}})
     user = users.find_one({'id':user['id']})
     kb = reply_kb(user)
