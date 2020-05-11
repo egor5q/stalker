@@ -21,7 +21,7 @@ kvs = db.kvs
 
 users.update_many({},{'$set':{'human.walking':False}})
 
-kvs.update_many({},{'$set':{'locked':False}})
+#kvs.update_many({},{'$set':{'locked':False}})
 #for ids in kvs.find({}):
 #    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
                    
@@ -162,6 +162,7 @@ def reply_kb(user):
     h = user['human']
     if h['position']['flat'] != None:
         kb.add(types.KeyboardButton('🗄'+'Холодильник'))
+        kb.add(types.KeyboardButton('🔐Закрыть/открыть квартиру'))
     return kb
 
 
@@ -184,7 +185,7 @@ def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, сайт временно не работает!')
     
 
-@bot.message_handler(func = lambda message: message.text != None and message.text[0] in ['🗄'])
+@bot.message_handler(func = lambda message: message.text != None and message.text[0] in ['🗄', '🔐'])
 def doings_fridge(m):
     user = getuser(m.from_user)
     if m.text == '🗄Холодильник':
@@ -193,6 +194,8 @@ def doings_fridge(m):
             bot.send_message(m.chat.id, 'Вы не в квартире!')
             return
         bot.send_message(m.chat.id, 'Выберите продукты, чтобы положить/взять.', reply_markup = kb)
+        
+    
         
 def get_fridge(user):
     user = users.find_one({'id':user['id']})
@@ -277,7 +280,7 @@ def fridgeacts(call):
         alred = 0
         for ids in h['inv']:
             alred += product(ids)['weight']
-        if h['maxweight']-alred < weight:
+        if h['inv_maxweight']-alred < weight:
             bot.answer_callback_query(call.id, 'Вы не можете столько нести!', show_alert = True)
             return
         inv = kv['objects']['fridge']['inv']
