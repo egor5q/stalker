@@ -260,7 +260,7 @@ def fridgeacts(call):
             return
         inv = h['inv']
         inv.remove(what)
-        kvs.update_one({'id':kv['id']},{'$push':{'inv':what}})
+        kvs.update_one({'id':kv['id']},{'$push':{'objects.fridge.inv':what}})
         users.update_one({'id':user['id']},{'$set':{'human.inv':inv}})
         bot.answer_callback_query(call.id, 'Вы положили продукт в холодильник!', show_alert = True)
         user = users.find_one({'id':user['id']})
