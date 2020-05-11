@@ -642,7 +642,7 @@ def endwalk(user, newstr, start = 'street'):
     users.update_one({'id':user['id']},{'$set':{'human.position.street':newstr['code']}})
     if start == 'flat':
         kvs.update_one({'id':user['human']['position']['flat']},{'$pull':{'humans':user['id']}})
-        curflat = kvs.find_one({'code':h['position']['flat']})
+        curflat = kvs.find_one({'id':h['position']['flat']})
         for ids in curflat['humans']:
             if ids != user['id']:
                 bot.send_message(ids, h['name']+' покидает квартиру!')
