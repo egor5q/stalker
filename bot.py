@@ -447,6 +447,7 @@ def doings(m):
         
 def endwalk_flat(user, kv):
     user = users.find_one({'id':user['id']})
+    h = user['human']
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
     if len(user['human']['shop_inv']) > 0:
         bot.send_message(user['id'], 'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
@@ -483,6 +484,7 @@ def endwalk_flat(user, kv):
     
 def endwalk_build(user, build):
     user = users.find_one({'id':user['id']})
+    h = user['human']
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
     if len(user['human']['shop_inv']) > 0:
         bot.send_message(user['id'], 'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
@@ -631,6 +633,7 @@ def desc(user, high=False):
     
 def endwalk(user, newstr, start = 'street'):
     user = users.find_one({'id':user['id']})
+    h = user['human']
     users.update_one({'id':user['id']},{'$set':{'human.walking':False}})
     if len(user['human']['shop_inv']) > 0:
         bot.send_message(user['id'], 'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
