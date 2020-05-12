@@ -990,13 +990,13 @@ def changestats(call):
             kb = reply_kb(user)
             medit('Хорошо! Я вас зарегистрировал, '+h['name']+'. Ваша квартира будет находиться по адресу: улица '+
                   streets[h['street']]['name']+', дом '+h['home']+'. Надеюсь, сами доберётесь. Сейчас вы находитесь на улице Встречная! '+
-                  'Чтобы найти какое-то место, вы всегда можете воспользоваться навигатором (/navigator) на своём устройстве. Успехов!', call.message.chat.id, call.message.message_id, reply_markup = kb)
+                  'Чтобы найти какое-то место, вы всегда можете воспользоваться навигатором (/navigator) на своём устройстве. Успехов!', call.message.chat.id, call.message.message_id)
             
             users.update_one({'id':user['id']},{'$set':{'start_stats':False}})
             users.update_one({'id':user['id']},{'$set':{'wait_for_stat':False}})
                 
             time.sleep(2)
-            bot.send_message(call.message.chat.id, 'Чуть не забыл! По всем вопросам можете обращаться на сайт нашего города (/help). Я сам его программировал!')
+            bot.send_message(call.message.chat.id, 'Чуть не забыл! По всем вопросам можете обращаться на сайт нашего города (/help). Я сам его программировал!', reply_markup = kb)
             return
     medit(text, call.message.chat.id, call.message.message_id, parse_mode = 'markdown')
 
