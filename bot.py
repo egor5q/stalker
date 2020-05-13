@@ -213,9 +213,130 @@ def doings_locks(m):
             bot.send_message(m.chat.id, 'Вы закрыли квартиру на ключ! Теперь зайти в неё смогут только те, у кого есть ключ.')
             
     elif m.text == '🍗Еда':
+        if not in_cafe(user):
+            bot.send_message(m.chat.id, 'Чтобы перекусить, вам нужно быть в квартире или кафе!')
+            return
+        
+        kb = get_eating(user)
+        bot.send_message(m.chat.id, 'Вы садитесь за стол. Выберите, какие продукты хотите смешать, чтобы съесть.', reply_markup = kb)
+        
+        
+def in_cafe(user):
+    h = user['human']
+    kv = kvs.find_one({'id':h['position']['flat']})
+    cafe = None
+    for ids in streets:
+        street = streets[ids]
+        for idss in street['buildings']:
+            b = street['buildings'][idss]
+            if b['code'] == h['position']['building']:
+                cafe = b
+    
+    if kv == None and cafe == None:
+        return False
+    
+    if cafe != None and cafe['type'] != 'cafe':
+        return False
+    
+    return True
+        
+        
+@bot.callback_query_handler(func = lambda call: call.data.split('?')[0] == 'cafe')
+def cafeacts(call):
+    user = users.find_one({'id':call.from_user.id})
+    h = user['human']
+    if not in_cafe(user):
+        bot.answer_callback_query(call.id, 'Чтобы перекусить, вам нужно быть в квартире или кафе!', show_alert = True)
+        return
+    
+    what = call.data.split('?')[1]
+    if what == 'mix':
+        item = call.data.split('?')[2]
+        if item not in h['inv']:
+            bot.answer_callback_query(call.id, 'У вас этого нет!')
+            return
+        
+        inv = h['inv']
+        inv.remove(item)
+        users.update_one({'id':user['id']},{'$push':{'human.mix':item}})
+        users.update_one({'id':user['id']},{'$set':{'human.inv':inv}})
+        bot.answer_callback_query(call.id, 'Новый продукт успешно добавлен в список для смешивания!', show_alert = True)
+        
+    elif what == 'take_away':
+        item = call.data.split('?')[2]
+        if item not in h['mix']:
+            bot.answer_callback_query(call.id, 'Этого нет в списке для смешивания!', show_alert = True)
+            return
+        
+        mix = h['mix']
+        mix.remove(item)
+        users.update_one({'id':user['id']},{'$set':{'human.mix':mix}})
+        users.update_one({'id':user['id']},{'$push':{'human.inv':item}})
+        bot.answer_callback_query(call.id, 'Продукт удалён из списка для смешивания!', show_alert = True)
+        
+    elif what == 'set_take_away':
+        users.update_one({'id':user['id']},{'$set':{'human.take_away':True}})
+        
+    elif what == 'unset_take_away':
+        users.update_one({'id':user['id']},{'$set':{'human.take_away':False}})
+        
+    elif what == 'ready':
+        hunger = 0
+        if len(h['mix']) == 0:
+            bot.answer_callback_query(call.id, 'На столе пусто! Нельзя питаться тарелкой!', show_alert = True)
+            return
+        for ids in h['mix']:
+            p = product(ids)
+            hunger += p['value']
+        if 'sousage' in h['mix'] and 'bread' in h['mix']:
+            hunger += 2
+        if 'sousage' in h['mix'] and 'conserves' in h['mix']:
+            hunger -= 3
+        if 'bread' in h['mix'] and 'conserves' in h['mix']:
+            hunger += 1
+           
+        users.update_one({'id':user['id']},{'$inc':{'human.hunger':hunger}})
+        users.update_one({'id':user['id']},{'$set':{'human.mix':[]}})
+        user = users.find_one({'id':user['id']})
+        h = user['human']
+        if h['hunger'] > h['maxhunger']:
+            users.update_one({'id':user['id']},{'$set':{'human.hunger':h['maxhunger']}})
+        medit('Вы смешали ингредиенты, и съели получившееся блюдо. Восстановлено '+str(hunger)+'🍗.', call.message.chat.id, call.message.message_id)
+        
+        
+    kb = get_eating(user)
+    try:
+        medit('Вы садитесь за стол. Выберите, какие продукты хотите смешать, чтобы съесть.', call.message.chat.id, call.message.message_id, reply_markup = kb)
+    except:
         pass
+    
         
         
+    
+        
+        
+def get_eating(user):
+    user = users.find_one({'id':user['id']})
+    h = user['human']
+    kb = types.InlineKeyboardMarkup()
+    mix = ''
+    take_away = ''
+    if h['take_away'] == False:
+        mix = '✅'
+        take_away = '☑'
+        for ids in h['inv']:
+            kb.add(types.InlineKeyboardButton(text = product(ids)['name'], callback_data = 'cafe?mix?'+ids))
+    elif h['take_away'] == True:
+        mix = '☑'
+        take_away = '✅'
+        for ids in h['mix']:
+            x = gettype(ids)
+            if x == 'product':
+                kb.add(types.InlineKeyboardButton(text = product(ids)['name'], callback_data = 'cafe?take_away?'+ids))
+    kb.add(types.InlineKeyboardButton(text = br+'Добавить ингредиенты', callback_data = 'cafe?set_take_away'), types.InlineKeyboardButton(text = kl+'Убрать ингредиенты', callback_data = 'cafe?unset_take_away'))
+    kb.add(types.InlineKeyboardButton(text = br+'Приготовить и съесть', callback_data = 'cafe?ready'))
+    
+    return kb      
         
     
         
@@ -1110,6 +1231,8 @@ def human(user):
         'sleep':100,
         'maxsleep':100,
         'education':'basic',
+        'mix':[],
+        'take_away':False,
         'walking':False,
         'inv':[],
         'inv_maxweight':50,
