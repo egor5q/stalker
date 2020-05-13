@@ -197,7 +197,7 @@ def doings_locks(m):
         bot.send_message(m.chat.id, 'Выберите продукты, чтобы положить/взять.', reply_markup = kb)
         
     elif m.text == '🔐Закрыть/открыть квартиру':
-        kv = kvs.find_one({'id':h['position']['flat']['id']})
+        kv = kvs.find_one({'id':h['position']['flat']})
         if kv == None:
             bot.send_message(m.chat.id, 'Вас сейчас нет в этой квартире!')
             return
