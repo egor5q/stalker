@@ -21,7 +21,7 @@ kvs = db.kvs
 
 users.update_many({},{'$set':{'human.walking':False}})
 
-#kvs.update_many({},{'$set':{'locked':False}})
+kvs.update_many({},{'$set':{'locked':True}})
 #for ids in kvs.find({}):
 #    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
                    
@@ -186,14 +186,32 @@ def navv(m):
     
 
 @bot.message_handler(func = lambda message: message.text != None and message.text[0] in ['🗄', '🔐'])
-def doings_fridge(m):
+def doings_locks(m):
     user = getuser(m.from_user)
+    h = user['human']
     if m.text == '🗄Холодильник':
         kb = get_fridge(user)
         if kb == None:
             bot.send_message(m.chat.id, 'Вы не в квартире!')
             return
         bot.send_message(m.chat.id, 'Выберите продукты, чтобы положить/взять.', reply_markup = kb)
+        
+    elif m.text == '🔐Закрыть/открыть квартиру':
+        kv = kvs.find_one({'id':h['position']['flat']['id']})
+        if kv == None:
+            bot.send_message(m.chat.id, 'Вас сейчас нет в этой квартире!')
+            return
+        key = kv['street']+'#'+kv['home']+'#'+str(kv['id'])
+        if key not in h['keys']:
+            bot.send_message(m.chat.id, 'У вас нет ключей от этой квартиры!')
+            return
+        if kv['locked']:
+            kvs.update_one({'id':kv['id']},{'$set':{'locked':False}})
+            bot.send_message(m.chat.id, 'Вы открыли квартиру!')
+        else:
+            kvs.update_one({'id':kv['id']},{'$set':{'locked':True}})
+            bot.send_message(m.chat.id, 'Вы закрыли квартиру на ключ!')
+        
         
     
         
@@ -1117,6 +1135,7 @@ def createkv(user, hom, street):
         'name':user.first_name,
         'home':hom,
         'street':street,
+        'locked':True,
         'objects':{
             'fridge':{
                 'maxweight':500,
