@@ -161,7 +161,7 @@ def reply_kb(user):
     kb.add(types.KeyboardButton(em+'Передвижение'))
     h = user['human']
     if h['position']['flat'] != None:
-        kb.add(types.KeyboardButton('🗄'+'Холодильник'))
+        kb.add(types.KeyboardButton('🗄'+'Холодильник'), types.KeyboardButton('🍗'+'Еда'))
         kb.add(types.KeyboardButton('🔐Закрыть/открыть квартиру'))
     return kb
 
@@ -185,7 +185,7 @@ def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, сайт временно не работает!')
     
 
-@bot.message_handler(func = lambda message: message.text != None and message.text[0] in ['🗄', '🔐'])
+@bot.message_handler(func = lambda message: message.text != None and message.text[0] in ['🗄', '🔐', '🍗'])
 def doings_locks(m):
     user = getuser(m.from_user)
     h = user['human']
@@ -199,7 +199,7 @@ def doings_locks(m):
     elif m.text == '🔐Закрыть/открыть квартиру':
         kv = kvs.find_one({'id':h['position']['flat']})
         if kv == None:
-            bot.send_message(m.chat.id, 'Вас сейчас нет в этой квартире!')
+            bot.send_message(m.chat.id, 'Вы сейчас не в квартире!')
             return
         key = kv['street']+'#'+kv['home']+'#'+str(kv['id'])
         if key not in h['keys']:
@@ -211,6 +211,10 @@ def doings_locks(m):
         else:
             kvs.update_one({'id':kv['id']},{'$set':{'locked':True}})
             bot.send_message(m.chat.id, 'Вы закрыли квартиру на ключ! Теперь зайти в неё смогут только те, у кого есть ключ.')
+            
+    elif m.text == '🍗Еда':
+        pass
+        
         
         
     
