@@ -210,7 +210,7 @@ def doings_locks(m):
             bot.send_message(m.chat.id, 'Вы открыли квартиру!')
         else:
             kvs.update_one({'id':kv['id']},{'$set':{'locked':True}})
-            bot.send_message(m.chat.id, 'Вы закрыли квартиру на ключ!')
+            bot.send_message(m.chat.id, 'Вы закрыли квартиру на ключ! Теперь зайти в неё смогут только те, у кого есть ключ.')
         
         
     
@@ -471,8 +471,11 @@ def endwalk_flat(user, kv):
         bot.send_message(user['id'], 'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
         return
     h = user['human']
+    kv = kvs.find_one({'id':kv['id']})
+    if kv['street']+'#'+kv['home']+'#'+str(kv['id']) not in user['keys'] and kv['locked']:
+        bot.send_message(user['id'], 'Вы попытались зайти в квартиру '+str(kv['id'])+', но она оказалась закрыта на ключ!')
+        return
     curstr = locs.find_one({'code':h['position']['street']})
-    
     for ids in curstr['humans']:
         if ids != user['id']:
             user2 = users.find_one({'id':ids})
