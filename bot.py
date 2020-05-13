@@ -21,7 +21,7 @@ kvs = db.kvs
 
 users.update_many({},{'$set':{'human.walking':False}})
 
-kvs.update_many({},{'$set':{'locked':True}})
+#kvs.update_many({},{'$set':{'locked':True}})
 #for ids in kvs.find({}):
 #    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
                    
