@@ -333,7 +333,7 @@ def get_eating(user):
             x = gettype(ids)
             if x == 'product':
                 kb.add(types.InlineKeyboardButton(text = product(ids)['name'], callback_data = 'cafe?take_away?'+ids))
-    kb.add(types.InlineKeyboardButton(text = br+'Добавить ингредиенты', callback_data = 'cafe?set_take_away'), types.InlineKeyboardButton(text = kl+'Убрать ингредиенты', callback_data = 'cafe?unset_take_away'))
+    kb.add(types.InlineKeyboardButton(text = mix+'Добавить ингредиенты', callback_data = 'cafe?set_take_away'), types.InlineKeyboardButton(text = take_away+'Убрать ингредиенты', callback_data = 'cafe?unset_take_away'))
     kb.add(types.InlineKeyboardButton(text = br+'Приготовить и съесть', callback_data = 'cafe?ready'))
     
     return kb      
