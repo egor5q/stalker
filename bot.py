@@ -472,7 +472,7 @@ def endwalk_flat(user, kv):
         return
     h = user['human']
     kv = kvs.find_one({'id':kv['id']})
-    if kv['street']+'#'+kv['home']+'#'+str(kv['id']) not in user['keys'] and kv['locked']:
+    if kv['street']+'#'+kv['home']+'#'+str(kv['id']) not in h['keys'] and kv['locked']:
         bot.send_message(user['id'], 'Вы попытались зайти в квартиру '+str(kv['id'])+', но она оказалась закрыта на ключ!')
         return
     curstr = locs.find_one({'code':h['position']['street']})
