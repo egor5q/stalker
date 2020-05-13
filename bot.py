@@ -302,6 +302,7 @@ def cafeacts(call):
         if h['hunger'] > h['maxhunger']:
             users.update_one({'id':user['id']},{'$set':{'human.hunger':h['maxhunger']}})
         medit('Вы смешали ингредиенты, и съели получившееся блюдо. Восстановлено '+str(hunger)+'🍗.', call.message.chat.id, call.message.message_id)
+        return
         
         
     kb = get_eating(user)
