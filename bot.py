@@ -212,6 +212,7 @@ def navv(m):
 
 
     
+    
 @bot.message_handler(commands=['phone'])
 def look(m):
     user = getuser(m.from_user)
@@ -228,11 +229,13 @@ def look(m):
         bot.reply_to(m, 'Такого юзера нет!')
         return
     kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text='🔑Дать ключи от квартиры', callback_data=f'phone?give_keys?{friend["id"]}'))
-    kb.add(types.InlineKeyboardButton(text='🚷Выгнать из квартиры', callback_data=f'phone?throw_away?{friend["id"]}'))
+    kb.add(types.InlineKeyboardButton(text='🔑Дать ключи от квартиры', callback_data='phone?give_keys?'+str(friend["id"])))
+    kb.add(types.InlineKeyboardButton(text='🚷Выгнать из квартиры', callback_data=f'phone?throw_away?'+str(friend["id"])))
     bot.send_message(m.from_user.id, '📱Вы достали телефон. Что вы ходите сделать с '+human_name+'?', reply_markup=kb)
 
 
+
+    
                                       
 @bot.message_handler(func=lambda message: message.text != None and message.text[0] in ['🗄', '🔐', '🍗'])
 def doings_locks(m):
@@ -271,6 +274,7 @@ def doings_locks(m):
         bot.send_message(m.chat.id, 'Вы садитесь за стол. Выберите, какие продукты хотите смешать, чтобы съесть.',
                          reply_markup=kb)
 
+                                      
 
 def in_cafe(user):
     h = user['human']
@@ -291,6 +295,8 @@ def in_cafe(user):
 
     return True
 
+       
+    
 
 @bot.callback_query_handler(func=lambda c: c.data.split('?')[0] == 'phone')
 def phone_acts(c):
@@ -437,6 +443,7 @@ def get_eating(user):
     kb.add(types.InlineKeyboardButton(text='🥣' + 'Приготовить и съесть', callback_data='cafe?ready'))
 
     return kb
+
 
                                                       
 
@@ -690,6 +697,7 @@ def doings(m):
             bot.send_message(m.chat.id, 'Вы направились в магазин ' + str(which) + '. Дойдёте примерно через минуту.')
 
 
+ 
                                       
 
 def endwalk_flat(user, kv):
