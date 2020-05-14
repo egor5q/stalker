@@ -163,6 +163,7 @@ def reply_kb(user):
     if h['position']['flat'] != None:
         kb.add(types.KeyboardButton('🗄' + 'Холодильник'), types.KeyboardButton('🍗' + 'Еда'))
         kb.add(types.KeyboardButton('🔐Закрыть/открыть квартиру'))
+    kb.add(types.KeyboardButton('👤Профиль'))
     return kb
 
 
@@ -173,6 +174,24 @@ def clearall(m):
         kvs.remove({})
         bot.send_message(m.chat.id, 'Очистил юзеров и квартиры.')
 
+@bot.message_handler(func = lambda m: m.text == '👤Профиль')
+def profile(m):
+    user = users.find_one({'id':m.from_user.id})
+    if user == None:
+        return
+    if user['start_stats'] == True:
+        return
+    h = user['human']
+    text = 'Ваш профиль:\n\n'
+    text += 'Имя: '+h['name']+'\n'
+    text += 'Возраст: '+str(h['age'])+'\n'
+    text += 'Деньги: '+str(h['money'])+'💶\n'
+    text += 'Сытость: '+str(h['hunger'])+'/'+str(h['maxhunger'])+'🍗\n'
+    text += 'Здоровье: '+str(h['health'])+'/'+str(h['maxhealth'])+'❤\n'
+    text += 'Силы: '+str(h['power'])+'/'+str(h['maxpower'])+'⚡\n'
+    text += 'Бодрость: '+str(h['sleep'])+'/'+str(h['maxsleep'])+'🛌\n'
+    bot.send_message(m.chat.id, text)
+        
 @bot.message_handler(func = lambda m: m.text == '/start' and users.find_one({'id':m.from_user.id}) != None)
 def starts(m):
     user = users.find_one({'id':m.from_user.id})
