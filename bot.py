@@ -191,7 +191,8 @@ def profile(m):
     text += 'Силы: '+str(h['power'])+'/'+str(h['maxpower'])+'⚡\n'
     text += 'Бодрость: '+str(h['sleep'])+'/'+str(h['maxsleep'])+'🛌\n'
     bot.send_message(m.chat.id, text)
-        
+ 
+
 @bot.message_handler(func = lambda m: m.text == '/start' and users.find_one({'id':m.from_user.id}) != None)
 def starts(m):
     user = users.find_one({'id':m.from_user.id})
@@ -210,6 +211,7 @@ def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, сайт временно не работает!')
 
 
+    
 @bot.message_handler(commands=['phone'])
 def look(m):
     user = getuser(m.from_user)
@@ -228,9 +230,10 @@ def look(m):
     kb = types.InlineKeyboardMarkup()
     kb.add(types.InlineKeyboardButton(text='🔑Дать ключи от квартиры', callback_data=f'phone?give_keys?{friend["id"]}'))
     kb.add(types.InlineKeyboardButton(text='🚷Выгнать из квартиры', callback_data=f'phone?throw_away?{friend["id"]}'))
-    bot.send_message(m.from_user.id, f'📱Вы достали телефон. Что вы ходите сделать с {human_name}?', reply_markup=kb)
+    bot.send_message(m.from_user.id, '📱Вы достали телефон. Что вы ходите сделать с '+human_name+'?', reply_markup=kb)
 
 
+                                      
 @bot.message_handler(func=lambda message: message.text != None and message.text[0] in ['🗄', '🔐', '🍗'])
 def doings_locks(m):
     user = getuser(m.from_user)
@@ -686,7 +689,8 @@ def doings(m):
             threading.Timer(random.randint(50, 70), endwalk_build, args=[user, shop]).start()
             bot.send_message(m.chat.id, 'Вы направились в магазин ' + str(which) + '. Дойдёте примерно через минуту.')
 
-                                                      
+
+                                      
 
 def endwalk_flat(user, kv):
     user = users.find_one({'id': user['id']})
