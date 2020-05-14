@@ -173,7 +173,12 @@ def clearall(m):
         kvs.remove({})
         bot.send_message(m.chat.id, 'Очистил юзеров и квартиры.')
 
-
+@bot.message_handler(func = lambda m: m.text == '/start' and users.find_one({'id':m.from_user.id}) != None)
+def starts(m):
+    user = users.find_one({'id':m.from_user.id})
+    kb = reply_kb(user)
+    bot.send_message(m.chat.id, 'Главное меню.', reply_markup = kb)
+        
 @bot.message_handler(commands=['navigator'])
 def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, навигатор временно не работает!')
