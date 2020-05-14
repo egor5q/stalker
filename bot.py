@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
+import os
+import telebot
+import time
 import random
 import threading
-import time
+from emoji import emojize
+from telebot import types
+from pymongo import MongoClient
 import traceback
 
-import telebot
-from pymongo import MongoClient
-from telebot import types
-
-token = '970751955:AAEFdmjC8_nblWSPiVyxnGTRH3nRUGgACUw'
+token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
 
-client = MongoClient('mongodb+srv://gbball:tttttt000!@database-fcfmt.gcp.mongodb.net/test?retryWrites=true&w=majority')
-db = client.lifesim
-users = db.users
+
+client=MongoClient(os.environ['database'])
+db=client.lifesim
+users=db.users
 locs = db.locs
 kvs = db.kvs
+
 
 users.update_many({}, {'$set': {'human.walking': False}})
 
