@@ -300,22 +300,22 @@ def phone_acts(c):
     print(user)
     if action == 'give_keys':
         for key in h['keys']:
-            kb.add(types.InlineKeyboardButton(text=f'{key}',
-                                              callback_data=f'phone?give_key?{friend["id"]}?{key}'))
+            kb.add(types.InlineKeyboardButton(text=str(key),
+                                              callback_data='phone?give_key?'+str(friend["id"])+'?'+str(key)))
         medit(message_text='Выберите ключ, который хотите дать.', chat_id=c.from_user.id,
               message_id=c.message.message_id, reply_markup=kb)
     if action == 'give_key':
         key = c.data.split('?')[3]
         friend['human']['keys'].append(key)
         users.update_one({'id': friend['id']}, {'$set': friend})
-        medit(message_text=f'Ключ {key} передан.', chat_id=c.from_user.id, message_id=c.message.message_id)
-        bot.send_message(friend['id'], f'Вам дали {key}!')
+        medit(message_text='Ключ '+str(key)+' передан.', chat_id=c.from_user.id, message_id=c.message.message_id)
+        bot.send_message(friend['id'], 'Вам дали '+str(key)+'!')
     if action == 'ungive_key':
         key = c.data.split('?')[3]
         friend['human']['keys'].remove(key)
         users.update_one({'id': friend['id']}, {'$set': friend})
-        medit(message_text=f'Ключ {key} отобран.', chat_id=c.from_user.id, message_id=c.message.message_id)
-        bot.send_message(friend['id'], f'У вас отобрали ключ {key}!')
+        medit(message_text='Ключ '+str(key)+' отобран.', chat_id=c.from_user.id, message_id=c.message.message_id)
+        bot.send_message(friend['id'], 'У вас отобрали ключ '+str(key)+'!')
     if action == 'throw_away':
         if not h['position']['flat']:
             medit(message_text='Вы можете выгонять и забирать ключи только из квартиры!',
@@ -324,20 +324,19 @@ def phone_acts(c):
         if friend['human']['position']['flat'] != h['position']['flat']:
             for key in h['keys']:
                 if key in friend['human']['keys']:
-                    kb.add(types.InlineKeyboardButton(text=f'{key}',
-                                                      callback_data=f'phone?ungive_key?{friend["id"]}?{key}'))
+                    kb.add(types.InlineKeyboardButton(text=str(key),
+                                                      callback_data='phone?ungive_key?'+str(friend["id"])+'?'+str(key)))
             medit(message_text='Выберите ключ, который хотите отобрать.', chat_id=c.from_user.id,
                   message_id=c.message.message_id, reply_markup=kb)
         else:
             kvs.update_one({'id': friend['human']['position']['flat']}, {'$pull': {'humans': friend['id']}})
             friend['human']['position']['flat'] = None
             users.update_one({'id': friend['id']}, {'$set': friend})
-            medit(message_text=f'Вы выгнали {friend["human"]["name"]} из квартиры!', chat_id=c.from_user.id,
+            medit(message_text='Вы выгнали '+str(friend["human"]["name"])+' из квартиры!', chat_id=c.from_user.id,
                   message_id=c.message.message_id)
             bot.send_message(friend['id'], 'Вас выгнали из квартиры и теперь вы на улице!')
 
-
-
+                                  
 
 @bot.callback_query_handler(func=lambda call: call.data.split('?')[0] == 'cafe')
 def cafeacts(call):
@@ -411,6 +410,7 @@ def cafeacts(call):
         pass
 
 
+                                                      
 def get_eating(user):
     user = users.find_one({'id': user['id']})
     h = user['human']
@@ -435,6 +435,7 @@ def get_eating(user):
 
     return kb
 
+                                                      
 
 def get_fridge(user):
     user = users.find_one({'id': user['id']})
@@ -462,6 +463,7 @@ def get_fridge(user):
     return kb
 
 
+                                                      
 @bot.callback_query_handler(func=lambda call: call.data.split('?')[0] == 'fridge')
 def fridgeacts(call):
     user = users.find_one({'id': call.from_user.id})
@@ -537,6 +539,7 @@ def fridgeacts(call):
         medit('Выберите продукты, чтобы положить/взять.', call.message.chat.id, call.message.message_id,
               reply_markup=kb)
 
+                                                      
 
 def gettype(x):
     typee = '?'
@@ -683,6 +686,7 @@ def doings(m):
             threading.Timer(random.randint(50, 70), endwalk_build, args=[user, shop]).start()
             bot.send_message(m.chat.id, 'Вы направились в магазин ' + str(which) + '. Дойдёте примерно через минуту.')
 
+                                                      
 
 def endwalk_flat(user, kv):
     user = users.find_one({'id': user['id']})
@@ -769,6 +773,7 @@ def endwalk_build(user, build):
         if text != 'В магазине вы видите следующих людей:\n\n':
             bot.send_message(user['id'], text)
 
+                                                      
 
 def getshop(shop, user=None):
     kb = types.InlineKeyboardMarkup()
@@ -793,6 +798,7 @@ def getweight(x, obj='product'):
         return product(x, 0)['weight']
 
 
+                                                      
 def desc(user, high=False):
     text = ''
     h = user['human']
@@ -875,6 +881,7 @@ def desc(user, high=False):
         text += gnd + ' выглядит уставш' + gnd2 + '.'
     return text
 
+                                                      
 
 def endwalk(user, newstr, start='street'):
     user = users.find_one({'id': user['id']})
@@ -940,6 +947,8 @@ def endwalk(user, newstr, start='street'):
         bot.send_message(user['id'], text)
 
 
+                                                      
+                                                      
 @bot.message_handler(content_types=['text'])
 def alltxts(m):
     if m.from_user.id == m.chat.id:
@@ -1040,6 +1049,9 @@ def alltxts(m):
                 bot.send_message(m.chat.id,
                                  'Нажмите на характеристику, чтобы изменить её. Внимание! Когда вы нажмёте "✅Готово", ' +
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup=kb)
+                                                     
+        if user['start_stats'] == True:
+            return                                             
 
         if user['human']['position']['street'] != None and user['human']['position']['flat'] == None and \
                 user['human']['position']['building'] == None:
@@ -1064,6 +1076,7 @@ def alltxts(m):
                 bot.send_message(h, user['human']['name'] + ': ' + m.text)
 
 
+                                                      
 def getstartkb(user):
     h = user['human']
     kb = types.InlineKeyboardMarkup()
