@@ -45,9 +45,9 @@ def new_msg(result):
             if em == '🎯':
                 x = 2.5
             elif em == '🎲':
-                x = 3.1
-            elif em == '🏀':
                 x = 3.3
+            elif em == '🏀':
+                x = 3.7
             #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
             time.sleep(x)
             req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен кубик! Результат: '+str(number))
