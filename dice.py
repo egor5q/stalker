@@ -19,9 +19,6 @@ client=MongoClient(os.environ['database'])
 db=client.dices
 users=db.users
 
-if users.find_one({'id':'bot'}) == None:
-    users.insert_one(createuser({'id':'bot', 'first_name': 'Dices'}))
-
 OPENER = urllib2.build_opener(urllib2.HTTPCookieProcessor(CJ))
 bot = 'https://api.telegram.org/bot'+os.environ['dicebot']+'/'
 
@@ -77,6 +74,9 @@ def createuser(user):
         }
     }
 
+if users.find_one({'id':'bot'}) == None:
+    users.insert_one(createuser({'id':'bot', 'first_name': 'Dices'}))
+
 def new_msg(result):
     user = users.find_one({'id':result['message']['from']['id']})
     if user == None:
@@ -129,6 +129,7 @@ def new_msg(result):
                     em = random.choice(ems)
                 try:
                     req = requests.get(bot+'sendDice?chat_id='+str(result['message']['chat']['id'])+'&emoji='+em+'&reply_to_message_id='+str(result['message']['message_id']))
+                    print(req.text)
                 except:
                     print(traceback.format_exc())
                     
