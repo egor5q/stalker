@@ -35,7 +35,8 @@ u_id = 0
 def new_msg(result):
     if 'dice' in result['message']:
         try:
-            req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
+            #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
+            req = request.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
             print(req.text)
         except:
             print(traceback.format_exc())
