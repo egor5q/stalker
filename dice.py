@@ -207,7 +207,7 @@ def new_msg(result):
                     
                 req = requests.get(bot+'sendMessage?chat_id='+str(message['chat']['id'])+'&text='+txt+'&reply_to_message_id='+str(message['message_id']))
             
-            elif text.lower()[:5] == '/start' and message['chat']['type'] == 'private':
+            elif text.lower()[:6] == '/start' and message['chat']['type'] == 'private':
                 req = requests.get(bot+'sendMessage?chat_id='+str(message['chat']['id'])+'&text='+'Я могу сохранять результаты бросков кубика/дротика/мяча. Если добавить меня в группу, то я буду записывать статистику бросков и там.')
             
 
