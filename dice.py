@@ -33,7 +33,7 @@ for url in ['https://api.github.com', 'https://api.github.com/invalid']:
 u_id = 0
 
 def new_msg(result):
-    if 'dice' in result:
+    if 'dice' in result['message']:
         try:
             req = urllib2.Request(bot+'sendMessage?chatid='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
         except:
