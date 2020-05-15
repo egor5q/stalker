@@ -15,6 +15,10 @@ import urllib.request as urllib2
 CJ = cookielib.LWPCookieJar()
 from requests.exceptions import HTTPError
 
+client=MongoClient(os.environ['database'])
+db=client.dices
+users=db.users
+
 OPENER = urllib2.build_opener(urllib2.HTTPCookieProcessor(CJ))
 bot = 'https://api.telegram.org/bot'+os.environ['dicebot']+'/'
 
@@ -31,6 +35,7 @@ for url in ['https://api.github.com', 'https://api.github.com/invalid']:
         print('Success!')
         
 u_id = 0
+ems = ['🎲', '🏀', '🎯']
 
 def new_msg(result):
     if 'dice' in result['message']:
@@ -38,9 +43,30 @@ def new_msg(result):
             number = result['message']['dice']['value']
             #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
             req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен кубик! Результат: '+str(number))
-            print(req.text)
+
         except:
             print(traceback.format_exc())
+            
+    else:
+        if 'text' in result['message']:
+            text = result['message']['text']
+            if text.lower() == '/dice' or text.lower() == '/dice@dice_saver_bot':
+                try:
+                    em = text.split(' ')[1]
+                except:
+                    em = random.choice(ems)
+                    
+                if em not in ems:
+                    em = random.choice(ems)
+                try:
+                    req = requests.get(bot+'sendDice?chat_id='+str(result['message']['chat']['id'])+'&emoji='+em+'&reply_to_message_id='+str(result['message']['message_id']))
+                except:
+                    print(traceback.format_exc())
+                                       
+                
+               
+                
+        
         
 def polling():
     global u_id
