@@ -9,7 +9,7 @@ from pymongo import MongoClient
 import traceback
 import json
 import requests
-import cookielib
+import http.cookiejar
 import urllib
 import urllib2
 CJ = cookielib.LWPCookieJar()
