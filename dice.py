@@ -11,7 +11,7 @@ import json
 import requests
 import http.cookiejar as cookielib
 import urllib
-import urllib2
+import urllib.request as urllib2
 CJ = cookielib.LWPCookieJar()
 from requests.exceptions import HTTPError
 
