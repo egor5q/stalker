@@ -136,7 +136,7 @@ def new_msg(result):
                 try:
                     req = requests.get(bot+'sendDice?chat_id='+str(result['message']['chat']['id'])+'&emoji='+em+'&reply_to_message_id='+str(result['message']['message_id']))
                     #content = OPENER.open(req).read()
-                    msg = json.loads(req.text)['result']
+                    msg = json.loads(req.text)
                     print(msg)
                     new_msg(msg)
                 except:
