@@ -129,10 +129,6 @@ streets = {
 
 # locs.remove({'code':'shop_street'})
 
-@bot.message_handler()
-def dicess(m):
-    print(m)
-
 for ids in streets:
     street = streets[ids]
     if locs.find_one({'code': street['code']}) == None:
