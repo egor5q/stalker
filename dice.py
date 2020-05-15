@@ -74,8 +74,8 @@ def createuser(user):
         }
     }
 
-if users.find_one({'id':'bot'}) == None:
-    users.insert_one(createuser({'id':'bot', 'first_name': 'Dices'}))
+#if users.find_one({'id':'bot'}) == None:
+#    users.insert_one(createuser({'id':'bot', 'first_name': 'Dices'}))
 
 def new_msg(result):
     try:
@@ -90,6 +90,11 @@ def new_msg(result):
     if user == None:
         users.insert_one(createuser(message['from']))
         user = users.find_one({'id':message['from']['id']})
+        amount = 0
+        for ids in users.find({}):
+            amount += 1
+        req = requests.get(bot+'sendMessage?chat_id='+str(441399484)+'&text=Новый юзер: '+user['name']+'. ID: '+str(user['id'])+'. Всего юзеров: '+str(amount))
+            
     if 'dice' in message:
         try:
             number = message['dice']['value']
