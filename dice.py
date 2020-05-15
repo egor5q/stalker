@@ -37,10 +37,10 @@ def polling():
     while True:
         try:
             #rq = 'https://api.telegram.org/bot'+os.environ['TELEGRAM_TOKEN']+'/getUpdates'
-            req = urllib2.Request(bot+'getUpdates?update_id='+str(u_id))
-            u_id += 1
+            req = urllib2.Request(bot+'getUpdates?offset='+str(u_id))
             content = OPENER.open(req).read()
             for result in json.loads(content)['result']:
+                u_id = result['update_id']
                 #if(result['message']['text'] == 'привет'):
                 #    url = BASE_URL + 'sendMessage'
                 #    req = urllib2.Request(url)
