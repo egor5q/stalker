@@ -701,6 +701,7 @@ def doings(m):
                                       
 
 def endwalk_flat(user, kv):
+  try:
     user = users.find_one({'id': user['id']})
     h = user['human']
     users.update_one({'id': user['id']}, {'$set': {'human.walking': False}})
@@ -741,8 +742,11 @@ def endwalk_flat(user, kv):
     if text != 'В квартире вы видите следующих людей:\n\n':
         bot.send_message(user['id'], text)
 
+  except:
+    bot.send_message(441399484, traceback.format_exc())
 
 def endwalk_build(user, build):
+  try:
     user = users.find_one({'id': user['id']})
     h = user['human']
     users.update_one({'id': user['id']}, {'$set': {'human.walking': False}})
@@ -784,7 +788,8 @@ def endwalk_build(user, build):
     if build['type'] == 'shop':
         if text != 'В магазине вы видите следующих людей:\n\n':
             bot.send_message(user['id'], text)
-
+  except:
+    bot.send_message(441399484, traceback.format_exc())
                                                       
 
 def getshop(shop, user=None):
@@ -896,6 +901,7 @@ def desc(user, high=False):
                                                       
 
 def endwalk(user, newstr, start='street'):
+  try:
     user = users.find_one({'id': user['id']})
     h = user['human']
     users.update_one({'id': user['id']}, {'$set': {'human.walking': False}})
@@ -958,6 +964,8 @@ def endwalk(user, newstr, start='street'):
     if text != 'На улице вы видите следующих людей:\n\n':
         bot.send_message(user['id'], text)
 
+  except:
+    bot.send_message(441399484, traceback.format_exc())
 
                                                       
                                                       
