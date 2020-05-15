@@ -134,18 +134,27 @@ def new_msg(result):
                 txt += 'Статистика бросков '+user['name']+':\n\n'
                 txt += '🎲:\n'
                 txt += '   Количество бросков: '+str(user['results']['cube']['score_amount'])+'\n'
-                txt += '   Средний балл: '+str(round(user['results']['cube']['score_sum']/user['results']['cube']['score_amount'], 3))+'\n'
-                
+                try:
+                    txt += '   Средний балл: '+str(round(user['results']['cube']['score_sum']/user['results']['cube']['score_amount'], 3))+'\n'
+                except:
+                    txt += '   Средний балл: 0\n'
+                    
                 txt += '\n'
                 txt += '🎯:\n'
                 txt += '   Количество бросков: '+str(user['results']['darts']['score_amount'])+'\n'
-                txt += '   Средний балл: '+str(round(user['results']['darts']['score_sum']/user['results']['darts']['score_amount'], 3))+'\n'
+                try:
+                    txt += '   Средний балл: '+str(round(user['results']['darts']['score_sum']/user['results']['darts']['score_amount'], 3))+'\n'
+                except:
+                    txt += '   Средний балл: 0\n'
                 
                 txt += '\n'
                 txt += '🏀:\n'
                 txt += '   Количество бросков: '+str(user['results']['ball']['score_amount'])+'\n'
-                txt += '   Средний балл: '+str(round(user['results']['ball']['score_sum']/user['results']['ball']['score_amount'], 3))+'\n'
-                
+                try:
+                    txt += '   Средний балл: '+str(round(user['results']['ball']['score_sum']/user['results']['ball']['score_amount'], 3))+'\n'
+                except:
+                    txt += '   Средний балл: 0\n'
+                    
                 req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text='+txt+'&reply_to_message_id='+str(result['message']['message_id']))
             
 
