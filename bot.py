@@ -9,6 +9,7 @@ from telebot import types
 from pymongo import MongoClient
 import traceback
 import json
+import dice
 
 token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
