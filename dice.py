@@ -29,12 +29,16 @@ for url in ['https://api.github.com', 'https://api.github.com/invalid']:
         print('Other error occurred: '+str(err))  
     else:
         print('Success!')
-
+        
+u_id = 0 
+        
 def polling():
+    global u_id
     while True:
         try:
             #rq = 'https://api.telegram.org/bot'+os.environ['TELEGRAM_TOKEN']+'/getUpdates'
-            req = urllib2.Request(bot+'getUpdates')
+            req = urllib2.Request(bot+'getUpdates?update_id='+str(u_id))
+            u_id += 1
             content = OPENER.open(req).read()
             for result in json.loads(content)['result']:
                 #if(result['message']['text'] == 'привет'):
