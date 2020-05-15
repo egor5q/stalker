@@ -129,8 +129,9 @@ def new_msg(result):
                     em = random.choice(ems)
                 try:
                     req = requests.get(bot+'sendDice?chat_id='+str(result['message']['chat']['id'])+'&emoji='+em+'&reply_to_message_id='+str(result['message']['message_id']))
-                    content = OPENER.open(req).read()
-                    print(json.loads(content)['result'])
+                    #content = OPENER.open(req).read()
+                    print(req)
+                    print(json.loads(req))
                 except:
                     print(traceback.format_exc())
                     
