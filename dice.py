@@ -86,16 +86,19 @@ def new_msg(result):
             if em == '🎯':
                 x = 2.5
                 rs = 'darts'
+                doptxt = 'дротик'
             elif em == '🎲':
                 x = 3.3
                 rs = 'cube'
+                doptxt = 'кубик'
             elif em == '🏀':
                 x = 4
                 rs = 'ball'
+                doptxt = 'мяч'
                 
             #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
             time.sleep(x)
-            req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен кубик! Результат: '+str(number)+'&reply_to_message_id='+str(result['message']['message_id']))
+            req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен '+doptxt+'! Результат: '+str(number)+'&reply_to_message_id='+str(result['message']['message_id']))
             users.update_one({'id':user['id']},{'$inc':{'results.'+rs+'.score_sum':number, 'results.'+rs+'.score_amount':1, str(number):number}}) 
 
         except:
@@ -125,11 +128,27 @@ def new_msg(result):
                     req = requests.get(bot+'sendDice?chat_id='+str(result['message']['chat']['id'])+'&emoji='+em+'&reply_to_message_id='+str(result['message']['message_id']))
                 except:
                     print(traceback.format_exc())
-                                       
+                    
+            elif text.lower()[:9] == '/my_dices' or text.lower()[:24] == '/my_dices@dice_saver_bot':
+                txt = ''
+                txt += 'Статистика бросков '+user['name']+':\n\n'
+                txt += '🎲:\n'
+                txt += '   Количество бросков: '+str(user['results']['cube']['score_amount'])+'\n'
+                txt += '   Средний балл: '+str(round(user['results']['cube']['score_sum']/user['results']['cube']['score_amount'], 3))+'\n'
                 
-               
+                txt += '\n'
+                txt += '🎯:\n'
+                txt += '   Количество бросков: '+str(user['results']['darts']['score_amount'])+'\n'
+                txt += '   Средний балл: '+str(round(user['results']['darts']['score_sum']/user['results']['darts']['score_amount'], 3))+'\n'
                 
-        
+                txt += '\n'
+                txt += '🏀:\n'
+                txt += '   Количество бросков: '+str(user['results']['ball']['score_amount'])+'\n'
+                txt += '   Средний балл: '+str(round(user['results']['ball']['score_sum']/user['results']['ball']['score_amount'], 3))+'\n'
+                
+                req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text='+txt+'&reply_to_message_id='+str(result['message']['message_id']))
+            
+
         
 def polling():
     global u_id
