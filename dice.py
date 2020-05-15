@@ -64,6 +64,8 @@ def new_msg(result):
                         em = '🏀'
                     if item.lower() in ['cube', 'куб', 'кубик', 'кости']:
                         em = '🎲'
+                except:
+                    pass
                 if em not in ems:
                     em = random.choice(ems)
                 try:
