@@ -42,6 +42,7 @@ def new_msg(result):
         try:
             number = result['message']['dice']['value']
             #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
+            time.sleep(2)
             req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен кубик! Результат: '+str(number))
 
         except:
@@ -55,7 +56,14 @@ def new_msg(result):
                     em = text.split(' ')[1]
                 except:
                     em = random.choice(ems)
-                    
+                try:
+                    item = text.split(' ')[1]
+                    if item.lower() in ['darts', 'дартс', 'дротик']:
+                        em = '🎯'
+                    if item.lower() in ['bowling', 'боулинг', 'мяч', 'мячик', 'корзина']:
+                        em = '🏀'
+                    if item.lower() in ['cube', 'куб', 'кубик', 'кости']:
+                        em = '🎲'
                 if em not in ems:
                     em = random.choice(ems)
                 try:
@@ -85,7 +93,7 @@ def polling():
                 #    req.add_data(urllib.urlencode({'chat_id':result['message']['chat']['id'],'text':'Эй Привет чувак!'}))
                 #    OPENER.open(req).read()
                 print(result)
-                new_msg(result)
+                threading.Thread(target = new_msg, args = [result]).start()
         except:
             print(traceback.format_exc())
             time.sleep(5)
