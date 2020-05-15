@@ -129,9 +129,9 @@ streets = {
 
 # locs.remove({'code':'shop_street'})
 
-@bot.message_handler(func = lambda m: 'dice' in json.loads(m.json))
+@bot.message_handler(func = lambda m: True)
 def dicess(m):
-    bot.send_message(441399484, json.loads(m.json))
+    print(m.json)
 
 for ids in streets:
     street = streets[ids]
