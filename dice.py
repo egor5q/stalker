@@ -40,7 +40,7 @@ def polling():
             req = urllib2.Request(bot+'getUpdates?offset='+str(u_id))
             content = OPENER.open(req).read()
             for result in json.loads(content)['result']:
-                u_id = result['update_id']
+                u_id = result['update_id']+1
                 #if(result['message']['text'] == 'привет'):
                 #    url = BASE_URL + 'sendMessage'
                 #    req = urllib2.Request(url)
