@@ -8,6 +8,7 @@ from emoji import emojize
 from telebot import types
 from pymongo import MongoClient
 import traceback
+import json
 
 token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
@@ -128,9 +129,9 @@ streets = {
 
 # locs.remove({'code':'shop_street'})
 
-@bot.message_handler(func = lambda m: 'dice' in m.json)
+@bot.message_handler(func = lambda m: 'dice' in json.loads(m.json))
 def dicess(m):
-    bot.send_message(441399484, m.json['dice'])
+    bot.send_message(441399484, json.loads(m.json))
 
 for ids in streets:
     street = streets[ids]
