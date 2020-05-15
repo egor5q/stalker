@@ -1444,5 +1444,10 @@ def medit(message_text, chat_id, message_id, reply_markup=None, parse_mode=None)
                                  parse_mode=parse_mode)
 
 
+def polll(x):
+    x()
+
 print('7777')
+threading.Thread(target = polll, args = [dice.polling]).start()
+
 bot.polling(none_stop=True, timeout=600)
