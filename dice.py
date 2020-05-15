@@ -81,17 +81,18 @@ def new_msg(result):
     try:
         user = users.find_one({'id':result['message']['from']['id']})
     except:
-        user = users.find_one({'id':result['result']['message']['from']['id']})
-        result = result['result']
-    if result['message']['from']['id'] == 1255836783:
+        user = users.find_one({'id':result['result']['from']['id']})
+        #result = result['result']
+        message = result['result']
+    if message['from']['id'] == 1255836783:
         user = users.find_one({'id':'bot'})
     if user == None:
-        users.insert_one(createuser(result['message']['from']))
-        user = users.find_one({'id':result['message']['from']['id']})
-    if 'dice' in result['message']:
+        users.insert_one(createuser(message['from']))
+        user = users.find_one({'id':message['from']['id']})
+    if 'dice' in message:
         try:
-            number = result['message']['dice']['value']
-            em = result['message']['dice']['emoji']
+            number = message['dice']['value']
+            em = message['dice']['emoji']
             if em == '🎯':
                 x = 2.5
                 rs = 'darts'
@@ -108,15 +109,15 @@ def new_msg(result):
             #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
             time.sleep(x)
             if user['id'] != 'bot':
-                req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен '+doptxt+'! Результат: '+str(number)+'&reply_to_message_id='+str(result['message']['message_id']))
+                req = requests.get(bot+'sendMessage?chat_id='+str(message['chat']['id'])+'&text=Брошен '+doptxt+'! Результат: '+str(number)+'&reply_to_message_id='+str(message['message_id']))
             users.update_one({'id':user['id']},{'$inc':{'results.'+rs+'.score_sum':number, 'results.'+rs+'.score_amount':1, str(number):number}}) 
 
         except:
             print(traceback.format_exc())
             
     else:
-        if 'text' in result['message']:
-            text = result['message']['text']
+        if 'text' in message:
+            text = message['text']
             if text.lower()[:5] == '/dice' or text.lower()[:20] == '/dice@dice_saver_bot':
                 try:
                     em = text.split(' ')[1]
@@ -135,7 +136,7 @@ def new_msg(result):
                 if em not in ems:
                     em = random.choice(ems)
                 try:
-                    req = requests.get(bot+'sendDice?chat_id='+str(result['message']['chat']['id'])+'&emoji='+em+'&reply_to_message_id='+str(result['message']['message_id']))
+                    req = requests.get(bot+'sendDice?chat_id='+str(message['chat']['id'])+'&emoji='+em+'&reply_to_message_id='+str(message['message_id']))
                     #content = OPENER.open(req).read()
                     msg = json.loads(req.text)
                     print(msg)
@@ -169,7 +170,7 @@ def new_msg(result):
                 except:
                     txt += '   Средний балл: 0\n'
                     
-                req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text='+txt+'&reply_to_message_id='+str(result['message']['message_id']))
+                req = requests.get(bot+'sendMessage?chat_id='+str(message['chat']['id'])+'&text='+txt+'&reply_to_message_id='+str(message['message_id']))
             
             elif text.lower()[:10] == '/bot_dices' or text.lower()[:25] == '/bot_dices@dice_saver_bot':
                 user = users.find_one({'id':'bot'})
@@ -198,7 +199,7 @@ def new_msg(result):
                 except:
                     txt += '   Средний балл: 0\n'
                     
-                req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text='+txt+'&reply_to_message_id='+str(result['message']['message_id']))
+                req = requests.get(bot+'sendMessage?chat_id='+str(message['chat']['id'])+'&text='+txt+'&reply_to_message_id='+str(message['message_id']))
             
 
         
