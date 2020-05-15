@@ -78,7 +78,10 @@ if users.find_one({'id':'bot'}) == None:
     users.insert_one(createuser({'id':'bot', 'first_name': 'Dices'}))
 
 def new_msg(result):
-    user = users.find_one({'id':result['message']['from']['id']})
+    try:
+        user = users.find_one({'id':result['message']['from']['id']})
+    except:
+        user = users.find_one({'id':result['from']['id']})
     if result['message']['from']['id'] == 1255836783:
         user = users.find_one({'id':'bot'})
     if user == None:
