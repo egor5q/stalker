@@ -41,6 +41,13 @@ def new_msg(result):
     if 'dice' in result['message']:
         try:
             number = result['message']['dice']['value']
+            em = result['message']['dice']['emoji']
+            if em == '🎯':
+                x = 2.5
+            elif em == '🎲':
+                x = 3.1
+            elif em == '🏀':
+                x = 3.3
             #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
             time.sleep(3)
             req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен кубик! Результат: '+str(number))
