@@ -50,7 +50,7 @@ def new_msg(result):
     else:
         if 'text' in result['message']:
             text = result['message']['text']
-            if text.lower() == '/dice' or text.lower() == '/dice@dice_saver_bot':
+            if text.lower()[:4] == '/dice' or text.lower()[:19] == '/dice@dice_saver_bot':
                 try:
                     em = text.split(' ')[1]
                 except:
