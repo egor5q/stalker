@@ -81,7 +81,8 @@ def new_msg(result):
     try:
         user = users.find_one({'id':result['message']['from']['id']})
     except:
-        user = users.find_one({'id':result['from']['id']})
+        user = users.find_one({'id':result['result']['message']['from']['id']})
+        result = result['result']
     if result['message']['from']['id'] == 1255836783:
         user = users.find_one({'id':'bot'})
     if user == None:
