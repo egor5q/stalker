@@ -19,6 +19,9 @@ client=MongoClient(os.environ['database'])
 db=client.dices
 users=db.users
 
+if users.find_one({'id':'bot'}) == None:
+    users.insert_one(createuser({'id':'bot', 'first_name': 'Dices'}))
+
 OPENER = urllib2.build_opener(urllib2.HTTPCookieProcessor(CJ))
 bot = 'https://api.telegram.org/bot'+os.environ['dicebot']+'/'
 
@@ -130,6 +133,35 @@ def new_msg(result):
                     print(traceback.format_exc())
                     
             elif text.lower()[:9] == '/my_dices' or text.lower()[:24] == '/my_dices@dice_saver_bot':
+                txt = ''
+                txt += 'Статистика бросков '+user['name']+':\n\n'
+                txt += '🎲:\n'
+                txt += '   Количество бросков: '+str(user['results']['cube']['score_amount'])+'\n'
+                try:
+                    txt += '   Средний балл: '+str(round(user['results']['cube']['score_sum']/user['results']['cube']['score_amount'], 3))+'\n'
+                except:
+                    txt += '   Средний балл: 0\n'
+                    
+                txt += '\n'
+                txt += '🎯:\n'
+                txt += '   Количество бросков: '+str(user['results']['darts']['score_amount'])+'\n'
+                try:
+                    txt += '   Средний балл: '+str(round(user['results']['darts']['score_sum']/user['results']['darts']['score_amount'], 3))+'\n'
+                except:
+                    txt += '   Средний балл: 0\n'
+                
+                txt += '\n'
+                txt += '🏀:\n'
+                txt += '   Количество бросков: '+str(user['results']['ball']['score_amount'])+'\n'
+                try:
+                    txt += '   Средний балл: '+str(round(user['results']['ball']['score_sum']/user['results']['ball']['score_amount'], 3))+'\n'
+                except:
+                    txt += '   Средний балл: 0\n'
+                    
+                req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text='+txt+'&reply_to_message_id='+str(result['message']['message_id']))
+            
+            elif text.lower()[:10] == '/bot_dices' or text.lower()[:25] == '/bot_dices@dice_saver_bot':
+                user = users.find_one({'id':'bot'})
                 txt = ''
                 txt += 'Статистика бросков '+user['name']+':\n\n'
                 txt += '🎲:\n'
