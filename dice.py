@@ -37,20 +37,66 @@ for url in ['https://api.github.com', 'https://api.github.com/invalid']:
 u_id = 0
 ems = ['🎲', '🏀', '🎯']
 
+def createuser(user):
+    return {
+        'id':user['id'],
+        'name':user['first_name'],
+        'results':{
+            'ball':{
+                'score_sum':0,
+                'score_amount':0,
+                '1':0,
+                '2':0,
+                '3':0,
+                '4':0,
+                '5':0
+            },
+            'darts':{
+                'score_sum':0,
+                'score_amount':0,
+                '1':0,
+                '2':0,
+                '3':0,
+                '4':0,
+                '5':0,
+                '6':0
+            },
+            'cube':{
+                'score_sum':0,
+                'score_amount':0,
+                '1':0,
+                '2':0,
+                '3':0,
+                '4':0,
+                '5':0,
+                '6':0
+            }
+        }
+    }
+
 def new_msg(result):
+    user = users.find_one({'id':result['message']['from']['id']})
+    if user == None:
+        users.insert_one(createuser(result['message']['from']))
+        user = users.find_one({'id':result['message']['from']['id']})
     if 'dice' in result['message']:
         try:
             number = result['message']['dice']['value']
             em = result['message']['dice']['emoji']
             if em == '🎯':
                 x = 2.5
+                rs = 'darts'
             elif em == '🎲':
                 x = 3.3
+                rs = 'cube'
             elif em == '🏀':
                 x = 4
+                rs = 'ball'
+                
             #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
             time.sleep(x)
-            req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен кубик! Результат: '+str(number))
+            req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен кубик! Результат: '+str(number)+'&reply_to_message_id='+str(result['message']['message_id']))
+            users.update_one({'id':user['id']},{'$inc':{'results.'+rs+'.score_sum':number, 'results.'+rs+'.score_amount':1, str(number):number}}) 
 
         except:
             print(traceback.format_exc())
