@@ -30,7 +30,14 @@ for url in ['https://api.github.com', 'https://api.github.com/invalid']:
     else:
         print('Success!')
         
-u_id = 0 
+u_id = 0
+
+def new_msg(result):
+    if 'dice' in result:
+        try:
+            req = urllib2.Request(bot+'sendMessage?chatid='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
+        except:
+            print(traceback.format_exc())
         
 def polling():
     global u_id
@@ -49,6 +56,7 @@ def polling():
                 #    req.add_data(urllib.urlencode({'chat_id':result['message']['chat']['id'],'text':'Эй Привет чувак!'}))
                 #    OPENER.open(req).read()
                 print(result)
+                new_msg(result)
         except:
             print(traceback.format_exc())
             time.sleep(5)
