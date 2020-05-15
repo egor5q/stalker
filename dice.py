@@ -80,6 +80,7 @@ if users.find_one({'id':'bot'}) == None:
 def new_msg(result):
     try:
         user = users.find_one({'id':result['message']['from']['id']})
+        message = result['message']
     except:
         user = users.find_one({'id':result['result']['from']['id']})
         #result = result['result']
