@@ -42,7 +42,7 @@ def new_msg(result):
         try:
             number = result['message']['dice']['value']
             #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
-            time.sleep(2)
+            time.sleep(3)
             req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен кубик! Результат: '+str(number))
 
         except:
