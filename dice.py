@@ -131,7 +131,7 @@ def new_msg(result):
                     req = requests.get(bot+'sendDice?chat_id='+str(result['message']['chat']['id'])+'&emoji='+em+'&reply_to_message_id='+str(result['message']['message_id']))
                     #content = OPENER.open(req).read()
                     print(req)
-                    print(json.loads(req))
+                    print(json.loads(req.text))
                 except:
                     print(traceback.format_exc())
                     
