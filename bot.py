@@ -1448,6 +1448,6 @@ def polll(x):
     x()
 
 print('7777')
-threading.Thread(target = polll, args = [dice.polling]).start()
+#threading.Thread(target = polll, args = [dice.polling]).start()
 
 bot.polling(none_stop=True, timeout=600)
