@@ -79,6 +79,8 @@ if users.find_one({'id':'bot'}) == None:
 
 def new_msg(result):
     user = users.find_one({'id':result['message']['from']['id']})
+    if result['message']['from']['id'] == 1255836783:
+        user = users.find_one({'id':'bot'})
     if user == None:
         users.insert_one(createuser(result['message']['from']))
         user = users.find_one({'id':result['message']['from']['id']})
@@ -101,7 +103,8 @@ def new_msg(result):
                 
             #req = urllib2.Request(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text="Брошен кубик!"')
             time.sleep(x)
-            req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен '+doptxt+'! Результат: '+str(number)+'&reply_to_message_id='+str(result['message']['message_id']))
+            if user['id'] != 'bot':
+                req = requests.get(bot+'sendMessage?chat_id='+str(result['message']['chat']['id'])+'&text=Брошен '+doptxt+'! Результат: '+str(number)+'&reply_to_message_id='+str(result['message']['message_id']))
             users.update_one({'id':user['id']},{'$inc':{'results.'+rs+'.score_sum':number, 'results.'+rs+'.score_amount':1, str(number):number}}) 
 
         except:
@@ -130,8 +133,9 @@ def new_msg(result):
                 try:
                     req = requests.get(bot+'sendDice?chat_id='+str(result['message']['chat']['id'])+'&emoji='+em+'&reply_to_message_id='+str(result['message']['message_id']))
                     #content = OPENER.open(req).read()
-                    print(req)
-                    print(json.loads(req.text))
+                    msg = json.loads(req.text)['result']
+                    print(msg)
+                    new_msg(msg)
                 except:
                     print(traceback.format_exc())
                     
