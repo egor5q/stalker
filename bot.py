@@ -9,7 +9,6 @@ from telebot import types
 from pymongo import MongoClient
 import traceback
 import json
-#import dice
 
 token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
@@ -164,6 +163,7 @@ def reply_kb(user):
     h = user['human']
     if h['position']['flat'] != None:
         kb.add(types.KeyboardButton('🗄' + 'Холодильник'), types.KeyboardButton('🍗' + 'Еда'))
+        kb.add(types.KeyboardButton('📱' + 'Искать подработку'), types.KeyboardButton('🛏' + 'Сон'))
         kb.add(types.KeyboardButton('🔐Закрыть/открыть квартиру'))
     kb.add(types.KeyboardButton('👤Профиль'))
     return kb
@@ -176,6 +176,14 @@ def clearall(m):
         kvs.remove({})
         bot.send_message(m.chat.id, 'Очистил юзеров и квартиры.')
 
+@bot.message_handler(func = lambda m: m.text == '📱Искать подработку')
+def works(m):
+    pass
+
+@bot.message_handler(func = lambda m: m.text == '🛏Сон')
+def sleeeep(m):
+    pass
+        
 @bot.message_handler(func = lambda m: m.text == '👤Профиль')
 def profile(m):
     user = users.find_one({'id':m.from_user.id})
