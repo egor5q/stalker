@@ -58,6 +58,9 @@ def talk(chat):
         act = 'teory'
     if act == 'manul':
         number = chat['manuls']
+        if random.randint(1, 100) <= 30:
+            number = number*random.randint(-1, 5)
+            number -= random.randint(-2, 4)
         mn = ''
         if str(number)[-1] == '1':
             mn = 'манул'
@@ -75,12 +78,13 @@ def talk(chat):
                 pass
         if str(number)[-1] in ['5', '6', '7', '8', '9', '0']:
             mn = 'манулов'
-        bot.send_message(chat['id'], str(number)+' '+mn+'!')
+            
+        bot.send_message(chat['id'], str(number)+' '+mn+'')
         chats.update_one({'id':chat['id']},{'$inc':{'manuls':random.randint(-5, 6)}})
         
     elif act == 'anzor':
                                                
-        bot.send_message(chat['id'], 'Анзор'+random.choice(['.', '!', '?', '...']))
+        bot.send_message(chat['id'], 'Анзор')
         
     elif act == 'teory':
         txt = 'Тео́рия вероя́тностей — раздел математики, изучающий случайные события, случайные величины, их свойства и операции над ними. '+\
@@ -101,7 +105,7 @@ def check():
     threading.Timer(10, check).start()
     for ids in chats.find({}):
         chat = ids
-        if random.randint(1, 1000) <= chat['freq']*25:
+        if random.randint(1, 1000) <= chat['freq']*50:
             talk(chat)
             
     
