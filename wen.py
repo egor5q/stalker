@@ -44,7 +44,7 @@ def setfff(m):
     
 @bot.message_handler(content_types=['document'], func = lambda m: m.reply_to_message != None)
 @bot.message_handler(content_types=['animations'], func = lambda m: m.reply_to_message != None)
-@bot.message_handler(content_types=['text'], func = lambda m: m.reply_to_message != None or '@wensxur' in m.text.lower())
+@bot.message_handler(content_types=['text'], func = lambda m: m.reply_to_message != None or (m.text != None and '@wensxur' in m.text.lower()))
 @bot.message_handler(content_types=['sticker'], func = lambda m: m.reply_to_message != None)
 @bot.message_handler(content_types=['photo'], func = lambda m: m.reply_to_message != None)
 @bot.message_handler(content_types=['audio'], func = lambda m: m.reply_to_message != None)
