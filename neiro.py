@@ -92,7 +92,9 @@ def tsttttt(m):
             while ss[lastsymbol]['next_symbols'][ids] > z:
                 mas.append(ids)
                 z += 1
-                
+        if len(mas) == 0:
+            bot.send_message(m.chat.id, text)
+            return
         cursymb = random.choice(mas)
         lastsymbol = cursymb
         if cursymb == '*':
