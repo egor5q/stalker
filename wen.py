@@ -36,13 +36,19 @@ def setfff(m):
     chats.update_one({'id':m.chat.id},{'$set':{'freq':fr}})
     bot.send_message(m.chat.id, 'Частота разговоров теперь '+str(fr)+'/10!')
     
-@bot.message_handler(func = lambda m: m.chat.id != m.from_user.id)
+@bot.message_handler(func = lambda m: m.reply_to_message != None)
+def rplyy(m):
+    if m.reply_to_message.from_user.id == 1150126466:
+        if random.randint(1, 100) <= 100:
+            als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?']
+            bot.send_message(m.chat.id, random.choice(als), reply_to_message_id = m.message_id)
+    
+@bot.message_handler(func = lambda m: True)
 def chatss(m):
     if chats.find_one({'id':m.chat.id}) == None:
         chats.insert_one(createchat(m.chat))
-        
 
-    
+        
 def createchat(chat):
     return {
         'id':chat.id,
@@ -106,7 +112,10 @@ def check():
     for ids in chats.find({}):
         chat = ids
         if random.randint(1, 1000) <= chat['freq']*50:
-            talk(chat)
+            try:
+                talk(chat)
+            except:
+                pass
             
     
 check()
