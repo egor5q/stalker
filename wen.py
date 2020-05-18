@@ -39,7 +39,7 @@ def setfff(m):
     chats.update_one({'id':m.chat.id},{'$set':{'freq':fr}})
     bot.send_chat_action(m.chat.id, 'typing')
     time.sleep(3)
-    bot.send_message(m.chat.id, 'Частота разговоров теперь '+str(fr)+'/10!')
+    bot.send_message(m.chat.id, 'Частота разговоров теперь '+str(fr)+'/20!')
 
   except:
     bot.send_message(441399484, traceback.format_exc())
