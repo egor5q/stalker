@@ -115,8 +115,8 @@ def adds(m):
      
     i = 0
     for x in text:
-        z = ids
-        if ids == '.':
+        z = x
+        if x == '.':
             z = '^'
         if z != '*':
             nxtsmb = text[i+1]
