@@ -9,6 +9,7 @@ from telebot import types
 from pymongo import MongoClient
 import traceback
 import json
+import wen
 
 token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
@@ -1454,8 +1455,11 @@ def medit(message_text, chat_id, message_id, reply_markup=None, parse_mode=None)
 
 def polll(x):
     x()
+    
+def poll(b):
+    b.polling(none_stop = True)
 
+threading.Thread(target = poll, args = [wen]).start()
 print('7777')
-#threading.Thread(target = polll, args = [dice.polling]).start()
 
 bot.polling(none_stop=True, timeout=600)
