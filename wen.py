@@ -152,7 +152,7 @@ def check():
             try:
                 talk(chat)
             except:
-                pass
+                bot.send_message(441399484, traceback.format_exc())
             
     
 check()
