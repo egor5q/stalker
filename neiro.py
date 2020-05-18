@@ -65,29 +65,6 @@ def check():
             }
             }})
     
-    
-@bot.message_handler(content_types = ['text'])
-def adds(m):
-    if m.from_user.id != 441399484:
-        return
-    text = '&'+m.text+'*'
-    for x in m.text:
-        if x not in avalaible:
-            return
-     
-    i = 0
-    for x in text:
-        z = ids
-        if ids == '.':
-            z = '^'
-        if z != '*':
-            nxtsmb = text[i+1]
-            if nxtsmb == '.':
-                nxtsmb = '^'
-            s.update_one({},{'$inc':{z+'.next_symbols.'+nxtsmb:1}})
-        i+=1
-        
-    
 @bot.message_handler(commands=['test'])
 def tsttttt(m):
     if m.from_user.id != 441399484:
@@ -113,6 +90,30 @@ def tsttttt(m):
             text += cursymb
             
     bot.send_message(m.chat.id, text)
+    
+@bot.message_handler(content_types = ['text'])
+def adds(m):
+    if m.from_user.id != 441399484:
+        return
+    text = '&'+m.text+'*'
+    for x in m.text:
+        if x not in avalaible:
+            return
+     
+    i = 0
+    for x in text:
+        z = ids
+        if ids == '.':
+            z = '^'
+        if z != '*':
+            nxtsmb = text[i+1]
+            if nxtsmb == '.':
+                nxtsmb = '^'
+            s.update_one({},{'$inc':{z+'.next_symbols.'+nxtsmb:1}})
+        i+=1
+        
+    
+
             
         
   
