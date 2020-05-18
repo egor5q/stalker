@@ -125,7 +125,8 @@ def adds(m):
     nt = m.text
     nt.replace('\n', ' ')
     for x in nt:
-        if x not in avalaible and x != '':
+        if x not in avalaible:
+            print(x)
             bot.send_message(m.chat.id, '"```'+str(x)+'```"', parse_mode = 'markdown')
             return
      
