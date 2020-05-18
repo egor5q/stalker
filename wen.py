@@ -37,7 +37,13 @@ def setfff(m):
     
     bot.send_message(m.chat.id, 'Частота разговоров теперь '+str(fr)+'/10!')
     
-@bot.message_handler(func = lambda m: m.reply_to_message != None)
+@beebot.message_handler(content_types=['document'], func = lambda m: m.reply_to_message != None)
+@beebot.message_handler(content_types=['animations'], func = lambda m: m.reply_to_message != None)
+@beebot.message_handler(content_types=['text'], func = lambda m: m.reply_to_message != None)
+@beebot.message_handler(content_types=['sticker'], func = lambda m: m.reply_to_message != None)
+@beebot.message_handler(content_types=['photo'], func = lambda m: m.reply_to_message != None)
+@beebot.message_handler(content_types=['audio'], func = lambda m: m.reply_to_message != None)
+@beebot.message_handler(content_types=['voice'], func = lambda m: m.reply_to_message != None)
 def rplyy(m):
     if m.reply_to_message.from_user.id == 1150126466:
         if random.randint(1, 100) <= 100:
