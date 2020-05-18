@@ -122,7 +122,9 @@ def adds(m):
     if m.from_user.id != 441399484:
         return
     text = '&'+m.text+'*'
-    for x in m.text:
+    nt = m.text
+    nt.replace('\n', ' ')
+    for x in nt:
         if x not in avalaible and x != '':
             bot.send_message(m.chat.id, '"```'+str(x)+'```"', parse_mode = 'markdown')
             return
