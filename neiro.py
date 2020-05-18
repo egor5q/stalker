@@ -113,6 +113,7 @@ def adds(m):
     text = '&'+m.text+'*'
     for x in m.text:
         if x not in avalaible:
+            bot.send_message(m.chat.id, x)
             return
      
     i = 0
