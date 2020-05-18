@@ -12,7 +12,6 @@ import traceback
 token = os.environ['wen']
 bot = telebot.TeleBot(token)
 
-
 client=MongoClient(os.environ['database'])
 db=client.wen
 users=db.users
