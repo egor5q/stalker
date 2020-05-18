@@ -117,13 +117,13 @@ def talk(chat):
                 pass
         if str(number)[-1] in ['5', '6', '7', '8', '9', '0']:
             mn = 'манулов'
-        bot.send_chat_action(m.chat.id, 'typing')
+        bot.send_chat_action(chat['id'], 'typing')
         time.sleep(3)
         bot.send_message(chat['id'], str(number)+' '+mn+'')
         chats.update_one({'id':chat['id']},{'$inc':{'manuls':random.randint(-5, 6)}})
         
     elif act == 'anzor':
-        bot.send_chat_action(m.chat.id, 'typing')
+        bot.send_chat_action(chat['id'], 'typing')
         time.sleep(3)                                       
         bot.send_message(chat['id'], 'Анзор')
         
@@ -140,7 +140,7 @@ def talk(chat):
         'вероятностей (понятие вероятности как величины шанса; математическое ожидание для дискретных случаев, в виде цены шанса), '+\
         'а также используются теоремы сложения и умножения вероятностей (не сформулированные явно), вышла в печатном виде на двадцать '+\
         'лет раньше (1657 год) издания писем Паскаля и Ферма (1679 год)[2].'
-        bot.send_chat_action(m.chat.id, 'typing')
+        bot.send_chat_action(chat['id'], 'typing')
         time.sleep(3)
         bot.send_message(chat['id'], txt)
 
