@@ -21,11 +21,11 @@ chats = db.chats
     
 @bot.message_handler(commands=['set_frequency'])
 def setfff(m):
+  try:
     if chats.find_one({'id':m.chat.id}) == None:
         chats.insert_one(createchat(m.chat))
     time.sleep(1)
-    if m.chat.id == m.from_user.id:
-        return
+    
     memb = bot.get_chat_member(m.chat.id, m.from_user.id)
     if memb.status not in ['administrator', 'creator'] and m.from_user.id != m.chat.id:
         return
@@ -40,7 +40,9 @@ def setfff(m):
     bot.send_chat_action(m.chat.id, 'typing')
     time.sleep(3)
     bot.send_message(m.chat.id, 'Частота разговоров теперь '+str(fr)+'/10!')
- 
+
+  except:
+    bot.send_message(441399484, traceback.format_exc())
     
 @bot.message_handler(content_types=['document'], func = lambda m: m.reply_to_message != None)
 @bot.message_handler(content_types=['animations'], func = lambda m: m.reply_to_message != None)
