@@ -58,10 +58,11 @@ def rplyy(m):
     time.sleep(1)
     if m.reply_to_message != None:
         if m.reply_to_message.from_user.id == 1150126466:
-            if '@' in m.text:
-                bot.send_chat_action(m.chat.id, 'typing')
-                time.sleep(3)
-                bot.send_message(m.chat.id, random.choice(['Зачем ты это делаешь?']), reply_to_message_id = m.message_id)
+            if m.text != None:
+                if '@' in m.text:
+                    bot.send_chat_action(m.chat.id, 'typing')
+                    time.sleep(3)
+                    bot.send_message(m.chat.id, random.choice(['Зачем ты это делаешь?']), reply_to_message_id = m.message_id)
     if random.randint(1, 100) <= 100:
         als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?', 'Что случилось?', 'Что случилось']
         bot.send_chat_action(m.chat.id, 'typing')
