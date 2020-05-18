@@ -1,47 +1,119 @@
-import numpy as np
+import os
+import telebot
+import time
+import random
+import threading
+from emoji import emojize
+from telebot import types
+from pymongo import MongoClient
+import traceback
+    
+token = os.environ['TELEGRAM_TOKEN']
+bot = telebot.TeleBot(token)
 
-#X = np.array([ [0,0,1],[0,1,1],[1,0,1],[1,1,1] ])
-#y = np.array([[0,1,1,0]]).T
-#syn0 = 2*np.random.random((3,4)) - 1
-#syn1 = 2*np.random.random((4,1)) - 1
-#for j in range(60000):
-#    l1 = 1/(1+np.exp(-(np.dot(X,syn0))))
-#    l2 = 1/(1+np.exp(-(np.dot(l1,syn1))))
-#    l2_delta = (y - l2)*(l2*(1-l2))
-#    l1_delta = l2_delta.dot(syn1.T) * (l1 * (1-l1))
-#    syn1 += l1.T.dot(l2_delta)
-#    syn0 += X.T.dot(l1_delta)
-#    
-#print(syn0)
-#print(syn1)
+client=MongoClient(os.environ['database'])
+db=client.neirotalk
+s = db.symbols
 
+def creates():
+    return {
+      
+    }
 
+if s.find_one({}) == None:
+    s.insert_one(creates())
+    
+avalaible = ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о',
+             'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э',
+            'ю', 'я', ',', '.', '!', ':', ' ', '-']
 
-#def nonlin(x, deriv = False):
-#    if(deriv == True):
-#        return f(x)*(1-f(x))
-#    return 1/(1+np.exp(-x))
-#
-#X = np.array([
-#    [0, 0, 1],
-#    [0, 1, 1],
-#    [1, 0, 1],
-#    [1, 1, 1]
-#])
-#
-#y = np.array([[0, 0, 1, 1]]).T
-#
-#np.random.seed(1)
-#syn0 = 2*np.random.random((3, 1)) - 1
-#
-#for item in range(10000):
-#    l0 = X
-#    l1 = nonlin(np.dot(l0, syn0))
-#    l1_error = y - l1
-#    
-#    l1_delta = l1_error * nonlin(l1, True)
-#    
-#    syn0 += np.dot(l0.T, l1_delta)
-#    
-#print('Выходные данные после тренировки: ')
-#print(l1)
+techn = ['&', '*']
+
+def nextsymbs():
+    a = {}
+    for ids in avalaible:
+        z = ids
+        if ids == '.':
+            z = '^'
+        a.update({z:0})
+    for ids in techn:
+        z = ids
+        if ids == '.':
+            z = '^'
+        a.update({z:0})
+    return a
+
+def check():
+    x = s.find_one({})
+    for ids in avalaible:
+        z = ids
+        if ids == '.':
+            z = '^'
+        if z not in x:
+            s.update_one({},{'$set':{z:{
+                'next_symbols':nextsymbs()
+            }
+            }})
+            
+    for ids in techn:
+        z = ids
+        if ids == '.':
+            z = '^'
+        if z not in x:
+            s.update_one({},{'$set':{z:{
+                'next_symbols':nextsymbs()
+            }
+            }})
+    
+    
+@bot.message_handler(content_types = ['text'])
+def adds(m):
+    if m.fror_user.id != 441399484:
+        return
+    text = '&'+m.text+'*'
+    for x in m.text:
+        if x not in avalaible:
+            return
+     
+    i = 0
+    for x in text:
+        z = ids
+        if ids == '.':
+            z = '^'
+        if z != '*':
+            nxtsmb = text[i+1]
+            if nxtsmb == '.':
+                nxtsmb = '^'
+            s.update_one({},{'$inc':{z+'.next_symbols.'+nxtsmb:1}})
+        i+=1
+        
+    
+@bot.message_handler(commands=['test'])
+def tsttttt(m):
+    if m.from_user.id != 441399484:
+        return
+    text = ''
+    lastsymbol = '&'
+    ss = s.find_one({})
+    while lastsymbol != '*':
+        mas = []
+        for ids in ss[lastsymbol]['next_symbols']:
+            z = 0
+            while ss[lastsymbol]['next_symbols'][ids] > z:
+                mas.append(ids)
+                z += 1
+                
+        cursymb = random.choice(mas)
+        lastsymbol = cursymb
+        if cursymb == '*':
+            text += ''
+        elif cursymb == '^':
+            text += '.'
+        else:
+            text += cursymb
+            
+    bot.send_message(m.chat.id, text)
+            
+        
+  
+  
