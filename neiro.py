@@ -68,7 +68,7 @@ def check():
     
 @bot.message_handler(content_types = ['text'])
 def adds(m):
-    if m.fror_user.id != 441399484:
+    if m.from_user.id != 441399484:
         return
     text = '&'+m.text+'*'
     for x in m.text:
