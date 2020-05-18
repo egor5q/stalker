@@ -121,7 +121,7 @@ def talk(chat):
         bot.send_chat_action(chat['id'], 'typing')
         time.sleep(3)
         bot.send_message(chat['id'], str(number)+' '+mn+'')
-        chats.update_one({'id':chat['id']},{'$inc':{'manuls':random.randint(-5, 6)}})
+        chats.update_one({'id':chat['id']},{'$inc':{'manuls':random.randint(-4, 6)}})
         
     elif act == 'anzor':
         bot.send_chat_action(chat['id'], 'typing')
