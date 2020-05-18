@@ -103,7 +103,8 @@ def tsttttt(m):
             text += '.'
         else:
             text += cursymb
-            
+    if len(text) > 4000:
+        text = text[:4000]
     bot.send_message(m.chat.id, text)
     
 @bot.message_handler(content_types = ['text'])
