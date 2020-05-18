@@ -52,15 +52,15 @@ def setfff(m):
 def rplyy(m):
     if chats.find_one({'id':m.chat.id}) == None:
         chats.insert_one(createchat(m.chat))
-        if m.reply_to_message != None:
-            if m.reply_to_message.from_user.id != 1150126466:
-                return
-        time.sleep(1)
-        if random.randint(1, 100) <= 100:
-            als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?', 'Что случилось?', 'Что случилось']
-            bot.send_chat_action(m.chat.id, 'typing')
-            time.sleep(3)
-            bot.send_message(m.chat.id, random.choice(als), reply_to_message_id = m.message_id)
+    if m.reply_to_message != None:
+        if m.reply_to_message.from_user.id != 1150126466:
+            return
+    time.sleep(1)
+    if random.randint(1, 100) <= 100:
+        als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?', 'Что случилось?', 'Что случилось']
+        bot.send_chat_action(m.chat.id, 'typing')
+        time.sleep(3)
+        bot.send_message(m.chat.id, random.choice(als), reply_to_message_id = m.message_id)
     
 @bot.message_handler(func = lambda m: True)
 def chatss(m):
