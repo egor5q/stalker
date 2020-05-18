@@ -64,6 +64,8 @@ def check():
                 'next_symbols':nextsymbs()
             }
             }})
+            
+check()
     
 @bot.message_handler(commands=['test'])
 def tsttttt(m):
