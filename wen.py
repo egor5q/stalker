@@ -33,8 +33,8 @@ def setfff(m):
         fr = int(m.text.split(' ')[1])
     except:
         return
-    if fr > 10 or fr < 0:
-        bot.send_message(m.chat.id, 'Нужно число >=0 и <= 10!')
+    if fr > 20 or fr < 0:
+        bot.send_message(m.chat.id, 'Нужно число >=0 и <= 20!')
         return
     chats.update_one({'id':m.chat.id},{'$set':{'freq':fr}})
     bot.send_chat_action(m.chat.id, 'typing')
@@ -152,7 +152,7 @@ def check():
     threading.Timer(10, check).start()
     for ids in chats.find({}):
         chat = ids
-        if random.randint(1, 1000) <= chat['freq']*50:
+        if random.randint(1, 1000) <= chat['freq']*25:
             try:
                 talk(chat)
             except:
