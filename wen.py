@@ -37,17 +37,17 @@ def setfff(m):
     
     bot.send_message(m.chat.id, 'Частота разговоров теперь '+str(fr)+'/10!')
     
-@beebot.message_handler(content_types=['document'], func = lambda m: m.reply_to_message != None)
-@beebot.message_handler(content_types=['animations'], func = lambda m: m.reply_to_message != None)
-@beebot.message_handler(content_types=['text'], func = lambda m: m.reply_to_message != None)
-@beebot.message_handler(content_types=['sticker'], func = lambda m: m.reply_to_message != None)
-@beebot.message_handler(content_types=['photo'], func = lambda m: m.reply_to_message != None)
-@beebot.message_handler(content_types=['audio'], func = lambda m: m.reply_to_message != None)
-@beebot.message_handler(content_types=['voice'], func = lambda m: m.reply_to_message != None)
+@bot.message_handler(content_types=['document'], func = lambda m: m.reply_to_message != None)
+@bot.message_handler(content_types=['animations'], func = lambda m: m.reply_to_message != None)
+@bot.message_handler(content_types=['text'], func = lambda m: m.reply_to_message != None)
+@bot.message_handler(content_types=['sticker'], func = lambda m: m.reply_to_message != None)
+@bot.message_handler(content_types=['photo'], func = lambda m: m.reply_to_message != None)
+@bot.message_handler(content_types=['audio'], func = lambda m: m.reply_to_message != None)
+@bot.message_handler(content_types=['voice'], func = lambda m: m.reply_to_message != None)
 def rplyy(m):
     if m.reply_to_message.from_user.id == 1150126466:
         if random.randint(1, 100) <= 100:
-            als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?']
+            als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?', '']
             bot.send_chat_action(m.chat.id, 'typing')
             time.sleep(3)
             bot.send_message(m.chat.id, random.choice(als), reply_to_message_id = m.message_id)
