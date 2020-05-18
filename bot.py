@@ -10,10 +10,15 @@ from pymongo import MongoClient
 import traceback
 import json
 import wen
+    
 
 token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
 
+try:
+    import neiro
+except:
+    bot.send_message(441399484, traceback.format_exc())
 
 client=MongoClient(os.environ['database'])
 db=client.lifesim
