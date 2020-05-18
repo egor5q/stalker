@@ -123,7 +123,7 @@ def adds(m):
         return
     text = '&'+m.text+'*'
     nt = m.text
-    nt = nt.replace('\n', ' ').replace(';', ',')
+    nt = nt.replace('\n', ' ').replace(';', ',').replace('"', '')
     for x in nt:
         if x not in avalaible:
             print(x)
