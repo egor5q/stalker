@@ -21,6 +21,8 @@ chats = db.chats
     
 @bot.message_handler(commands=['set_frequency'])
 def setfff(m):
+    if chats.find_one({'id':m.chat.id}) == None:
+        chats.insert_one(createchat(m.chat))
     time.sleep(1)
     if m.chat.id == m.from_user.id:
         return
@@ -48,6 +50,8 @@ def setfff(m):
 @bot.message_handler(content_types=['audio'], func = lambda m: m.reply_to_message != None)
 @bot.message_handler(content_types=['voice'], func = lambda m: m.reply_to_message != None)
 def rplyy(m):
+    if chats.find_one({'id':m.chat.id}) == None:
+        chats.insert_one(createchat(m.chat))
     if m.reply_to_message.from_user.id == 1150126466:
         time.sleep(1)
         if random.randint(1, 100) <= 100:
