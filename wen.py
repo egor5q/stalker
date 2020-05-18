@@ -21,6 +21,7 @@ chats = db.chats
     
 @bot.message_handler(commands=['set_frequency'])
 def setfff(m):
+    time.sleep(1)
     if m.chat.id == m.from_user.id:
         return
     memb = bot.get_chat_member(m.chat.id, m.from_user.id)
@@ -34,20 +35,23 @@ def setfff(m):
         bot.send_message(m.chat.id, 'Нужно число >=0 и <= 10!')
         return
     chats.update_one({'id':m.chat.id},{'$set':{'freq':fr}})
-    
+    bot.send_chat_action(m.chat.id, 'typing')
+    time.sleep(3)
     bot.send_message(m.chat.id, 'Частота разговоров теперь '+str(fr)+'/10!')
+ 
     
 @bot.message_handler(content_types=['document'], func = lambda m: m.reply_to_message != None)
 @bot.message_handler(content_types=['animations'], func = lambda m: m.reply_to_message != None)
-@bot.message_handler(content_types=['text'], func = lambda m: m.reply_to_message != None)
+@bot.message_handler(content_types=['text'], func = lambda m: m.reply_to_message != None or '@wensxur' in m.text.lower())
 @bot.message_handler(content_types=['sticker'], func = lambda m: m.reply_to_message != None)
 @bot.message_handler(content_types=['photo'], func = lambda m: m.reply_to_message != None)
 @bot.message_handler(content_types=['audio'], func = lambda m: m.reply_to_message != None)
 @bot.message_handler(content_types=['voice'], func = lambda m: m.reply_to_message != None)
 def rplyy(m):
     if m.reply_to_message.from_user.id == 1150126466:
+        time.sleep(1)
         if random.randint(1, 100) <= 100:
-            als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?', '']
+            als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?', 'Что случилось?', 'Что случилось']
             bot.send_chat_action(m.chat.id, 'typing')
             time.sleep(3)
             bot.send_message(m.chat.id, random.choice(als), reply_to_message_id = m.message_id)
@@ -58,10 +62,11 @@ def chatss(m):
         chats.insert_one(createchat(m.chat))
         
     if m.text.lower()[:6] == 'привет':
-        if random.randint(1, 100) <= 75:
+        if random.randint(1, 100) <= 100:
+            time.sleep(1)
             bot.send_chat_action(m.chat.id, 'typing')
             time.sleep(3)
-            bot.send_message(m.chat.id, random.choice(['Расскажи, что случилось']), reply_to_message_id = m.message_id)
+            bot.send_message(m.chat.id, random.choice(['Расскажи, что случилось', 'Что случилось?']), reply_to_message_id = m.message_id)
             
 
         
