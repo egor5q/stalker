@@ -38,11 +38,15 @@ def nextsymbs():
         z = ids
         if ids == '.':
             z = '^'
+        if ids == '...':
+            z = '#'
         a.update({z:0})
     for ids in techn:
         z = ids
         if ids == '.':
             z = '^'
+        if ids == '...':
+            z = '#'
         a.update({z:0})
     return a
 
@@ -52,6 +56,8 @@ def check():
         z = ids
         if ids == '.':
             z = '^'
+        if ids == '...':
+            z = '#'
         if z not in x:
             s.update_one({},{'$set':{z:{
                 'next_symbols':nextsymbs()
@@ -62,6 +68,8 @@ def check():
         z = ids
         if ids == '.':
             z = '^'
+        if ids == '...':
+            z = '#'
         if z not in x:
             s.update_one({},{'$set':{z:{
                 'next_symbols':nextsymbs()
@@ -101,6 +109,8 @@ def tsttttt(m):
             text += ''
         elif cursymb == '^':
             text += '.'
+        elif cursymb == '#':
+            text += '...'
         else:
             text += cursymb
     if len(text) > 4000:
@@ -122,6 +132,8 @@ def adds(m):
         z = x
         if x == '.':
             z = '^'
+        if x == '...':
+            z = '#'
         if z != '*':
             nxtsmb = text[i+1]
             if nxtsmb == '.':
