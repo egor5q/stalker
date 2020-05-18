@@ -93,7 +93,7 @@ def tsttttt(m):
     text = ''
     lastsymbol = '&'
     ss = s.find_one({})
-    while lastsymbol != '*':
+    while lastsymbol != '*' and len(text) <= 4000:
         mas = []
         for ids in ss[lastsymbol]['next_symbols']:
             z = 0
