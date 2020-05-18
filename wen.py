@@ -24,7 +24,7 @@ def setfff(m):
     if m.chat.id == m.from_user.id:
         return
     memb = bot.get_chat_member(m.chat.id, m.from_user.id)
-    if memb not in ['administrator', 'creator']:
+    if memb.status not in ['administrator', 'creator']:
         return
     try:
         fr = int(m.text.split(' ')[1])
