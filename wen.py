@@ -52,7 +52,9 @@ def setfff(m):
 def rplyy(m):
     if chats.find_one({'id':m.chat.id}) == None:
         chats.insert_one(createchat(m.chat))
-    if m.reply_to_message.from_user.id == 1150126466:
+        if m.reply_to_message != None:
+            if m.reply_to_message.from_user.id != 1150126466:
+                return
         time.sleep(1)
         if random.randint(1, 100) <= 100:
             als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?', 'Что случилось?', 'Что случилось']
