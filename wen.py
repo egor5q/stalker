@@ -24,7 +24,7 @@ def setfff(m):
     if m.chat.id == m.from_user.id:
         return
     memb = bot.get_chat_member(m.chat.id, m.from_user.id)
-    if memb.status not in ['administrator', 'creator']:
+    if memb.status not in ['administrator', 'creator'] and m.from_user.id != m.chat.id:
         return
     try:
         fr = int(m.text.split(' ')[1])
@@ -34,6 +34,7 @@ def setfff(m):
         bot.send_message(m.chat.id, 'Нужно число >=0 и <= 10!')
         return
     chats.update_one({'id':m.chat.id},{'$set':{'freq':fr}})
+    
     bot.send_message(m.chat.id, 'Частота разговоров теперь '+str(fr)+'/10!')
     
 @bot.message_handler(func = lambda m: m.reply_to_message != None)
@@ -41,12 +42,21 @@ def rplyy(m):
     if m.reply_to_message.from_user.id == 1150126466:
         if random.randint(1, 100) <= 100:
             als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?']
+            bot.send_chat_action(m.chat.id, 'typing')
+            time.sleep(3)
             bot.send_message(m.chat.id, random.choice(als), reply_to_message_id = m.message_id)
     
 @bot.message_handler(func = lambda m: True)
 def chatss(m):
     if chats.find_one({'id':m.chat.id}) == None:
         chats.insert_one(createchat(m.chat))
+        
+    if m.text.lower()[:6] == 'привет':
+        if random.randint(1, 100) <= 75:
+            bot.send_chat_action(m.chat.id, 'typing')
+            time.sleep(3)
+            bot.send_message(m.chat.id, random.choice(['Расскажи, что случилось']), reply_to_message_id = m.message_id)
+            
 
         
 def createchat(chat):
@@ -84,12 +94,14 @@ def talk(chat):
                 pass
         if str(number)[-1] in ['5', '6', '7', '8', '9', '0']:
             mn = 'манулов'
-            
+        bot.send_chat_action(m.chat.id, 'typing')
+        time.sleep(3)
         bot.send_message(chat['id'], str(number)+' '+mn+'')
         chats.update_one({'id':chat['id']},{'$inc':{'manuls':random.randint(-5, 6)}})
         
     elif act == 'anzor':
-                                               
+        bot.send_chat_action(m.chat.id, 'typing')
+        time.sleep(3)                                       
         bot.send_message(chat['id'], 'Анзор')
         
     elif act == 'teory':
@@ -105,6 +117,8 @@ def talk(chat):
         'вероятностей (понятие вероятности как величины шанса; математическое ожидание для дискретных случаев, в виде цены шанса), '+\
         'а также используются теоремы сложения и умножения вероятностей (не сформулированные явно), вышла в печатном виде на двадцать '+\
         'лет раньше (1657 год) издания писем Паскаля и Ферма (1679 год)[2].'
+        bot.send_chat_action(m.chat.id, 'typing')
+        time.sleep(3)
         bot.send_message(chat['id'], txt)
 
 def check():
