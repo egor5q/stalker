@@ -191,22 +191,26 @@ def adds(m):
      
     i = 0
     ss = s.find_one({})
-    for x in text:
-        z = x
-        if x == '.':
-            z = '^'
-        if x == '...':
-            z = '#'
-        if z != '*':
-            ii = i
-            razn = 1
-            while ii+razn < len(text) and razn <= 10:
-                nxtsmb = text[ii+razn]
-                if nxtsmb == '.':
-                    nxtsmb = '^'
-                ss[z]['next_symbols'][str(razn)][nxtsmb]+=1
-                razn += 1
-        i+=1
+    try:
+        for x in text:
+            z = x
+            if x == '.':
+                z = '^'
+            if x == '...':
+                z = '#'
+            if z != '*':
+                ii = i
+                razn = 1
+                while ii+razn < len(text) and razn <= 10:
+                    nxtsmb = text[ii+razn]
+                    if nxtsmb == '.':
+                        nxtsmb = '^'
+                    ss[z]['next_symbols'][str(razn)][nxtsmb]+=1
+                    razn += 1
+            i+=1
+    except:
+        bot.send_message(m.chat.id, traceback.format_exc(), reply_to_message_id = m.message_id)
+        return
     stopp = True
     s.remove({})
 
