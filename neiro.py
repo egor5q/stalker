@@ -111,8 +111,8 @@ def tsttttt(m):
             print(ii)
             print(razn)
             mas.append([])
-            for ids in ss[ii - razn]['next_symbols']:
-                need = ss[ii - razn]['next_symbols'][ids]
+            for ids in ss[str(ii - razn)]['next_symbols']:
+                need = ss[str(ii - razn)]['next_symbols'][ids]
                 cur = 0
                 while cur < need:
                     mas[s4et].append(ids)
@@ -133,9 +133,9 @@ def tsttttt(m):
                     if allow == True:
                         itogmas.append(symbol)
 
-        #if len(itogmas) == 0:
-        #    bot.send_message(m.chat.id, text)
-        #    return
+        if len(itogmas) == 0:
+            bot.send_message(m.chat.id, text)
+            return
         cursymb = random.choice(itogmas)
         lastsymbol = cursymb
         if cursymb == '*':
