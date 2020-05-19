@@ -34,20 +34,27 @@ techn = ['&', '*']
 
 def nextsymbs():
     a = {}
+    i = 10
     for ids in avalaible:
         z = ids
         if ids == '.':
             z = '^'
         if ids == '...':
             z = '#'
-        a.update({z:0})
+        cur = 1
+        while cur <= i:
+            a.update({str(cur):{z:0}})
+            cur+=1
     for ids in techn:
         z = ids
         if ids == '.':
             z = '^'
         if ids == '...':
             z = '#'
-        a.update({z:0})
+        cur = 1
+        while cur <= i:
+            a.update({str(cur):{z:0}})
+            cur+=1
     return a
 
 def check():
@@ -93,17 +100,41 @@ def tsttttt(m):
     text = ''
     lastsymbol = '&'
     ss = s.find_one({})
+    i = 1
     while lastsymbol != '*' and len(text) <= 4000:
+        razn = 1
+        ii = i
         mas = []
-        for ids in ss[lastsymbol]['next_symbols']:
-            z = 0
-            while ss[lastsymbol]['next_symbols'][ids] > z:
-                mas.append(ids)
-                z += 1
-        if len(mas) == 0:
+        itogmas = []
+        s4et = 0
+        while (ii - razn > 0 and razn <= 10):
+            mas.append([])
+            for ids in ss[ii - razn]['next_symbols']:
+                need = ss[ii - razn]['next_symbols'][ids]
+                cur = 0
+                while cur < need:
+                    mas[s4et].append(ids)
+                    cur += 1
+            s4et += 1
+            razn += 1
+         
+        print(mas)
+        for ids in mas:
+            for idss in mas:
+                for idsss in mas[idss]:
+                    allow = True
+                    symbol = idsss
+                    for idssss in mas:
+                        if symbol not in mas[idssss]:
+                            allow = False
+                            print(symbol)
+                    if allow == True:
+                        itogmas.append(symbol)
+
+        if len(itogmas) == 0:
             bot.send_message(m.chat.id, text)
             return
-        cursymb = random.choice(mas)
+        cursymb = random.choice(itogmas)
         lastsymbol = cursymb
         if cursymb == '*':
             text += ''
@@ -113,6 +144,7 @@ def tsttttt(m):
             text += '...'
         else:
             text += cursymb
+        i+=1
     if len(text) > 4000:
         text = text[:4000]
     bot.send_message(m.chat.id, text)
@@ -138,10 +170,15 @@ def adds(m):
         if x == '...':
             z = '#'
         if z != '*':
-            nxtsmb = text[i+1]
-            if nxtsmb == '.':
-                nxtsmb = '^'
-            s.update_one({},{'$inc':{z+'.next_symbols.'+nxtsmb:1}})
+            ii = i
+            razn = 1
+            while ii+razn < len(text) and razn <= 10:
+                nxtsmb = text[ii+razn]
+                if nxtsmb == '.':
+                    nxtsmb = '^'
+                s.update_one({},{'$inc':{z+'.next_symbols.'+str(razn)+'.'+nxtsmb:1}})
+                ii+=1
+                razn += 1
         i+=1
         
     
