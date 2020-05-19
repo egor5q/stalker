@@ -114,6 +114,7 @@ def tsttttt(m):
             for ids in ss[text[ii - razn]]['next_symbols']:
                 need = ss[text[ii - razn]]['next_symbols'][ids]
                 cur = 0
+                print(need)
                 while cur < need:
                     mas[s4et].append(ids)
                     cur += 1
