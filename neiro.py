@@ -14,6 +14,9 @@ bot = telebot.TeleBot(token)
 client=MongoClient(os.environ['database'])
 db=client.neirotalk
 s = db.symbols
+mc = db.mc
+if mc.find_one({}) == None:
+    mc.insert_one({'trigger':False})
 
 stopp = False
 
@@ -105,9 +108,10 @@ def dellll(m):
 def tsttttt(m):
     if m.from_user.id != 441399484:
         return
-    global stopp
+    stopp = mc.find_one({})['trigger']
     while stopp == True:
         time.sleep(1)
+        stopp = mc.find_one({})['trigger']
     text = '&'
     lastsymbol = '&'
     ss = s.find_one({})
@@ -177,12 +181,14 @@ def tsttttt(m):
 def adds(m):
     if m.from_user.id != 441399484:
         return
-    global stopp
+    stopp = mc.find_one({})['trigger']
     while stopp == True:
         time.sleep(1)
+        stopp = mc.find_one({})['trigger']
+    mc.update_one({},{'$set':{'trigger':True}})
     text = '&'+m.text+'*'
     nt = m.text
-    nt = nt.replace('\n', ' ').replace('"', '').replace(' ', ' ')
+    nt = nt.replace('\n', ' ').replace('"', '').replace(' ', ' ').replace('\n', ' ')
     for x in nt:
         if x not in avalaible:
             print(x)
@@ -205,18 +211,19 @@ def adds(m):
                     nxtsmb = text[ii+razn]
                     if nxtsmb == '.':
                         nxtsmb = '^'
+                    if nxtsmb == '\n':
+                        nxtsmb = ' '
                     ss[z]['next_symbols'][str(razn)][nxtsmb]+=1
                     razn += 1
             i+=1
     except:
         bot.send_message(m.chat.id, traceback.format_exc(), reply_to_message_id = m.message_id)
         return
-    stopp = True
-    s.remove({})
 
+    s.remove({})
     s.insert_one(ss)
     time.sleep((random.randint(1, 10)/10))
-    stopp = False
+    mc.update_one({},{'$set':{'trigger':False}})
     bot.send_message(m.chat.id, 'Обработано!', reply_to_message_id = m.message_id)
         
     
