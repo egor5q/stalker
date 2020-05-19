@@ -220,6 +220,7 @@ def adds(m):
             i+=1
     except:
         bot.send_message(m.chat.id, traceback.format_exc(), reply_to_message_id = m.message_id)
+        mc.update_one({},{'$set':{'trigger':False}})
         return
 
     s.remove({})
