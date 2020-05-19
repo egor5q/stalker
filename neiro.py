@@ -109,10 +109,7 @@ def dellll(m):
 def tsttttt(m):
     if m.from_user.id != 441399484:
         return
-    stopp = mc.find_one({})['trigger']
-    while stopp == True:
-        time.sleep(1)
-        stopp = mc.find_one({})['trigger']
+
     text = '&'
     lastsymbol = '&'
     ss = s.find_one({})
