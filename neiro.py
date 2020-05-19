@@ -144,13 +144,13 @@ def tsttttt(m):
             cycle2 = 0
             for idss in mas:
                 cycle3 = 0
-                for idsss in mas[idss]:
+                for idsss in mas[cycle3]:
                     cycle4 = 0
                     allow = True
                     symbol = idsss
-                    amo = mas[idss][idsss]
+                    amo = mas[cycle3][idsss]
                     for idssss in mas:
-                        if symbol not in mas[idsss]:
+                        if symbol not in mas[cycle4]:
                             allow = False
                         cycle4 += 1
                     if allow == True:
