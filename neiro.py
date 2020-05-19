@@ -18,7 +18,6 @@ mc = db.mc
 if mc.find_one({}) == None:
     mc.insert_one({'trigger':False})
 
-stopp = False
 
 def creates():
     return {
@@ -193,6 +192,7 @@ def adds(m):
         if x not in avalaible:
             print(x)
             bot.send_message(m.chat.id, '"```'+str(x)+'```"', parse_mode = 'markdown', reply_to_message_id = m.message_id)
+            mc.update_one({},{'$set':{'trigger':False}})
             return
      
     i = 0
