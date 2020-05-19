@@ -131,9 +131,9 @@ def tsttttt(m):
                     if allow == True:
                         itogmas.append(symbol)
 
-        if len(itogmas) == 0:
-            bot.send_message(m.chat.id, text)
-            return
+        #if len(itogmas) == 0:
+        #    bot.send_message(m.chat.id, text)
+        #    return
         cursymb = random.choice(itogmas)
         lastsymbol = cursymb
         if cursymb == '*':
