@@ -17,4 +17,5 @@ db=client.neirotalk2
 
 import nltk
 nltk.download('averaged_perceptron_tagger')
-print(nltk.pos_tag("Машинное обучение прекрасно функционирует.".split()))
+tokens = nltk.word_tokenize('Машинное обучение прекрасно функционирует.')
+print(nltk.pos_tag(tokens))
