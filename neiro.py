@@ -17,6 +17,8 @@ s = db.symbols
 mc = db.mc
 if mc.find_one({}) == None:
     mc.insert_one({'trigger':False})
+    
+mc.update_one({},{'$set':{'trigger':False}})
 
 
 def creates():
