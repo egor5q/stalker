@@ -164,7 +164,7 @@ def tsttttt(m):
         i+=1
     if len(text) > 4000:
         text = text[:4000]
-    text = text[1:]
+    #text = text[1:]
     try:
         bot.send_message(m.chat.id, text)
     except:
