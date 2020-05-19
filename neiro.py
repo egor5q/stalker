@@ -224,6 +224,7 @@ def adds(m):
         return
 
     s.remove({})
+    ss.pop('_id')
     s.insert_one(ss)
     time.sleep((random.randint(1, 10)/10))
     mc.update_one({},{'$set':{'trigger':False}})
