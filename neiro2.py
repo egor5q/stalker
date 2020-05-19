@@ -14,3 +14,6 @@ bot = telebot.TeleBot(token)
 
 client=MongoClient(os.environ['database'])
 db=client.neirotalk2
+
+import nltk
+print(nltk.pos_tag("Machine learning is great".split()))
