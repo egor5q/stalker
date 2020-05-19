@@ -43,7 +43,10 @@ def nextsymbs():
             z = '#'
         cur = 1
         while cur <= i:
-            a.update({str(cur):{z:0}})
+            try:
+                a[cur].update({z:0})
+            except:
+                a.update({str(cur):{z:0}})
             cur+=1
     for ids in techn:
         z = ids
@@ -53,7 +56,10 @@ def nextsymbs():
             z = '#'
         cur = 1
         while cur <= i:
-            a.update({str(cur):{z:0}})
+            try:
+                a[cur].update({z:0})
+            except:
+                a.update({str(cur):{z:0}})
             cur+=1
     return a
 
@@ -108,8 +114,6 @@ def tsttttt(m):
         itogmas = []
         s4et = 0
         while (ii - razn >= 0 and razn <= 10):
-            print(ii)
-            print(razn)
             mas.append([])
             for ids in ss[text[ii - razn]]['next_symbols']:
                 for idss in ss[text[ii - razn]]['next_symbols'][ids]:
