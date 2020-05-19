@@ -18,5 +18,5 @@ db=client.neirotalk2
 import nltk
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
-tokens = 'Лошадь жуёт траву, бегает. Лягушка квакает.'
+tokens = 'horse eats grass'
 print(nltk.pos_tag(tokens.split()))
