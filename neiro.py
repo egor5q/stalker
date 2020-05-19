@@ -182,6 +182,7 @@ def adds(m):
             return
      
     i = 0
+    ss = s.find_one({})
     for x in text:
         z = x
         if x == '.':
@@ -195,9 +196,11 @@ def adds(m):
                 nxtsmb = text[ii+razn]
                 if nxtsmb == '.':
                     nxtsmb = '^'
-                s.update_one({},{'$inc':{z+'.next_symbols.'+str(razn)+'.'+nxtsmb:1}})
+                ss[z]['next_symbols'][str(razn)][nxtsmb]+=1
                 razn += 1
         i+=1
+    s.remove({})
+    s.insert_one(ss)
     bot.send_message(m.chat.id, 'Обработано!', reply_to_message_id = m.message_id)
         
     
