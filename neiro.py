@@ -148,7 +148,7 @@ def tsttttt(m):
                     cycle4 = 0
                     allow = True
                     symbol = idsss
-                    amo = mas[cycle3][idsss]
+                    amo = mas[cycle3][symbol]
                     for idssss in mas:
                         if symbol not in mas[cycle4]:
                             allow = False
