@@ -116,8 +116,8 @@ def tsttttt(m):
         while (ii - razn >= 0 and razn <= 10):
             mas.append([])
             for ids in ss[text[ii - razn]]['next_symbols']:
-                for idss in ss[text[ii - razn]]['next_symbols'][ids]:
-                    need = ss[text[ii - razn]]['next_symbols'][ids][idss]
+                for idss in ss[text[ii - razn]]['next_symbols'][str(ii+razn)]:
+                    need = ss[text[ii - razn]]['next_symbols'][str(ii+razn)][idss]
                     cur = 0
                     while cur < need:
                         mas[s4et].append(idss)
@@ -138,7 +138,6 @@ def tsttttt(m):
                     for idssss in mas:
                         if symbol not in mas[cycle4]:
                             allow = False
-                            print(symbol)
                         cycle4 += 1
                     if allow == True:
                         itogmas.append(symbol)
