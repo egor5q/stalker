@@ -16,6 +16,7 @@ client=MongoClient(os.environ['database'])
 db=client.neirotalk2
 
 import nltk
+nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
-tokens = 'Лошадь жуёт траву.'
+tokens = 'Лошадь жуёт траву, бегает. Лягушка квакает.'
 print(nltk.pos_tag(tokens.split()))
