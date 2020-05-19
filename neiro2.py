@@ -17,4 +17,4 @@ db=client.neirotalk2
 
 import nltk
 nltk.download('averaged_perceptron_tagger')
-print(nltk.pos_tag("Machine learning is great".split()))
+print(nltk.pos_tag("Машинное обучение прекрасно функционирует.".split()))
