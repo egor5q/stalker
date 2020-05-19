@@ -117,7 +117,7 @@ def tsttttt(m):
                     cur = 0
                     print(need)
                     while cur < need:
-                        mas[s4et].append(ids)
+                        mas[s4et].append(idss)
                         cur += 1
             s4et += 1
             razn += 1
