@@ -97,7 +97,7 @@ def dellll(m):
 def tsttttt(m):
     if m.from_user.id != 441399484:
         return
-    text = ''
+    text = '&'
     lastsymbol = '&'
     ss = s.find_one({})
     i = 1
@@ -149,6 +149,7 @@ def tsttttt(m):
         i+=1
     if len(text) > 4000:
         text = text[:4000]
+    text = text[1:]
     bot.send_message(m.chat.id, text)
     
 @bot.message_handler(content_types = ['text'])
