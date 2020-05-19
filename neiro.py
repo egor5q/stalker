@@ -122,7 +122,7 @@ def tsttttt(m):
         itogmas = []
         s4et = 0
         while (ii - razn >= 0 and razn <= 10):
-            mas.append([])
+            mas.append({})
             tir = text[ii - razn]
             if tir == '.':
                 tir = '^'
@@ -130,7 +130,10 @@ def tsttttt(m):
                 need = ss[tir]['next_symbols'][str(razn)][idss]
                 cur = 0
                 while cur < need:
-                    mas[s4et].append(idss)
+                    try:
+                        mas[s4et][idss]+=1
+                    except:
+                        mas[s4et].update({idss:1})
                     cur += 1
             s4et += 1
             razn += 1
@@ -141,21 +144,22 @@ def tsttttt(m):
             cycle2 = 0
             for idss in mas:
                 cycle3 = 0
-                for idsss in mas[cycle3]:
+                for idsss in mas[idss]:
                     cycle4 = 0
                     allow = True
                     symbol = idsss
+                    amo = mas[idss][idsss]
                     for idssss in mas:
-                        if symbol not in mas[cycle4]:
+                        if symbol not in mas[idsss]:
                             allow = False
                         cycle4 += 1
                     if allow == True:
                         #if symbol not in itogmas:
                         #    itogmas.append(symbol)
                         try:
-                            itogamount[symbol] += 1
+                            itogamount[symbol] += amo
                         except:
-                            itogamount.update({symbol:1})
+                            itogamount.update({symbol:amo})
                     cycle3 += 1
                 cycle2 += 1
             cycle1 += 1     
