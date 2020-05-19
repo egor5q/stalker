@@ -15,6 +15,8 @@ client=MongoClient(os.environ['database'])
 db=client.neirotalk
 s = db.symbols
 
+stopp = False
+
 def creates():
     return {
       
@@ -103,6 +105,9 @@ def dellll(m):
 def tsttttt(m):
     if m.from_user.id != 441399484:
         return
+    global stopp
+    while stopp == True:
+        time.sleep(1)
     text = '&'
     lastsymbol = '&'
     ss = s.find_one({})
@@ -172,6 +177,9 @@ def tsttttt(m):
 def adds(m):
     if m.from_user.id != 441399484:
         return
+    global stopp
+    while stopp == True:
+        time.sleep(1)
     text = '&'+m.text+'*'
     nt = m.text
     nt = nt.replace('\n', ' ').replace('"', '').replace(' ', ' ')
@@ -199,8 +207,12 @@ def adds(m):
                 ss[z]['next_symbols'][str(razn)][nxtsmb]+=1
                 razn += 1
         i+=1
+    stopp = True
     s.remove({})
+
     s.insert_one(ss)
+    time.sleep((random.randint(1, 10)/10))
+    stopp = False
     bot.send_message(m.chat.id, 'Обработано!', reply_to_message_id = m.message_id)
         
     
