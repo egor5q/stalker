@@ -165,29 +165,14 @@ def tsttttt(m):
             except:
                 bot.send_message(m.chat.id, 'Сообщение пустое!')
             return
-        rare1 = 0
-        rare2 = 0
-        rare3 = 0
-        word1 = None
-        word2 = None
-        word3 = None
-        for ids in itogamount:
-            if itogamount[ids] > rare1:
-                rare1 = itogamount[ids]
-                word1 = ids
-            elif itogamount[ids] > rare2:
-                rare2 = itogamount[ids]
-                word2 = ids
-            elif itogamount[ids] > rare3:
-                rare3 = itogamount[ids]
-                word3 = ids
+        
         itogmas = []
-        if word1 != None:
-            itogmas.append(word1)
-        if word2 != None:
-            itogmas.append(word2)
-        if word3 != None:
-            itogmas.append(word3)
+        for ids in itogamount:
+            z = 0
+            while z < itogamount[ids]:
+                itogmas.append(ids)
+                z+=1
+
         cursymb = random.choice(itogmas)
         lastsymbol = cursymb
         if cursymb == '*':
