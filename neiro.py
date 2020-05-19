@@ -28,7 +28,7 @@ avalaible = ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', '
             'ю', 'я', ',', '.', '!', ':', ' ', '-',
             'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О',
              'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э',
-            'Ю', 'Я', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '?', '«', '»', '–', '…', '—']
+            'Ю', 'Я', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '?', '«', '»', '–', '…', '—', ';']
 
 techn = ['&', '*']
 
@@ -123,18 +123,26 @@ def tsttttt(m):
             razn += 1
          
         print(mas)
+        cycle1 = 0
         for ids in mas:
+            cycle2 = 0
             for idss in mas:
-                for idsss in mas[idss]:
+                cycle3 = 0
+                for idsss in mas[cycle3]:
+                    cycle4 = 0
                     allow = True
                     symbol = idsss
                     for idssss in mas:
-                        if symbol not in mas[idssss]:
+                        if symbol not in mas[cycle4]:
                             allow = False
                             print(symbol)
+                        cycle4 += 1
                     if allow == True:
                         itogmas.append(symbol)
-
+                    cycle3 += 1
+                cycle2 += 1
+            cycle1 += 1
+                
         if len(itogmas) == 0:
             bot.send_message(m.chat.id, text)
             return
@@ -160,7 +168,7 @@ def adds(m):
         return
     text = '&'+m.text+'*'
     nt = m.text
-    nt = nt.replace('\n', ' ').replace(';', ',').replace('"', '').replace(' ', ' ')
+    nt = nt.replace('\n', ' ').replace('"', '').replace(' ', ' ')
     for x in nt:
         if x not in avalaible:
             print(x)
