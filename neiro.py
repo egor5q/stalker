@@ -125,8 +125,11 @@ def tsttttt(m):
         s4et = 0
         while (ii - razn >= 0 and razn <= 10):
             mas.append([])
-            for idss in ss[text[ii - razn]]['next_symbols'][str(razn)]:
-                need = ss[text[ii - razn]]['next_symbols'][str(razn)][idss]
+            tir = text[ii - razn]
+            if tir == '.':
+                tir = '^'
+            for idss in ss[tir]['next_symbols'][str(razn)]:
+                need = ss[tir]['next_symbols'][str(razn)][idss]
                 cur = 0
                 while cur < need:
                     mas[s4et].append(idss)
@@ -151,8 +154,7 @@ def tsttttt(m):
                         itogmas.append(symbol)
                     cycle3 += 1
                 cycle2 += 1
-            cycle1 += 1
-        print(itogmas)        
+            cycle1 += 1     
         if len(itogmas) == 0:
             try:
                 bot.send_message(m.chat.id, text)
@@ -222,12 +224,16 @@ def adds(m):
         bot.send_message(m.chat.id, traceback.format_exc(), reply_to_message_id = m.message_id)
         mc.update_one({},{'$set':{'trigger':False}})
         return
-
-    s.remove({})
-    ss.pop('_id')
-    s.insert_one(ss)
-    time.sleep((random.randint(1, 10)/10))
-    mc.update_one({},{'$set':{'trigger':False}})
+    try:
+        s.remove({})
+        ss.pop('_id')
+        s.insert_one(ss)
+        time.sleep((random.randint(1, 10)/10))
+        mc.update_one({},{'$set':{'trigger':False}})
+    except:
+        bot.send_message(m.chat.id, traceback.format_exc(), reply_to_message_id = m.message_id)
+        mc.update_one({},{'$set':{'trigger':False}})
+        return
     bot.send_message(m.chat.id, 'Обработано!', reply_to_message_id = m.message_id)
         
     
