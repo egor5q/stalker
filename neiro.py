@@ -148,7 +148,10 @@ def tsttttt(m):
             cycle1 += 1
                 
         if len(itogmas) == 0:
-            bot.send_message(m.chat.id, text)
+            try:
+                bot.send_message(m.chat.id, text)
+            except:
+                bot.send_message(m.chat.id, 'Сообщение пустое!')
             return
         cursymb = random.choice(itogmas)
         lastsymbol = cursymb
