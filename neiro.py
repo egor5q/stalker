@@ -123,8 +123,7 @@ def tsttttt(m):
                     cur += 1
             s4et += 1
             razn += 1
-         
-        print(mas)
+
         cycle1 = 0
         for ids in mas:
             cycle2 = 0
@@ -143,7 +142,7 @@ def tsttttt(m):
                     cycle3 += 1
                 cycle2 += 1
             cycle1 += 1
-                
+        print(itogmas)        
         if len(itogmas) == 0:
             try:
                 bot.send_message(m.chat.id, text)
