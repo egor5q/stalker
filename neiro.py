@@ -134,7 +134,8 @@ def tsttttt(m):
                     cur += 1
             s4et += 1
             razn += 1
-
+        
+        itogamount = {}
         cycle1 = 0
         for ids in mas:
             cycle2 = 0
@@ -149,7 +150,12 @@ def tsttttt(m):
                             allow = False
                         cycle4 += 1
                     if allow == True:
-                        itogmas.append(symbol)
+                        #if symbol not in itogmas:
+                        #    itogmas.append(symbol)
+                        try:
+                            itogamount[symbol] += 1
+                        except:
+                            itogamount.update({symbol:1})
                     cycle3 += 1
                 cycle2 += 1
             cycle1 += 1     
@@ -159,6 +165,29 @@ def tsttttt(m):
             except:
                 bot.send_message(m.chat.id, 'Сообщение пустое!')
             return
+        rare1 = 0
+        rare2 = 0
+        rare3 = 0
+        word1 = None
+        word2 = None
+        word3 = None
+        for ids in itogamount:
+            if itogamount[ids] > rare1:
+                rare1 = itogamount[ids]
+                word1 = ids
+            elif itogamount[ids] > rare2:
+                rare2 = itogamount[ids]
+                word2 = ids
+            itogamount[ids] > rare3:
+                rare3 = itogamount[ids]
+                word3 = ids
+        itogmas = []
+        if word1 != None:
+            itogmas.append(word1)
+        if word2 != None:
+            itogmas.append(word2)
+        if word3 != None:
+            itogmas.append(word3)
         cursymb = random.choice(itogmas)
         lastsymbol = cursymb
         if cursymb == '*':
