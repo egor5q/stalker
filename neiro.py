@@ -159,7 +159,7 @@ def tsttttt(m):
                     cycle3 += 1
                 cycle2 += 1
             cycle1 += 1     
-        if len(itogmas) == 0:
+        if len(itogamount) == 0:
             try:
                 bot.send_message(m.chat.id, text)
             except:
