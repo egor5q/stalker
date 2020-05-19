@@ -119,7 +119,6 @@ def tsttttt(m):
                 for idss in ss[text[ii - razn]]['next_symbols'][ids]:
                     need = ss[text[ii - razn]]['next_symbols'][ids][idss]
                     cur = 0
-                    print(need)
                     while cur < need:
                         mas[s4et].append(idss)
                         cur += 1
@@ -167,7 +166,10 @@ def tsttttt(m):
     if len(text) > 4000:
         text = text[:4000]
     text = text[1:]
-    bot.send_message(m.chat.id, text)
+    try:
+        bot.send_message(m.chat.id, text)
+    except:
+        bot.send_message(m.chat.id, 'Сообщение пустое!')
     
 @bot.message_handler(content_types = ['text'])
 def adds(m):
