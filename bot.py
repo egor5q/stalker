@@ -16,7 +16,7 @@ token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
 
 try:
-    import neiro
+    import neiro2
 except:
     bot.send_message(441399484, traceback.format_exc())
 
