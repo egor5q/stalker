@@ -178,7 +178,7 @@ def tsttttt(m):
             elif itogamount[ids] > rare2:
                 rare2 = itogamount[ids]
                 word2 = ids
-            itogamount[ids] > rare3:
+            elif itogamount[ids] > rare3:
                 rare3 = itogamount[ids]
                 word3 = ids
         itogmas = []
