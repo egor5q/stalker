@@ -118,9 +118,9 @@ def tsttttt(m):
             for idss in ss[text[ii - razn]]['next_symbols'][str(razn)]:
                 need = ss[text[ii - razn]]['next_symbols'][str(razn)][idss]
                 cur = 0
-                #while cur < need:
-                mas[s4et].append(idss)
-                #    cur += 1
+                while cur < need:
+                    mas[s4et].append(idss)
+                    cur += 1
             s4et += 1
             razn += 1
 
