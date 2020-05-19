@@ -115,8 +115,8 @@ def tsttttt(m):
         s4et = 0
         while (ii - razn >= 0 and razn <= 10):
             mas.append([])
-            for idss in ss[text[ii - razn]]['next_symbols'][str(ii+razn-1)]:
-                need = ss[text[ii - razn]]['next_symbols'][str(ii+razn-1)][idss]
+            for idss in ss[text[ii - razn]]['next_symbols'][str(ii)]:
+                need = ss[text[ii - razn]]['next_symbols'][str(ii)][idss]
                 cur = 0
                 while cur < need:
                     mas[s4et].append(idss)
@@ -179,7 +179,7 @@ def adds(m):
     for x in nt:
         if x not in avalaible:
             print(x)
-            bot.send_message(m.chat.id, '"```'+str(x)+'```"', parse_mode = 'markdown')
+            bot.send_message(m.chat.id, '"```'+str(x)+'```"', parse_mode = 'markdown', reply_to_message_id = m.message_id)
             return
      
     i = 0
@@ -199,6 +199,7 @@ def adds(m):
                 s.update_one({},{'$inc':{z+'.next_symbols.'+str(razn)+'.'+nxtsmb:1}})
                 razn += 1
         i+=1
+    bot.send_message(m.chat.id, 'Обработано!', reply_to_message_id = m.message_id)
         
     
 
