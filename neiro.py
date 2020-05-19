@@ -115,8 +115,8 @@ def tsttttt(m):
         s4et = 0
         while (ii - razn >= 0 and razn <= 10):
             mas.append([])
-            for idss in ss[text[ii - razn]]['next_symbols'][str(ii-razn)]:
-                need = ss[text[ii - razn]]['next_symbols'][str(ii-razn)][idss]
+            for idss in ss[text[ii - razn]]['next_symbols'][str(ii+razn-1)]:
+                need = ss[text[ii - razn]]['next_symbols'][str(ii+razn-1)][idss]
                 cur = 0
                 while cur < need:
                     mas[s4et].append(idss)
