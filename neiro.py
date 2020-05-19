@@ -44,7 +44,7 @@ def nextsymbs():
         cur = 1
         while cur <= i:
             try:
-                a[cur].update({z:0})
+                a[str(cur)].update({z:0})
             except:
                 a.update({str(cur):{z:0}})
             cur+=1
@@ -57,7 +57,7 @@ def nextsymbs():
         cur = 1
         while cur <= i:
             try:
-                a[cur].update({z:0})
+                a[str(cur)].update({z:0})
             except:
                 a.update({str(cur):{z:0}})
             cur+=1
