@@ -1465,7 +1465,7 @@ def poll(b):
     b.polling(none_stop = True)
 
 threading.Thread(target = poll, args = [wen.bot]).start()
-threading.Thread(target = poll, args = [neiro.bot]).start()
+#threading.Thread(target = poll, args = [neiro.bot]).start()
 print('7777')
 
 bot.polling(none_stop=True, timeout=600)
