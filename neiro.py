@@ -107,7 +107,7 @@ def tsttttt(m):
         mas = []
         itogmas = []
         s4et = 0
-        while (ii - razn > 0 and razn <= 10):
+        while (ii - razn >= 0 and razn <= 10):
             print(ii)
             print(razn)
             mas.append([])
