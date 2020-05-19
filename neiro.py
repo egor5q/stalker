@@ -108,6 +108,8 @@ def tsttttt(m):
         itogmas = []
         s4et = 0
         while (ii - razn > 0 and razn <= 10):
+            print(ii)
+            print(razn)
             mas.append([])
             for ids in ss[ii - razn]['next_symbols']:
                 need = ss[ii - razn]['next_symbols'][ids]
