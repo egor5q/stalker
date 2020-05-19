@@ -199,7 +199,6 @@ def adds(m):
                 if nxtsmb == '.':
                     nxtsmb = '^'
                 s.update_one({},{'$inc':{z+'.next_symbols.'+str(razn)+'.'+nxtsmb:1}})
-                ii+=1
                 razn += 1
         i+=1
         
