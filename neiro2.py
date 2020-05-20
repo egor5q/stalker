@@ -141,8 +141,20 @@ def callssss(call):
         added = check_predlozh(ids, True)
         if added != False and added != True:
             kb = types.InlineKeyboardMarkup()
-            for ids in parts:
-                kb.add(types.InlineKeyboardButton(text = ids.title(), callback_data = 'addword?'+added+'?'+ids))
+            for idss in parts:
+                cs = 1
+                allow = True
+                for idsss in sokr:
+                    if sokr[idsss]['id'] == cs:
+                        allow = False
+                while allow == False:
+                    allow = True
+                    for idsss in sokr:
+                        if sokr[idsss]['id'] == cs:
+                            allow = False
+                    cs += 1
+                sokr.update({str(cs):{'id':cs, 'text':added}})
+                kb.add(types.InlineKeyboardButton(text = idss.title(), callback_data = 'addword?'+str(cs)+'?'+idss))
             bot.send_message(call.message.chat.id, added, reply_markup = kb)
             
     
