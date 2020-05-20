@@ -194,6 +194,7 @@ def check_predlozh(text, newword = False):
     for ids in w:
         word = ids
         znak = None
+        pered = None
         znaks = []
         if word[-1] not in avalaible:
             znak = word[-1]
@@ -201,10 +202,15 @@ def check_predlozh(text, newword = False):
         while word[-1] not in avalaible:
             znaks.append(word[-1])
             word = word[:len(word)-1]
+        if word[0] not in avalaible:
+            pered = word[0]
+            word = word[1:]
         if word not in known['words'] and word.lower() not in known['words']:
             if newword == True:
                 return word
             return False
+        if pered != None:
+            construct.append(pered)
         try:
             construct.append(known['words'][word]['type'])
         except:
