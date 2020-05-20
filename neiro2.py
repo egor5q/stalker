@@ -213,8 +213,8 @@ def adds(m):
                 bot.send_message(m.chat.id, curtext)
                 curtext = ''
         else:
-            if ids != ' ':
-                curtext += ids
+         
+            curtext += ids
         i+=1
     if curtext != '':
         sents.append(curtext)
