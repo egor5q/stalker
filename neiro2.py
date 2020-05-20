@@ -91,7 +91,7 @@ def msgsss(m):
                         cw = cw.title()
                 text += cw
                 try:
-                    if curst[i+1] not in znaki:
+                    if curst[i+1] not in znaki or curst[i+1] == '-':
                         text += ' '
                 except:
                     pass
