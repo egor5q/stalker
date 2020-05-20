@@ -42,6 +42,10 @@ endsent = ['.', '!', '?']
 znaki = [',', '.', '!', ':', '-', '?', ';', '"']
 
 
+sokr = {
+
+}
+
 @bot.message_handler(commands=['get_words'])
 def getwords(m):
   try:
@@ -53,10 +57,19 @@ def getwords(m):
         if added != False and added != True:
             kb = types.InlineKeyboardMarkup()
             for idss in parts:
-                bot.send_message(m.chat.id, added)
-                bot.send_message(m.chat.id, idss)
-                
-                kb.add(types.InlineKeyboardButton(text = ids.title(), callback_data = 'addword?'+added+'?'+idss))
+                cs = 1
+                allow = True
+                for idsss in sokr:
+                    if sokr[idsss]['id'] == cs:
+                        allow = False
+                while allow == False:
+                    allow = True
+                    for idsss in sokr:
+                        if sokr[idsss]['id'] == cs:
+                            allow = False
+                    cs += 1
+                sokr.update({str(cs):{'id':cs, 'text':added}})
+                kb.add(types.InlineKeyboardButton(text = ids.title(), callback_data = 'addword?'+str(cs)+'?'+idss))
             bot.send_message(m.chat.id, added, reply_markup = kb)
   except:
     bot.send_message(441399484, traceback.format_exc())
@@ -114,7 +127,10 @@ def msgsss(m):
         
 @bot.callback_query_handler(func = lambda call: True)
 def callssss(call):
-    word = call.data.split('?')[1]
+    try:
+        word = sokr[call.data.split('?')[1]]['text']
+    except:
+        return
     typee = call.data.split('?')[2]
     if typee != 'имя-название':
         word = word.lower()
