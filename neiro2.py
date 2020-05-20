@@ -73,10 +73,11 @@ def msgsss(m):
     except:
         pass
     st = sent_types.find_one({})
-    curst = random.choice(st['types'])
+    
     w = words.find_one({})
     currentprs = 1
     while currentprs <= prs:
+        curst = random.choice(st['types'])
         i = 0
         for ids in curst:
             if ids in parts:
