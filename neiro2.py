@@ -86,7 +86,11 @@ def skippp(m):
     if m.from_user.id != 441399484:
         return
     x = sent_to_check.find_one({})
-    sent_to_check.update_one({},{'$pull':{'sents':x['sents'][0]}})
+    try:
+        sent_to_check.update_one({},{'$pull':{'sents':x['sents'][0]}})
+    except:
+        bot.send_message(m.chat.id, 'Пусто!')
+        return
     bot.send_message(m.chat.id, 'предложение '+x['sents'][0]+' удалено!')
 
             
