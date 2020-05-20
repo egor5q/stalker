@@ -196,7 +196,22 @@ def adds(m):
         if ids not in avalaible and ids not in znaki:
             bot.send_message(m.chat.id, '"'+ids+'"')
             return
-    sent_to_check.update_one({},{'$push':{'sents':text}})
+    sents = []
+   
+    curtext = ''
+    for ids in text:
+        if ids in endsent:
+            curtext += ids
+            sents.append(curtext)
+            bot.send_message(m.chat.id, curtext)
+            curtext = ''
+        else:
+            curtext += ids
+    if curtext != '':
+        sents.append(curtext)
+        curtext = ''
+    for ids in sents:        
+        sent_to_check.update_one({},{'$push':{'sents':ids}})
     bot.send_message(m.chat.id, 'Добавлено!')
     
 def check_predlozh(text, newword = False):
