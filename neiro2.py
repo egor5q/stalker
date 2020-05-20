@@ -194,8 +194,12 @@ def check_predlozh(text, newword = False):
     for ids in w:
         word = ids
         znak = None
+        znaks = []
         if word[-1] not in avalaible:
             znak = word[-1]
+            word = word[:len(word)-1]
+        while word[-1] not in avalaible:
+            znaks.append(word[-1])
             word = word[:len(word)-1]
         if word not in known['words'] and word.lower() not in known['words']:
             if newword == True:
@@ -207,6 +211,8 @@ def check_predlozh(text, newword = False):
             construct.append(known['words'][word.lower()]['type'])
         if znak != None:
             construct.append(znak)
+            for idss in znaks:
+                construct.append(idss)
       
     if construct not in sent_types.find_one({})['types']:
         sent_types.update_one({},{'$push':{'types':construct}})
