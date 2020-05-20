@@ -28,7 +28,7 @@ if sent_types.find_one({}) == None:
     sent_types.insert_one({'types':[]})
     
 parts = ['существительное', 'прилагательное', 'числительное', 'глагол', 'местоимение', 'наречие', 'предикатив', 'причастие',
-         'деепричастие', 'предлог', 'союз', 'частица']
+         'деепричастие', 'предлог', 'союз', 'частица', 'имя-название']
 
 avalaible = ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о',
              'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э',
@@ -58,6 +58,8 @@ def getwords(m):
 def callssss(call):
     word = call.data.split('?')[1]
     typee = call.data.split('?')[2]
+    if typee != 'имя-название':
+        word = word.lower()
     words.update_one({},{'$set':{'words.'+word:{'type':typee}}})
     medit('Добавлено слово "'+word+'": '+typee+'!', call.message.chat.id, call.message.message_id)
     
