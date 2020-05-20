@@ -53,6 +53,9 @@ def getwords(m):
         if added != False and added != True:
             kb = types.InlineKeyboardMarkup()
             for ids in parts:
+                bot.send_message(m.chat.id, added)
+                bot.send_message(m.chat.id, ids)
+                
                 kb.add(types.InlineKeyboardButton(text = ids.title(), callback_data = 'addword?'+added+'?'+ids))
             bot.send_message(m.chat.id, added, reply_markup = kb)
   except:
