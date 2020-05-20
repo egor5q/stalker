@@ -136,6 +136,7 @@ def msgsss(m):
         
 @bot.callback_query_handler(func = lambda call: True)
 def callssss(call):
+  try:
     try:
         word = sokr[call.data.split('?')[1]]['text']
     except:
@@ -166,6 +167,8 @@ def callssss(call):
                 kb.add(types.InlineKeyboardButton(text = idss.title(), callback_data = 'addword?'+str(cs)+'?'+idss))
             bot.send_message(call.message.chat.id, added, reply_markup = kb)
             
+  except:
+    bot.send_message(441399484, traceback.format_exc())
     
 @bot.message_handler(commands=['new_amount'])
 def newam(m):
