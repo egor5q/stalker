@@ -69,7 +69,7 @@ def getwords(m):
                             allow = False
                     cs += 1
                 sokr.update({str(cs):{'id':cs, 'text':added}})
-                kb.add(types.InlineKeyboardButton(text = ids.title(), callback_data = 'addword?'+str(cs)+'?'+idss))
+                kb.add(types.InlineKeyboardButton(text = idss.title(), callback_data = 'addword?'+str(cs)+'?'+idss))
             bot.send_message(m.chat.id, added, reply_markup = kb)
   except:
     bot.send_message(441399484, traceback.format_exc())
