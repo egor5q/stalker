@@ -208,23 +208,32 @@ def check_predlozh(text, newword = False):
         if word[-1] not in avalaible:
             znak = word[-1]
             word = word[:len(word)-1]
-        while word[-1] not in avalaible:
-            znaks.append(word[-1])
-            word = word[:len(word)-1]
-        if word[0] not in avalaible:
-            pered = word[0]
-            word = word[1:]
-        if word not in known['words'] and word.lower() not in known['words']:
-            if newword == True:
-                return word
-            return False
+        try:
+            while word[-1] not in avalaible:
+                znaks.append(word[-1])
+                word = word[:len(word)-1]
+        except:
+            word = None
+        if word != None:
+            if word[0] not in avalaible:
+                pered = word[0]
+                word = word[1:]
+        if word != None:
+            if word not in known['words'] and word.lower() not in known['words']:
+                if newword == True:
+                    return word
+                return False
+         
         if pered != None:
             construct.append(pered)
-        try:
-            construct.append(known['words'][word]['type'])
-        except:
-            construct.append(known['words'][word.lower()]['type'])
-        if znak != None:
+        if word != None:
+            try:
+                construct.append(known['words'][word]['type'])
+            except:
+                construct.append(known['words'][word.lower()]['type'])
+        else:
+            construct.append(znak)
+        if znak != None and word != None:
             construct.append(znak)
             for idss in znaks:
                 construct.append(idss)
