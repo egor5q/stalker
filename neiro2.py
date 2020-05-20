@@ -44,6 +44,7 @@ znaki = [',', '.', '!', ':', '-', '?', ';', '"']
 
 @bot.message_handler(commands=['get_words'])
 def getwords(m):
+  try:
     if m.chat.id != 441399484:
         return
     x = sent_to_check.find_one({})
@@ -54,6 +55,8 @@ def getwords(m):
             for ids in parts:
                 kb.add(types.InlineKeyboardButton(text = ids.title(), callback_data = 'addword?'+added+'?'+ids))
             bot.send_message(m.chat.id, added, reply_markup = kb)
+  except:
+    bot.send_message(441399484, traceback.format_exc())
             
 #@bot.message_handler(commands=['clearrrrrrrrrr'])
 #def clrrr(m):
