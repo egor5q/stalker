@@ -197,16 +197,25 @@ def adds(m):
             bot.send_message(m.chat.id, '"'+ids+'"')
             return
     sents = []
-   
+    i = 0
     curtext = ''
     for ids in text:
         if ids in endsent:
-            curtext += ids
-            sents.append(curtext)
-            bot.send_message(m.chat.id, curtext)
-            curtext = ''
+            if curtext == '':
+                pass
+            else:
+                curtext += ids
+                if text[i+1] in endsent:
+                    curtext += text[i+1]
+                if text[i+2] in endsent:
+                    curtext += text[i+2]
+                sents.append(curtext)
+                bot.send_message(m.chat.id, curtext)
+                curtext = ''
         else:
-            curtext += ids
+            if ids != ' ':
+                curtext += ids
+        i+=1
     if curtext != '':
         sents.append(curtext)
         curtext = ''
