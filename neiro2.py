@@ -64,6 +64,8 @@ def getwords(m):
             
 @bot.message_handler(commands=['msg'])
 def msgsss(m):
+    if m.from_user.id != 441399484:
+        return
     text = ''
     prs = 2
     try:
@@ -100,7 +102,7 @@ def msgsss(m):
             i+=1
         currentprs += 1
         
-    bot.send_message(m.chat.id, msg)
+    bot.send_message(m.chat.id, text)
         
         
 @bot.callback_query_handler(func = lambda call: True)
