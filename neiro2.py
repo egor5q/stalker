@@ -102,7 +102,7 @@ def check_predlozh(text, newword = False):
         if word[-1] not in avalaible:
             znak = word[-1]
             word = word[:len(word)-1]
-        if word not in known['words']:
+        if word not in known['words'] and word.lower() not in known['words']:
             if newword == True:
                 return word
             return False
