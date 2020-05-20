@@ -113,6 +113,15 @@ def callssss(call):
         word = word.lower()
     words.update_one({},{'$set':{'words.'+word:{'type':typee}}})
     medit('Добавлено слово "'+word+'": '+typee+'!', call.message.chat.id, call.message.message_id)
+    x = sent_to_check.find_one({})
+    for ids in x['sents']:
+        added = check_predlozh(ids, True)
+        if added != False and added != True:
+            kb = types.InlineKeyboardMarkup()
+            for ids in parts:
+                kb.add(types.InlineKeyboardButton(text = ids.title(), callback_data = 'addword?'+added+'?'+ids))
+            bot.send_message(call.message.chat.id, added, reply_markup = kb)
+            
     
 @bot.message_handler(commands=['new_amount'])
 def newam(m):
