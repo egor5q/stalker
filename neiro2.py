@@ -72,6 +72,7 @@ def getwords(m):
                 sokr.update({str(cs):{'id':cs, 'text':added}})
                 kb.add(types.InlineKeyboardButton(text = idss.title(), callback_data = 'addword?'+str(cs)+'?'+idss))
             bot.send_message(m.chat.id, added, reply_markup = kb)
+            return
   except:
     bot.send_message(441399484, traceback.format_exc())
             
@@ -170,6 +171,7 @@ def callssss(call):
                 sokr.update({str(cs):{'id':cs, 'text':added}})
                 kb.add(types.InlineKeyboardButton(text = idss.title(), callback_data = 'addword?'+str(cs)+'?'+idss))
             bot.send_message(call.message.chat.id, added, reply_markup = kb)
+            return
             
   except:
     bot.send_message(441399484, traceback.format_exc())
