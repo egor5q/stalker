@@ -37,6 +37,8 @@ avalaible = ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', '
              'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э',
             'Ю', 'Я', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ' ']
 
+endsent = ['.', '!', '?']
+
 znaki = [',', '.', '!', ':', '-', '?', ';']
 
 
@@ -53,7 +55,54 @@ def getwords(m):
                 kb.add(types.InlineKeyboardButton(text = ids.title(), callback_data = 'addword?'+added+'?'+ids))
             bot.send_message(m.chat.id, added, reply_markup = kb)
             
+#@bot.message_handler(commands=['clearrrrrrrrrr'])
+#def clrrr(m):
+#    if m.chat.id != 441399484:
+#        return
+#    
             
+            
+@bot.message_handler(commands=['msg'])
+def msgsss(m):
+    text = ''
+    prs = 2
+    try:
+        prs = int(m.text.split(' ')[1])
+    except:
+        pass
+    st = sent_types.find_one({})
+    curst = random.choice(st['types'])
+    w = words.find_one({})
+    currentprs = 1
+    while currentprs <= prs:
+        i = 0
+        for ids in curst:
+            if ids in parts:
+                aval = []
+                for idss in w['words']:
+                    if w['words'][idss]['type'] == ids:
+                        aval.append(idss)
+                cw = random.choice(aval)
+                if text == '' or text[-1] in endsent:
+                    if ids != 'имя-название':
+                        cw = cw.title()
+                text += cw
+                try:
+                    if curst[i+1] not in znaki:
+                        text += ' '
+                except:
+                    pass
+            else:
+                text += ids
+                text += ' '
+            
+                
+            i+=1
+        currentprs += 1
+        
+    bot.send_message(m.chat.id, msg)
+        
+        
 @bot.callback_query_handler(func = lambda call: True)
 def callssss(call):
     word = call.data.split('?')[1]
