@@ -209,10 +209,13 @@ def adds(m):
                 pass
             else:
                 curtext += ids
-                if text[i+1] in endsent:
-                    curtext += text[i+1]
-                if text[i+2] in endsent:
-                    curtext += text[i+2]
+                try:
+                    if text[i+1] in endsent:
+                        curtext += text[i+1]
+                    if text[i+2] in endsent:
+                        curtext += text[i+2]
+                except:
+                    pass
                 sents.append(curtext)
                 bot.send_message(m.chat.id, curtext)
                 curtext = ''
