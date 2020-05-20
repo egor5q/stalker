@@ -106,7 +106,10 @@ def check_predlozh(text, newword = False):
             if newword == True:
                 return word
             return False
-        construct.append(known['words'][word]['type'])
+        try:
+            construct.append(known['words'][word]['type'])
+        except:
+            construct.append(known['words'][word.lower()]['type'])
         if znak != None:
             construct.append(znak)
       
