@@ -66,7 +66,7 @@ def rplyy(m):
                     bot.send_message(m.chat.id, random.choice(['Зачем ты это делаешь?']), reply_to_message_id = m.message_id)
                     return
     if random.randint(1, 100) <= 100:
-        als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?', 'Что случилось?', 'Что случилось', 'М?', 'Ты о чем?']
+        als = ['?', 'Что?', 'Почему?', 'Зачем?', 'Что такого я сделал?', 'Что случилось?', 'Что случилось', 'М?', 'Ты о чем?', 'Шо нада']
         bot.send_chat_action(m.chat.id, 'typing')
         time.sleep(3)
         bot.send_message(m.chat.id, random.choice(als), reply_to_message_id = m.message_id)
