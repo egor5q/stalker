@@ -10,6 +10,7 @@ from pymongo import MongoClient
 import traceback
 import json
 import wen
+
     
 
 token = os.environ['TELEGRAM_TOKEN']
