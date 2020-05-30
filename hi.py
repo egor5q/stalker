@@ -3,10 +3,8 @@ import traceback
 from telebot import types, TeleBot
 import time
 import threading
-import config
 import telebot
 import os
-import config
 
 bot = TeleBot(os.environ['hi'])
 
