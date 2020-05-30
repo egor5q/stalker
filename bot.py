@@ -10,16 +10,13 @@ from pymongo import MongoClient
 import traceback
 import json
 import wen
+import hi
 
     
 
 token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
 
-try:
-    import neiro2
-except:
-    bot.send_message(441399484, traceback.format_exc())
 
 client=MongoClient(os.environ['database'])
 db=client.lifesim
@@ -1466,7 +1463,7 @@ def poll(b):
     b.polling(none_stop = True)
 
 threading.Thread(target = poll, args = [wen.bot]).start()
-threading.Thread(target = poll, args = [neiro2.bot]).start()
+threading.Thread(target = poll, args = [hi.bot]).start()
 print('7777')
 
 bot.polling(none_stop=True, timeout=600)
