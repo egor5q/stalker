@@ -1,1 +1,1 @@
-bot: pythfvrgon3 bot.py
+bot: python3

@@ -1,15 +1,12 @@
 import config as os
+from config import *
 import telebot
 import time
 import random
 import threading
-from emoji import emojize
 from telebot import types
 from pymongo import MongoClient
 import traceback
-import json
-import wen
-import hi
 
 # НЕ СПУСКАЙТЕСЬ НИЖЕ ТУТ ДУШИ МЕРТВЫХ ДЕВСТВЕННИЦ
 
@@ -25,43 +22,43 @@ kvs = db.kvs
 
 users.update_many({}, {'$set': {'human.walking': False}})
 
+
 # kvs.update_many({},{'$set':{'locked':True}})
 # for ids in kvs.find({}):
-#    bot.send_message(ids['id'], 'Программа по улучшению уровня жизни города доставила вам в квартиру бесплатный холодильник!')
-
+#    bot.send_message(ids['id'], text)
 # users.update_many({},{'$set':{'human.take_away':False, 'human.mix':[]}})
 
-
-def currentshop(h):
+# ААААААААААААААААААААААаааааааааааааааааааааааааааааааааааааА
+def currentshop(human):
     shop = None
-    for ids in streets[h['position']['street']]['buildings']:
-        if streets[h['position']['street']]['buildings'][ids]['code'] == h['position']['building']:
-            shop = streets[h['position']['street']]['buildings'][ids]
+    for building in streets[human['position']['street']]['buildings']:
+        if streets[human['position']['street']]['buildings'][building]['code'] == human['position']['building']:
+            shop = streets[human['position']['street']]['buildings'][building]
     return shop
 
 
-def product(p, cost=0, give_desc=False):
+def init_product(food, cost=0, give_desc=False):
     name = 'Не опознано'
     value = 0
-    desc = 'Неизвестно'
-    code = p
+    food_desc = 'Неизвестно'
+    code = food
     weight = 1
-    if p == 'bread':
+    if food == 'bread':
         name = 'Хлеб'
         value = 1
-        desc = 'Обычный хлеб. Восстанавливает 1🍗.'
+        food_desc = 'Обычный хлеб. Восстанавливает 1🍗.'
         weight = 2
 
-    elif p == 'sousage':
+    elif food == 'sousage':
         name = 'Сосиски'
         value = 4
-        desc = 'Сосиски из свинины. Восстанавливают 4🍗.'
+        food_desc = 'Сосиски из свинины. Восстанавливают 4🍗.'
         weight = 6
 
-    elif p == 'conserves':
+    elif food == 'conserves':
         name = 'Рыбные консервы'
         value = 3
-        desc = 'Дешёвые консервы. Для тех, кто не очень богат. Восстанавливают 3🍗.'
+        food_desc = 'Дешёвые консервы. Для тех, кто не очень богат. Восстанавливают 3🍗.'
         weight = 5
 
     obj = {
@@ -72,7 +69,7 @@ def product(p, cost=0, give_desc=False):
         'weight': weight
     }
     if give_desc:
-        return desc
+        return food_desc
     return obj
 
 
@@ -81,7 +78,7 @@ streets = {
         'name': 'Битард-стрит',
         'nearlocs': ['meet_street', 'shop_street'],
         'code': 'bitard_street',
-        'homes': ['17', '18', '30'],
+        'homes': ['17', '18', '30'],                                     # УХОДИ
         'buildings': {},
         'humans': []
     },
@@ -108,9 +105,9 @@ streets = {
                 'humans': [],
                 'code': 'sitniy',
                 'products': {
-                    'bread': product('bread', 50),
-                    'sousage': product('sousage', 300),
-                    'conserves': product('conserves', 150)
+                    'bread': init_product('bread', 50),
+                    'sousage': init_product('sousage', 300),
+                    'conserves': init_product('conserves', 150)
                 }
             }
         },
@@ -130,39 +127,30 @@ streets = {
 
 # locs.remove({'code':'shop_street'})
 
-for ids in streets:
-    street = streets[ids]
-    if locs.find_one({'code': street['code']}) == None:
+for street in streets:
+    street = streets[street]
+    if not locs.find_one({'code': street['code']}):
         locs.insert_one(street)
 
-for ids in locs.find({}):
-    for idss in ids['buildings']:
-        b = ids['buildings'][idss]
-        if b['type'] == 'shop':
-            for idsss in streets[ids['code']]['buildings'][b['code']]['products']:
-                p = streets[ids['code']]['buildings'][b['code']]['products'][idsss]
-                if p['code'] not in b['products']:
-                    locs.update_one({'code': ids['code']},
-                                    {'$set': {'buildings.' + b['code'] + '.products.' + p['code']: p}})
-
-letters = [' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у',
-           'ф',
-           'х', 'ц', 'ч', 'ш', 'щ', 'ь', 'ъ', 'ы', 'э', 'ю', 'я']
-
-emjs = ['🚶', '🚶‍♀️']
-
-h_colors = ['brown', 'gold', 'orange', 'black']
-h_lenghts = ['short', 'medium', 'long']
+for street in locs.find({}):
+    for building in street['buildings']:
+        building = street['buildings'][building]
+        if building['type'] == 'shop':
+            for product in streets[street['code']]['buildings'][building['code']]['products']:
+                product = streets[street['code']]['buildings'][building['code']]['products'][product]
+                if product['code'] not in building['products']:
+                    locs.update_one({'code': street['code']},
+                                    {'$set': {f'buildings.{building["code"]}.products.{product["code"]}': product}})
 
 
 def reply_kb(user):
     kb = types.ReplyKeyboardMarkup()
-    em = '🚶'
+    emoji = '🚶'
     if user['human']['gender'] == 'female':
-        em = '🚶‍♀️'
-    kb.add(types.KeyboardButton(em + 'Передвижение'))
+        emoji = '🚶‍♀️'
+    kb.add(types.KeyboardButton(emoji + 'Передвижение'))
     h = user['human']
-    if h['position']['flat'] != None:
+    if h['position']['flat']:
         kb.add(types.KeyboardButton('🗄' + 'Холодильник'), types.KeyboardButton('🍗' + 'Еда'))
         kb.add(types.KeyboardButton('📱' + 'Искать подработку'), types.KeyboardButton('🛏' + 'Сон'))
         kb.add(types.KeyboardButton('🔐Закрыть/открыть квартиру'))
@@ -402,7 +390,7 @@ def cafeacts(call):
             bot.answer_callback_query(call.id, 'На столе пусто! Нельзя питаться тарелкой!', show_alert=True)
             return
         for ids in h['mix']:
-            p = product(ids)
+            p = init_product(ids)
             hunger += p['value']
         if 'sousage' in h['mix'] and 'bread' in h['mix']:
             hunger += 2
@@ -439,14 +427,14 @@ def get_eating(user):
         mix = '✅'
         take_away = '☑'
         for ids in h['inv']:
-            kb.add(types.InlineKeyboardButton(text=product(ids)['name'], callback_data='cafe?mix?' + ids))
+            kb.add(types.InlineKeyboardButton(text=init_product(ids)['name'], callback_data='cafe?mix?' + ids))
     elif h['take_away'] == True:
         mix = '☑'
         take_away = '✅'
         for ids in h['mix']:
             x = gettype(ids)
             if x == 'product':
-                kb.add(types.InlineKeyboardButton(text=product(ids)['name'], callback_data='cafe?take_away?' + ids))
+                kb.add(types.InlineKeyboardButton(text=init_product(ids)['name'], callback_data='cafe?take_away?' + ids))
     kb.add(types.InlineKeyboardButton(text=mix + 'Добавить ингредиенты', callback_data='cafe?unset_take_away'),
            types.InlineKeyboardButton(text=take_away + 'Убрать ингредиенты', callback_data='cafe?set_take_away'))
     kb.add(types.InlineKeyboardButton(text='🥣' + 'Приготовить и съесть', callback_data='cafe?ready'))
@@ -467,14 +455,14 @@ def get_fridge(user):
         if kv == None:
             return None
         for ids in kv['objects']['fridge']['inv']:
-            kb.add(types.InlineKeyboardButton(text=product(ids)['name'], callback_data='fridge?take?' + ids))
+            kb.add(types.InlineKeyboardButton(text=init_product(ids)['name'], callback_data='fridge?take?' + ids))
     elif h['kl'] == True:
         br = '☑'
         kl = '✅'
         for ids in h['inv']:
             x = gettype(ids)
             if x == 'product':
-                kb.add(types.InlineKeyboardButton(text=product(ids)['name'], callback_data='fridge?put?' + ids))
+                kb.add(types.InlineKeyboardButton(text=init_product(ids)['name'], callback_data='fridge?put?' + ids))
     kb.add(types.InlineKeyboardButton(text=br + 'Брать продукты', callback_data='fridge?set_br'),
            types.InlineKeyboardButton(text=kl + 'Класть продукты', callback_data='fridge?set_kl'))
     return kb
@@ -515,10 +503,10 @@ def fridgeacts(call):
             bot.answer_callback_query(call.id, 'У вас этого нет!', show_alert=True)
             return
         kv = kvs.find_one({'id': h['position']['flat']})
-        weight = product(what)['weight']
+        weight = init_product(what)['weight']
         alred = 0
         for ids in kv['objects']['fridge']['inv']:
-            alred += product(ids)['weight']
+            alred += init_product(ids)['weight']
         if kv['objects']['fridge']['maxweight'] - alred < weight:
             bot.answer_callback_query(call.id, 'В холодильнике недостаточно места!', show_alert=True)
             return
@@ -538,10 +526,10 @@ def fridgeacts(call):
         if what not in kv['objects']['fridge']['inv']:
             bot.answer_callback_query(call.id, 'В холодильнике этого нет!', show_alert=True)
             return
-        weight = product(what)['weight']
+        weight = init_product(what)['weight']
         alred = 0
         for ids in h['inv']:
-            alred += product(ids)['weight']
+            alred += init_product(ids)['weight']
         if h['inv_maxweight'] - alred < weight:
             bot.answer_callback_query(call.id, 'Вы не можете столько нести!', show_alert=True)
             return
@@ -558,7 +546,7 @@ def fridgeacts(call):
 
 def gettype(x):
     typee = '?'
-    a = product(x)
+    a = init_product(x)
     if a['name'] == 'Не опознано':
         pass
     else:
@@ -659,7 +647,7 @@ def doings(m):
             try:
                 kv = kvs.find_one({'id': int(which)})
                 if kv == None:
-                    crash += 1
+                    raise
             except:
                 bot.send_message(m.chat.id, 'От такой квартиры ключей у вас нет!')
                 return
@@ -815,7 +803,7 @@ def getshop(shop, user=None):
 
 def getweight(x, obj='product'):
     if obj == 'product':
-        return product(x, 0)['weight']
+        return init_product(x, 0)['weight']
 
 
 def desc(user, high=False):
@@ -1015,7 +1003,7 @@ def alltxts(m):
                     age = int(m.text)
                     val = age
                     if age < 18 or age > 25:
-                        crash += '_'
+                        raise
                 except:
                     allow = False
                     er_text = 'Начальный возраст может быть от 18 до 25!'
@@ -1048,7 +1036,7 @@ def alltxts(m):
                     height = int(m.text)
                     val = height
                     if height < 140 or height > 200:
-                        crash += '_'
+                        raise
                 except:
                     allow = False
                     er_text = 'Рост может быть от 140 до 200 см!'
@@ -1145,7 +1133,7 @@ def shopping1(call):
         if weight > (h['inv_maxweight'] + h['strenght']):
             bot.answer_callback_query(call.id, 'Вы не можете нести такой вес!', show_alert=True)
             return
-        prod = product(pr, 0)
+        prod = init_product(pr, 0)
         users.update_one({'id': user['id']}, {'$push': {'human.shop_inv': pr}})
         bot.answer_callback_query(call.id, 'Вы положили продукт в телегу для покупок.', show_alert=True)
 
@@ -1208,7 +1196,7 @@ def shopping1(call):
 def getbuylist(h):
     kb = types.InlineKeyboardMarkup()
     for ids in h['shop_inv']:
-        kb.add(types.InlineKeyboardButton(text=product(ids, 0)['name'], callback_data='shop?remove?' + ids))
+        kb.add(types.InlineKeyboardButton(text=init_product(ids, 0)['name'], callback_data='shop?remove?' + ids))
     kb.add(types.InlineKeyboardButton(text='↩Вернуться к полкам', callback_data='shop?mainmenu'))
     return kb
 
@@ -1237,7 +1225,7 @@ def shopping(call):
         kb = types.InlineKeyboardMarkup()
         kb.add(types.InlineKeyboardButton(text='Купить', callback_data='shop?buy?' + pr))
         kb.add(types.InlineKeyboardButton(text='↩Вернуться к полкам', callback_data='shop?mainmenu'))
-        medit(product(pr, 0, True) + '\nЦена: ' + str(shop['products'][pr]['cost']) + '💶', call.message.chat.id,
+        medit(init_product(pr, 0, True) + '\nЦена: ' + str(shop['products'][pr]['cost']) + '💶', call.message.chat.id,
               call.message.message_id, reply_markup=kb)
     except:
         print(traceback.format_exc())
@@ -1439,18 +1427,3 @@ def getuser(u):
 def medit(message_text, chat_id, message_id, reply_markup=None, parse_mode=None):
     return bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=message_text, reply_markup=reply_markup,
                                  parse_mode=parse_mode)
-
-
-def polll(x):
-    x()
-
-
-def poll(b):
-    b.polling(none_stop=True)
-
-
-threading.Thread(target=poll, args=[wen.bot]).start()
-threading.Thread(target=poll, args=[hi.bot]).start()
-print('7777')
-
-bot.polling(none_stop=True, timeout=600)
