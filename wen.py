@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
+import config as os
 import telebot
 import time
 import random

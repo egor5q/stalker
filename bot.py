@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-import os
+import config as os
 import telebot
 import time
 import random
@@ -25,7 +24,6 @@ locs = db.locs
 kvs = db.kvs
 
 users.update_many({}, {'$set': {'human.walking': False}})
-bot.send_message(792414733, str(os.environ))
 
 # kvs.update_many({},{'$set':{'locked':True}})
 # for ids in kvs.find({}):
@@ -301,10 +299,10 @@ def in_cafe(user):
             if b['code'] == h['position']['building']:
                 cafe = b
 
-    if kv == None and cafe == None:
+    if kv is None and cafe is None:
         return False
 
-    if cafe != None and cafe['type'] != 'cafe':
+    if cafe is not None and cafe['type'] != 'cafe':
         return False
 
     return True
