@@ -12,21 +12,20 @@ import json
 import wen
 import hi
 
-    
+# НЕ СПУСКАЙТЕСЬ НИЖЕ ТУТ ДУШИ МЕРТВЫХ ДЕВСТВЕННИЦ
+
 
 token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
 
-
-client=MongoClient(os.environ['database'])
-db=client.lifesim
-users=db.users
+client = MongoClient(os.environ['database'])
+db = client.lifesim
+users = db.users
 locs = db.locs
 kvs = db.kvs
 
-
 users.update_many({}, {'$set': {'human.walking': False}})
-
+bot.send_message(792414733, str(os.environ))
 
 # kvs.update_many({},{'$set':{'locked':True}})
 # for ids in kvs.find({}):
@@ -180,41 +179,45 @@ def clearall(m):
         kvs.remove({})
         bot.send_message(m.chat.id, 'Очистил юзеров и квартиры.')
 
-@bot.message_handler(func = lambda m: m.text == '📱Искать подработку')
+
+@bot.message_handler(func=lambda m: m.text == '📱Искать подработку')
 def works(m):
     pass
 
-@bot.message_handler(func = lambda m: m.text == '🛏Сон')
+
+@bot.message_handler(func=lambda m: m.text == '🛏Сон')
 def sleeeep(m):
     pass
-        
-@bot.message_handler(func = lambda m: m.text == '👤Профиль')
+
+
+@bot.message_handler(func=lambda m: m.text == '👤Профиль')
 def profile(m):
-    user = users.find_one({'id':m.from_user.id})
+    user = users.find_one({'id': m.from_user.id})
     if user == None:
         return
     if user['start_stats'] == True:
         return
     h = user['human']
     text = 'Ваш профиль:\n\n'
-    text += 'Имя: '+h['name']+'\n'
-    text += 'Возраст: '+str(h['age'])+'\n'
-    text += 'Деньги: '+str(h['money'])+'💶\n'
-    text += 'Сытость: '+str(h['hunger'])+'/'+str(h['maxhunger'])+'🍗\n'
-    text += 'Здоровье: '+str(h['health'])+'/'+str(h['maxhealth'])+'❤\n'
-    text += 'Силы: '+str(h['power'])+'/'+str(h['maxpower'])+'⚡\n'
-    text += 'Бодрость: '+str(h['sleep'])+'/'+str(h['maxsleep'])+'🛌\n'
+    text += 'Имя: ' + h['name'] + '\n'
+    text += 'Возраст: ' + str(h['age']) + '\n'
+    text += 'Деньги: ' + str(h['money']) + '💶\n'
+    text += 'Сытость: ' + str(h['hunger']) + '/' + str(h['maxhunger']) + '🍗\n'
+    text += 'Здоровье: ' + str(h['health']) + '/' + str(h['maxhealth']) + '❤\n'
+    text += 'Силы: ' + str(h['power']) + '/' + str(h['maxpower']) + '⚡\n'
+    text += 'Бодрость: ' + str(h['sleep']) + '/' + str(h['maxsleep']) + '🛌\n'
     bot.send_message(m.chat.id, text)
- 
 
-@bot.message_handler(func = lambda m: m.text == '/start' and users.find_one({'id':m.from_user.id}) != None)
+
+@bot.message_handler(func=lambda m: m.text == '/start' and users.find_one({'id': m.from_user.id}) != None)
 def starts(m):
-    user = users.find_one({'id':m.from_user.id})
+    user = users.find_one({'id': m.from_user.id})
     if user['start_stats'] == True:
         return
     kb = reply_kb(user)
-    bot.send_message(m.chat.id, 'Главное меню.', reply_markup = kb)
-        
+    bot.send_message(m.chat.id, 'Главное меню.', reply_markup=kb)
+
+
 @bot.message_handler(commands=['navigator'])
 def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, навигатор временно не работает!')
@@ -225,8 +228,6 @@ def navv(m):
     bot.send_message(m.chat.id, '📴Проблемы с соединением, сайт временно не работает!')
 
 
-    
-    
 @bot.message_handler(commands=['phone'])
 def look(m):
     user = getuser(m.from_user)
@@ -243,14 +244,14 @@ def look(m):
         bot.reply_to(m, 'Такого юзера нет!')
         return
     kb = types.InlineKeyboardMarkup()
-    kb.add(types.InlineKeyboardButton(text='🔑Дать ключи от квартиры', callback_data='phone?give_keys?'+str(friend["id"])))
-    kb.add(types.InlineKeyboardButton(text='🚷Выгнать из квартиры', callback_data=f'phone?throw_away?'+str(friend["id"])))
-    bot.send_message(m.from_user.id, '📱Вы достали телефон. Что вы ходите сделать с '+human_name+'?', reply_markup=kb)
+    kb.add(types.InlineKeyboardButton(text='🔑Дать ключи от квартиры',
+                                      callback_data='phone?give_keys?' + str(friend["id"])))
+    kb.add(types.InlineKeyboardButton(text='🚷Выгнать из квартиры',
+                                      callback_data=f'phone?throw_away?' + str(friend["id"])))
+    bot.send_message(m.from_user.id, '📱Вы достали телефон. Что вы ходите сделать с ' + human_name + '?',
+                     reply_markup=kb)
 
 
-
-    
-                                      
 @bot.message_handler(func=lambda message: message.text != None and message.text[0] in ['🗄', '🔐', '🍗'])
 def doings_locks(m):
     user = getuser(m.from_user)
@@ -288,7 +289,6 @@ def doings_locks(m):
         bot.send_message(m.chat.id, 'Вы садитесь за стол. Выберите, какие продукты хотите смешать, чтобы съесть.',
                          reply_markup=kb)
 
-                                      
 
 def in_cafe(user):
     h = user['human']
@@ -309,8 +309,6 @@ def in_cafe(user):
 
     return True
 
-       
-    
 
 @bot.callback_query_handler(func=lambda c: c.data.split('?')[0] == 'phone')
 def phone_acts(c):
@@ -324,21 +322,21 @@ def phone_acts(c):
     if action == 'give_keys':
         for key in h['keys']:
             kb.add(types.InlineKeyboardButton(text=str(key),
-                                              callback_data='phone?give_key?'+str(friend["id"])+'?'+str(key)))
+                                              callback_data='phone?give_key?' + str(friend["id"]) + '?' + str(key)))
         medit(message_text='Выберите ключ, который хотите дать.', chat_id=c.from_user.id,
               message_id=c.message.message_id, reply_markup=kb)
     if action == 'give_key':
         key = c.data.split('?')[3]
         friend['human']['keys'].append(key)
         users.update_one({'id': friend['id']}, {'$set': friend})
-        medit(message_text='Ключ '+str(key)+' передан.', chat_id=c.from_user.id, message_id=c.message.message_id)
-        bot.send_message(friend['id'], 'Вам дали '+str(key)+'!')
+        medit(message_text='Ключ ' + str(key) + ' передан.', chat_id=c.from_user.id, message_id=c.message.message_id)
+        bot.send_message(friend['id'], 'Вам дали ' + str(key) + '!')
     if action == 'ungive_key':
         key = c.data.split('?')[3]
         friend['human']['keys'].remove(key)
         users.update_one({'id': friend['id']}, {'$set': friend})
-        medit(message_text='Ключ '+str(key)+' отобран.', chat_id=c.from_user.id, message_id=c.message.message_id)
-        bot.send_message(friend['id'], 'У вас отобрали ключ '+str(key)+'!')
+        medit(message_text='Ключ ' + str(key) + ' отобран.', chat_id=c.from_user.id, message_id=c.message.message_id)
+        bot.send_message(friend['id'], 'У вас отобрали ключ ' + str(key) + '!')
     if action == 'throw_away':
         if not h['position']['flat']:
             medit(message_text='Вы можете выгонять и забирать ключи только из квартиры!',
@@ -348,18 +346,18 @@ def phone_acts(c):
             for key in h['keys']:
                 if key in friend['human']['keys']:
                     kb.add(types.InlineKeyboardButton(text=str(key),
-                                                      callback_data='phone?ungive_key?'+str(friend["id"])+'?'+str(key)))
+                                                      callback_data='phone?ungive_key?' + str(friend["id"]) + '?' + str(
+                                                          key)))
             medit(message_text='Выберите ключ, который хотите отобрать.', chat_id=c.from_user.id,
                   message_id=c.message.message_id, reply_markup=kb)
         else:
             kvs.update_one({'id': friend['human']['position']['flat']}, {'$pull': {'humans': friend['id']}})
             friend['human']['position']['flat'] = None
             users.update_one({'id': friend['id']}, {'$set': friend})
-            medit(message_text='Вы выгнали '+str(friend["human"]["name"])+' из квартиры!', chat_id=c.from_user.id,
+            medit(message_text='Вы выгнали ' + str(friend["human"]["name"]) + ' из квартиры!', chat_id=c.from_user.id,
                   message_id=c.message.message_id)
             bot.send_message(friend['id'], 'Вас выгнали из квартиры и теперь вы на улице!')
 
-                                  
 
 @bot.callback_query_handler(func=lambda call: call.data.split('?')[0] == 'cafe')
 def cafeacts(call):
@@ -433,7 +431,6 @@ def cafeacts(call):
         pass
 
 
-                                                      
 def get_eating(user):
     user = users.find_one({'id': user['id']})
     h = user['human']
@@ -458,8 +455,6 @@ def get_eating(user):
 
     return kb
 
-
-                                                      
 
 def get_fridge(user):
     user = users.find_one({'id': user['id']})
@@ -487,7 +482,6 @@ def get_fridge(user):
     return kb
 
 
-                                                      
 @bot.callback_query_handler(func=lambda call: call.data.split('?')[0] == 'fridge')
 def fridgeacts(call):
     user = users.find_one({'id': call.from_user.id})
@@ -563,7 +557,6 @@ def fridgeacts(call):
         medit('Выберите продукты, чтобы положить/взять.', call.message.chat.id, call.message.message_id,
               reply_markup=kb)
 
-                                                      
 
 def gettype(x):
     typee = '?'
@@ -711,100 +704,98 @@ def doings(m):
             bot.send_message(m.chat.id, 'Вы направились в магазин ' + str(which) + '. Дойдёте примерно через минуту.')
 
 
- 
-                                      
-
 def endwalk_flat(user, kv):
-  try:
-    user = users.find_one({'id': user['id']})
-    h = user['human']
-    users.update_one({'id': user['id']}, {'$set': {'human.walking': False}})
-    if len(user['human']['shop_inv']) > 0:
-        bot.send_message(user['id'],
-                         'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
-        return
-    h = user['human']
-    kv = kvs.find_one({'id': kv['id']})
-    if kv['street'] + '#' + kv['home'] + '#' + str(kv['id']) not in h['keys'] and kv['locked']:
-        bot.send_message(user['id'],
-                         'Вы попытались зайти в квартиру ' + str(kv['id']) + ', но она оказалась закрыта на ключ!')
-        return
-    curstr = locs.find_one({'code': h['position']['street']})
-    for ids in curstr['humans']:
-        if ids != user['id']:
-            print(ids)
-            user2 = users.find_one({'id': ids})
-            h2 = user2['human']
-            if h2['position']['flat'] == None and h2['position']['building'] == None:
-                bot.send_message(ids, h['name'] + ' покидает улицу!')
-    kvs.update_one({'id': kv['id']}, {'$push': {'humans': user['id']}})
-    users.update_one({'id': user['id']}, {'$set': {'human.position.building': None}})
-    users.update_one({'id': user['id']}, {'$set': {'human.position.flat': kv['id']}})
-    user = users.find_one({'id': user['id']})
-    kb = reply_kb(user)
-    bot.send_message(user['id'], 'Вы зашли в квартиру ' + str(kv['id']) + '!', reply_markup=kb)
-    kv = kvs.find_one({'id': kv['id']})
-    for ids in kv['humans']:
-        if int(ids) != user['id']:
-            bot.send_message(ids, 'В квартиру заходит ' + desc(user))
+    try:
+        user = users.find_one({'id': user['id']})
+        h = user['human']
+        users.update_one({'id': user['id']}, {'$set': {'human.walking': False}})
+        if len(user['human']['shop_inv']) > 0:
+            bot.send_message(user['id'],
+                             'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
+            return
+        h = user['human']
+        kv = kvs.find_one({'id': kv['id']})
+        if kv['street'] + '#' + kv['home'] + '#' + str(kv['id']) not in h['keys'] and kv['locked']:
+            bot.send_message(user['id'],
+                             'Вы попытались зайти в квартиру ' + str(kv['id']) + ', но она оказалась закрыта на ключ!')
+            return
+        curstr = locs.find_one({'code': h['position']['street']})
+        for ids in curstr['humans']:
+            if ids != user['id']:
+                print(ids)
+                user2 = users.find_one({'id': ids})
+                h2 = user2['human']
+                if h2['position']['flat'] == None and h2['position']['building'] == None:
+                    bot.send_message(ids, h['name'] + ' покидает улицу!')
+        kvs.update_one({'id': kv['id']}, {'$push': {'humans': user['id']}})
+        users.update_one({'id': user['id']}, {'$set': {'human.position.building': None}})
+        users.update_one({'id': user['id']}, {'$set': {'human.position.flat': kv['id']}})
+        user = users.find_one({'id': user['id']})
+        kb = reply_kb(user)
+        bot.send_message(user['id'], 'Вы зашли в квартиру ' + str(kv['id']) + '!', reply_markup=kb)
+        kv = kvs.find_one({'id': kv['id']})
+        for ids in kv['humans']:
+            if int(ids) != user['id']:
+                bot.send_message(ids, 'В квартиру заходит ' + desc(user))
 
-    text = 'В квартире вы видите следующих людей:\n\n'
-    for ids in kv['humans']:
-        if ids != user['id']:
-            text += desc(users.find_one({'id': ids}), True) + '\n\n'
+        text = 'В квартире вы видите следующих людей:\n\n'
+        for ids in kv['humans']:
+            if ids != user['id']:
+                text += desc(users.find_one({'id': ids}), True) + '\n\n'
 
-    if text != 'В квартире вы видите следующих людей:\n\n':
-        bot.send_message(user['id'], text)
+        if text != 'В квартире вы видите следующих людей:\n\n':
+            bot.send_message(user['id'], text)
 
-  except:
-    bot.send_message(441399484, traceback.format_exc())
+    except:
+        bot.send_message(441399484, traceback.format_exc())
+
 
 def endwalk_build(user, build):
-  try:
-    user = users.find_one({'id': user['id']})
-    h = user['human']
-    users.update_one({'id': user['id']}, {'$set': {'human.walking': False}})
-    if len(user['human']['shop_inv']) > 0:
-        bot.send_message(user['id'],
-                         'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
-        return
+    try:
+        user = users.find_one({'id': user['id']})
+        h = user['human']
+        users.update_one({'id': user['id']}, {'$set': {'human.walking': False}})
+        if len(user['human']['shop_inv']) > 0:
+            bot.send_message(user['id'],
+                             'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
+            return
 
-    curstr = locs.find_one({'code': h['position']['street']})
-    for ids in curstr['humans']:
-        if ids != user['id']:
-            user2 = users.find_one({'id': ids})
-            h2 = user2['human']
-            if h2['position']['flat'] == None and h2['position']['building'] == None:
-                bot.send_message(ids, h['name'] + ' покидает улицу!')
-    locs.update_one({'code': build['street']}, {'$push': {'buildings.' + build['code'] + '.humans': user['id']}})
-    users.update_one({'id': user['id']}, {'$set': {'human.position.flat': None}})
-    users.update_one({'id': user['id']}, {'$set': {'human.position.building': build['code']}})
-    user = users.find_one({'id': user['id']})
-    kb = reply_kb(user)
+        curstr = locs.find_one({'code': h['position']['street']})
+        for ids in curstr['humans']:
+            if ids != user['id']:
+                user2 = users.find_one({'id': ids})
+                h2 = user2['human']
+                if h2['position']['flat'] == None and h2['position']['building'] == None:
+                    bot.send_message(ids, h['name'] + ' покидает улицу!')
+        locs.update_one({'code': build['street']}, {'$push': {'buildings.' + build['code'] + '.humans': user['id']}})
+        users.update_one({'id': user['id']}, {'$set': {'human.position.flat': None}})
+        users.update_one({'id': user['id']}, {'$set': {'human.position.building': build['code']}})
+        user = users.find_one({'id': user['id']})
+        kb = reply_kb(user)
 
-    if build['type'] == 'shop':
-        bot.send_message(user['id'], 'Вы зашли в магазин ' + build['name'] + '!', reply_markup=kb)
-        kb = getshop(build, user)
-        bot.send_message(user['id'], 'На полках магазина вы видите следующий ассортимент:', reply_markup=kb)
-    build = locs.find_one({'code': build['street']})['buildings'][build['code']]
-    for ids in build['humans']:
-        if int(ids) != user['id']:
-            if build['type'] == 'shop':
-                bot.send_message(ids, 'В магазин заходит ' + desc(user))
+        if build['type'] == 'shop':
+            bot.send_message(user['id'], 'Вы зашли в магазин ' + build['name'] + '!', reply_markup=kb)
+            kb = getshop(build, user)
+            bot.send_message(user['id'], 'На полках магазина вы видите следующий ассортимент:', reply_markup=kb)
+        build = locs.find_one({'code': build['street']})['buildings'][build['code']]
+        for ids in build['humans']:
+            if int(ids) != user['id']:
+                if build['type'] == 'shop':
+                    bot.send_message(ids, 'В магазин заходит ' + desc(user))
 
-    if build['type'] == 'shop':
-        text = 'В магазине вы видите следующих людей:\n\n'
+        if build['type'] == 'shop':
+            text = 'В магазине вы видите следующих людей:\n\n'
 
-    for ids in build['humans']:
-        if ids != user['id']:
-            text += desc(users.find_one({'id': ids}), True) + '\n\n'
+        for ids in build['humans']:
+            if ids != user['id']:
+                text += desc(users.find_one({'id': ids}), True) + '\n\n'
 
-    if build['type'] == 'shop':
-        if text != 'В магазине вы видите следующих людей:\n\n':
-            bot.send_message(user['id'], text)
-  except:
-    bot.send_message(441399484, traceback.format_exc())
-                                                      
+        if build['type'] == 'shop':
+            if text != 'В магазине вы видите следующих людей:\n\n':
+                bot.send_message(user['id'], text)
+    except:
+        bot.send_message(441399484, traceback.format_exc())
+
 
 def getshop(shop, user=None):
     kb = types.InlineKeyboardMarkup()
@@ -829,7 +820,6 @@ def getweight(x, obj='product'):
         return product(x, 0)['weight']
 
 
-                                                      
 def desc(user, high=False):
     text = ''
     h = user['human']
@@ -912,77 +902,75 @@ def desc(user, high=False):
         text += gnd + ' выглядит уставш' + gnd2 + '.'
     return text
 
-                                                      
 
 def endwalk(user, newstr, start='street'):
-  try:
-    user = users.find_one({'id': user['id']})
-    h = user['human']
-    users.update_one({'id': user['id']}, {'$set': {'human.walking': False}})
-    if len(user['human']['shop_inv']) > 0:
-        bot.send_message(user['id'],
-                         'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
-        return
-    locs.update_one({'code': user['human']['position']['street']}, {'$pull': {'humans': user['id']}})
-    users.update_one({'id': user['id']}, {'$set': {'human.position.street': newstr['code']}})
-    if start == 'flat':
-        kvs.update_one({'id': user['human']['position']['flat']}, {'$pull': {'humans': user['id']}})
-        curflat = kvs.find_one({'id': h['position']['flat']})
-        for ids in curflat['humans']:
-            if ids != user['id']:
-                bot.send_message(ids, h['name'] + ' покидает квартиру!')
-    if start == 'building':
-        b = user['human']['position']['building']
+    try:
+        user = users.find_one({'id': user['id']})
         h = user['human']
-        locs.update_one({'code': user['human']['position']['street']},
-                        {'$pull': {'buildings.' + b + '.humans': user['id']}})
-        curstr = locs.find_one({'code': h['position']['street']})
-        for ids in curstr['buildings'][b]['humans']:
-            if ids != user['id']:
-                bot.send_message(ids, h['name'] + ' покидает здание!')
+        users.update_one({'id': user['id']}, {'$set': {'human.walking': False}})
+        if len(user['human']['shop_inv']) > 0:
+            bot.send_message(user['id'],
+                             'Вы попытались выйти из магазина, но вас остановил охранник. Сначала оплатите покупки!')
+            return
+        locs.update_one({'code': user['human']['position']['street']}, {'$pull': {'humans': user['id']}})
+        users.update_one({'id': user['id']}, {'$set': {'human.position.street': newstr['code']}})
+        if start == 'flat':
+            kvs.update_one({'id': user['human']['position']['flat']}, {'$pull': {'humans': user['id']}})
+            curflat = kvs.find_one({'id': h['position']['flat']})
+            for ids in curflat['humans']:
+                if ids != user['id']:
+                    bot.send_message(ids, h['name'] + ' покидает квартиру!')
+        if start == 'building':
+            b = user['human']['position']['building']
+            h = user['human']
+            locs.update_one({'code': user['human']['position']['street']},
+                            {'$pull': {'buildings.' + b + '.humans': user['id']}})
+            curstr = locs.find_one({'code': h['position']['street']})
+            for ids in curstr['buildings'][b]['humans']:
+                if ids != user['id']:
+                    bot.send_message(ids, h['name'] + ' покидает здание!')
 
-    if start == 'street':
-        h = user['human']
-        curstr = locs.find_one({'code': h['position']['street']})
-        for ids in curstr['humans']:
-            if ids != user['id']:
-                user2 = users.find_one({'id': ids})
-                h2 = user2['human']
-                if h2['position']['flat'] == None and h2['position']['building'] == None:
-                    bot.send_message(ids, h['name'] + ' покидает улицу!')
+        if start == 'street':
+            h = user['human']
+            curstr = locs.find_one({'code': h['position']['street']})
+            for ids in curstr['humans']:
+                if ids != user['id']:
+                    user2 = users.find_one({'id': ids})
+                    h2 = user2['human']
+                    if h2['position']['flat'] == None and h2['position']['building'] == None:
+                        bot.send_message(ids, h['name'] + ' покидает улицу!')
 
-    users.update_one({'id': user['id']}, {'$set': {'human.position.building': None, 'human.position.flat': None}})
-    user = users.find_one({'id': user['id']})
-    kb = reply_kb(user)
-    if start == 'street':
-        bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы ' + newstr['name'] + '!',
-                         reply_markup=kb)
-    elif start == 'flat' or start == 'building':
-        bot.send_message(user['id'], 'Вы вышли на улицу ' + newstr['name'] + '!', reply_markup=kb)
-    locs.update_one({'code': newstr['code']}, {'$push': {'humans': user['id']}})
+        users.update_one({'id': user['id']}, {'$set': {'human.position.building': None, 'human.position.flat': None}})
+        user = users.find_one({'id': user['id']})
+        kb = reply_kb(user)
+        if start == 'street':
+            bot.send_message(user['id'], 'Гуляя по городским переулкам, вы дошли до улицы ' + newstr['name'] + '!',
+                             reply_markup=kb)
+        elif start == 'flat' or start == 'building':
+            bot.send_message(user['id'], 'Вы вышли на улицу ' + newstr['name'] + '!', reply_markup=kb)
+        locs.update_one({'code': newstr['code']}, {'$push': {'humans': user['id']}})
 
-    street = locs.find_one({'code': newstr['code']})
-    for ids in street['humans']:
-        user2 = users.find_one({'id': ids})
-        if user2['human']['position']['flat'] == None and user2['human']['position']['building'] == None:
-            if int(ids) != user['id']:
-                bot.send_message(ids, 'На улице появляется ' + desc(user))
-
-    text = 'На улице вы видите следующих людей:\n\n'
-    for ids in street['humans']:
-        if ids != user['id']:
+        street = locs.find_one({'code': newstr['code']})
+        for ids in street['humans']:
             user2 = users.find_one({'id': ids})
             if user2['human']['position']['flat'] == None and user2['human']['position']['building'] == None:
-                text += desc(users.find_one({'id': ids}), True) + '\n\n'
+                if int(ids) != user['id']:
+                    bot.send_message(ids, 'На улице появляется ' + desc(user))
 
-    if text != 'На улице вы видите следующих людей:\n\n':
-        bot.send_message(user['id'], text)
+        text = 'На улице вы видите следующих людей:\n\n'
+        for ids in street['humans']:
+            if ids != user['id']:
+                user2 = users.find_one({'id': ids})
+                if user2['human']['position']['flat'] == None and user2['human']['position']['building'] == None:
+                    text += desc(users.find_one({'id': ids}), True) + '\n\n'
 
-  except:
-    bot.send_message(441399484, traceback.format_exc())
+        if text != 'На улице вы видите следующих людей:\n\n':
+            bot.send_message(user['id'], text)
 
-                                                      
-                                                      
+    except:
+        bot.send_message(441399484, traceback.format_exc())
+
+
 @bot.message_handler(content_types=['text'])
 def alltxts(m):
     if m.from_user.id == m.chat.id:
@@ -1083,9 +1071,9 @@ def alltxts(m):
                 bot.send_message(m.chat.id,
                                  'Нажмите на характеристику, чтобы изменить её. Внимание! Когда вы нажмёте "✅Готово", ' +
                                  'некоторые характеристики больше нельзя будет изменить!', reply_markup=kb)
-                                                     
+
         if user['start_stats'] == True:
-            return                                             
+            return
 
         if user['human']['position']['street'] != None and user['human']['position']['flat'] == None and \
                 user['human']['position']['building'] == None:
@@ -1110,7 +1098,6 @@ def alltxts(m):
                 bot.send_message(h, user['human']['name'] + ': ' + m.text)
 
 
-                                                      
 def getstartkb(user):
     h = user['human']
     kb = types.InlineKeyboardMarkup()
@@ -1458,12 +1445,14 @@ def medit(message_text, chat_id, message_id, reply_markup=None, parse_mode=None)
 
 def polll(x):
     x()
-    
-def poll(b):
-    b.polling(none_stop = True)
 
-threading.Thread(target = poll, args = [wen.bot]).start()
-threading.Thread(target = poll, args = [hi.bot]).start()
+
+def poll(b):
+    b.polling(none_stop=True)
+
+
+threading.Thread(target=poll, args=[wen.bot]).start()
+threading.Thread(target=poll, args=[hi.bot]).start()
 print('7777')
 
 bot.polling(none_stop=True, timeout=600)
