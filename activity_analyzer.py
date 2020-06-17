@@ -8,7 +8,8 @@ from pymongo import MongoClient
 import traceback
 
 db = MongoClient(os.environ['database']).activity_analyser
-users = db.users
+#users = db.users
+chats = db.chats
 
 @bot.message_handler(commands=['start'])
 def start(m):
@@ -29,18 +30,22 @@ def start(m):
 def allmsg(m):
     if m.from_user.id == m.chat.id:
         return
-    chat = chats.find_one({'id':m.chat.id})
+    chat = createchat(m.chat)
     
     
-def insertuser(user):
+def insertchat(chat):
     return {
-        'id':user.id,
-        'name':user.first_name
+        'id':chat.id,
+        'name':chat.title,
+        'username':chat.username,
+        'users':{}
     }
     
-def createuser(user):
-    user = users.find_one({'id':user.id})
-    if user == None:
-        users.insert_one(insertuser(user))
-        user = users.find_one({'id':user.id})
-    return user
+def createchat(chat):
+    chat = chats.find_one({'id':chat.id})
+    if chat == None:
+        chats.insert_one(insertchat(chat))
+        chat = chats.find_one({'id':chat.id})
+    return chat
+    
+    
