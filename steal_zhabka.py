@@ -10,6 +10,19 @@ import traceback
 db = MongoClient(os.environ['database']).ultimate_war
 users = db.users
 
+games = {}
+
+nearlocs={'spystart':['leftcorridor','rightcorridor','midcorridor'],
+          'leftcorridor':['spystart','treasure','leftpass'],
+          'rightcorridor':['spystart','treasure', 'rightpass'],
+          'rightpass':['rightcorridor','stock'],
+          'leftpass':['stock','leftcorridor'],
+          'treasure':['leftcorridor','rightcorridor','stock','midcorridor'],
+          'spystart':['leftcorridor','rightcorridor','midcorridor'],
+          'midcorridor':['spystart','treasure'],
+          'stock':['rightpass','leftpass','treasure']
+}
+
 @bot.message_handler(commands=['start'])
 def start(m):
     if m.from_user.id != m.chat.id:
