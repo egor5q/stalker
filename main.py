@@ -16,11 +16,13 @@ from manybotslib import BotsRunner
 import hi
 import telegrad
 import wen
+import steal_zhabka
 
 bots_to_start = {
     'Telegrad': telegrad.bot,
     'Hi': hi.bot,
-    'Wen': wen.bot
+    'Wen': wen.bot,
+    'Жабка':steal_zhabka.bot
 }
 
 runner = BotsRunner(admins=config.admins, show_traceback=True)
