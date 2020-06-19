@@ -48,7 +48,7 @@ def first_turn(game):
         free_places.remove(x)
     for ids in game['players']:
         player = game['players'][ids]
-        kb = show_map(player)
+        kb = show_map(player, game['map'])
         try:
             bot.send_message(player['id'], 'Тестовое отображение карты', reply_markup = kb)
         except:
