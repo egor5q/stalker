@@ -181,9 +181,9 @@ def insertuser(user):
         'date':time.time()
     }
     
-def createuser(user):
-    user = users.find_one({'id':user.id})
+def createuser(user1):
+    user = users.find_one({'id':user1.id})
     if user == None:
-        users.insert_one(insertuser(user))
-        user = users.find_one({'id':user.id})
+        users.insert_one(insertuser(user1))
+        user = users.find_one({'id':user1.id})
     return user
