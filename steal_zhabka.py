@@ -64,7 +64,20 @@ def show_map(player, loc):
     end_x = x+radius
     end_y = y+radius
     
-    kb = types.InlineKeyboardMarkup()
+    amount = radius*2
+    code = str(start_x) + '_' + str(start_y)
+    if code not in loc:
+        amount -= 1
+        
+    code = str(start_x+1) + '_' + str(start_y)
+    if code not in loc:
+        amount -= 1
+        
+    code = str(start_x+2) + '_' + str(start_y)
+    if code not in loc:
+        amount -= 1
+
+    kb = types.InlineKeyboardMarkup(amount)
     
     while start_x <= end_x:
         while start_y <= end_y:
@@ -139,7 +152,6 @@ def go(m):
         game['started'] = True
 
         bot.send_message(m.chat.id, 'Игра начинается!')
-        game['msg'] = msg
         threading.Timer(2, first_turn, args=[game]).start()
         
      
