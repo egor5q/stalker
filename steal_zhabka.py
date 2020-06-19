@@ -55,6 +55,7 @@ def first_turn(game):
             bot.send_message(game['id'], 'Игрок '+player['name']+' не открыл со мной ЛС!')
         
         
+        
 def show_map(player, loc):
     radius = player['radius']
     x = int(player['pos'].split('_')[0])
