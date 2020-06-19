@@ -111,7 +111,7 @@ def join(m):
     game['players'].update(createplayer(m.from_user))
     bot.send_message(m.chat.id, m.from_user.first_name+' присоединился к игре!') 
     
-@bot.message_handler(commands=['startgame'])
+@bot.message_handler(commands=['prepare_zhabka'])
 def startgame(m):
     user = users.find_one({'id':m.from_user.id})
     if user == None:
