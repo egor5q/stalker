@@ -7,8 +7,9 @@ from telebot import types
 from pymongo import MongoClient
 import traceback
 
-db = MongoClient(os.environ['database']).ultimate_war
+db = MongoClient(os.environ['database']).steal_zhabka
 users = db.users
+bot = telebot.TeleBot(os.environ['zhabka'])
 
 games = {}
 
@@ -45,6 +46,42 @@ def first_turn(game):
         x = random.choice(free_places)
         player['pos'] = x
         free_places.remove(x)
+    for ids in game['players']:
+        player = game['players'][ids]
+        kb = show_map(player)
+        try:
+            bot.send_message(player['id'], 'Тестовое отображение карты', reply_markup = kb)
+        except:
+            bot.send_message(game['id'], 'Игрок '+player['name']+' не открыл со мной ЛС!')
+        
+        
+def show_map(player, loc):
+    radius = player['radius']
+    x = int(player['pos'].split('_')[0])
+    y = int(player['pos'].split('_')[1])
+    start_x = x-radius
+    start_y = y-radius
+    end_x = x+radius
+    end_y = y+radius
+    
+    kb = types.InlineKeyboardMarkup()
+    
+    while start_x <= end_x:
+        while start_y <= end_y:
+            code = str(start_x) + '_' + str(start_y)
+            if code in loc:
+                kb.add(types.InlineKeyboardButton(text = loctext(loc[code]), callback_data = 'act?'+code))
+    return kb
+    
+def loctext(loc):
+    if 'wall' in loc['objects']:
+        return '⬛'
+    if loc['players'] != []:
+        return '🔵'
+    if 'zhabka' in loc['objects']:
+        return '🐸'
+    
+    return 'ᅠ'
     
     
 @bot.message_handler(commands=['start'])
@@ -124,7 +161,9 @@ def createplayer(user):
     return {user.id:{
         'id':user.id,
         'name':user.first_name,
-        'pos':None
+        'pos':None,
+        'current_act':'move',
+        'radius':3
     }
            }
     
