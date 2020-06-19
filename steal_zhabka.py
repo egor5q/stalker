@@ -136,7 +136,7 @@ def startgame(m):
 
         games.update(game)
         game = games[m.chat.id]
-        bot.send_message(m.chat.id, 'Подготовка к игре запущена! Кто желает попытаться сп*здить жабку - жмём /join!', parse_mode = 'markdown')
+        bot.send_message(m.chat.id, 'Подготовка к игре запущена! Кто желает попытаться сп*здить жабку - жмём /join!')
     else:
         bot.send_message(m.chat.id, 'В этом чате уже есть игра!')
         return
