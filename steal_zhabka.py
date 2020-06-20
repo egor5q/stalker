@@ -90,6 +90,7 @@ def show_map(player, loc):
             bot.send_message(441399484, 'amount = '+str(amount))
         print(len(kb_list))
         try:
+            bot.send_message(441399484,len(kb_list))
             kb.add(*kb_list)
         except:
             pass
