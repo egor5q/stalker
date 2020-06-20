@@ -67,27 +67,22 @@ def show_map(player, loc):
     end_x = x+radius
     end_y = y+radius
     
-    amount = 0
-    
-    kb = None
+    kb = types.InlineKeyboardMarkup((radius*2)+1)
     
     while start_x <= end_x:
         start_y = y-radius
         kb_list = []
+        
         while start_y <= end_y:
             code = str(start_x) + '_' + str(start_y)
             print(code)
             if code in loc:
                 kb_list.append(types.InlineKeyboardButton(text = loctext(loc[code]), callback_data = 'act?'+code))
-                if kb == None:
-                    amount += 1
+            
             else:
                 kb_list.append(types.InlineKeyboardButton(text = '⬛', callback_data = 'out_map'))
             start_y+=1
-        if kb == None and amount > 0:
-            kb = types.InlineKeyboardMarkup((radius*2)+1)
-            print('amount = '+str(amount))
-            bot.send_message(441399484, 'amount = '+str(amount))
+
         print(len(kb_list))
         try:
             bot.send_message(441399484,len(kb_list))
