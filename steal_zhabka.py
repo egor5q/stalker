@@ -85,6 +85,7 @@ def show_map(player, loc):
         if kb == None:
             kb = types.InlineKeyboardMarkup(amount)
             print('amount = '+str(amount))
+            bot.send_message(441399484, 'amount = '+str(amount))
         print(len(kb_list))
         kb.add(*kb_list)
         start_x += 1
