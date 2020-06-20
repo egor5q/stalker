@@ -110,9 +110,23 @@ def see_pos(player, loc, code):
         
     i = 0    
     while i < 11:
-        dot = str(x+i)+'_'+str(y+i)
+        dot = str(x+i)+'_'+str(y+i)                # вниз вправо
         if code == dot:
             see = True
+            
+        try:
+            if 'wall' not in loc[str(x+i+1)+'_'+str(y+i)]['objects'] and 'wall' not in loc[dot]['objects']:
+                if code == str(x+i)+'_'+str(y+i+1):
+                    see = True
+        except:
+            pass
+        
+        try:
+            if 'wall' not in loc[str(x+i)+'_'+str(y-i-1)]['objects'] and 'wall' not in loc[dot]['objects']:
+                if code == str(x+i-1)+'_'+str(y-i):
+                    see = True
+        except:
+            pass
         
         if dot in loc:
             if 'wall' in loc[dot]['objects']:
@@ -121,38 +135,65 @@ def see_pos(player, loc, code):
         
     i = 0    
     while i < 11:
-        dot = str(x+i)+'_'+str(y-i)
-        if code == dot:
-            see = True
-        if dot in loc:
-            if 'wall' in loc[dot]['objects']:
-                break
-        i+=1
-        
-    i = 0   
-    while i < 11:
-        dot = str(x-i)+'_'+str(y+i)
-        if code == dot:
-            see = True
-        if dot in loc:
-            if 'wall' in loc[dot]['objects']:
-                break
-        i+=1
-        
-    i = 0   
-    while i < 11:
-        dot = str(x-i)+'_'+str(y-i)
+        dot = str(x+i)+'_'+str(y-i)                # вверх вправо
         if code == dot:
             see = True
         try:
-            if 'wall' not in loc[str(x-i+1)+'_'+str(y-i)]['objects']:
+            if 'wall' not in loc[str(x+i)+'_'+str(y-i+1)]['objects'] and 'wall' not in loc[dot]['objects']:
+                if code == str(x+i+1)+'_'+str(y-i):
+                    see = True
+        except:
+            pass
+        
+        try:
+            if 'wall' not in loc[str(x+i-1)+'_'+str(y-i)]['objects'] and 'wall' not in loc[dot]['objects']:
+                if code == str(x+i)+'_'+str(y-i-1):
+                    see = True
+        except:
+            pass
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1
+        
+    i = 0   
+    while i < 11:
+        dot = str(x-i)+'_'+str(y+i)                # вниз влево
+        if code == dot:
+            see = True
+        try:
+            if 'wall' not in loc[str(x-i)+'_'+str(y+i-1)]['objects'] and 'wall' not in loc[dot]['objects']:
+                if code == str(x-i-1)+'_'+str(y+i):
+                    see = True
+        except:
+            pass
+        
+        try:
+            if 'wall' not in loc[str(x-i+1)+'_'+str(y+i)]['objects'] and 'wall' not in loc[dot]['objects']:
+                if code == str(x-i)+'_'+str(y+i+1):
+                    see = True
+        except:
+            pass
+        
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1
+        
+    i = 0   
+    while i < 11:
+        dot = str(x-i)+'_'+str(y-i)                # вверх влево
+        if code == dot:
+            see = True
+        try:
+            if 'wall' not in loc[str(x-i+1)+'_'+str(y-i)]['objects'] and 'wall' not in loc[dot]['objects']:
                 if code == str(x-i)+'_'+str(y-i-1):
                     see = True
         except:
             pass
         
         try:
-            if 'wall' not in loc[str(x-i)+'_'+str(y-i+1)]['objects']:
+            if 'wall' not in loc[str(x-i)+'_'+str(y-i+1)]['objects'] and 'wall' not in loc[dot]['objects']:
                 if code == str(x-i-1)+'_'+str(y-i):
                     see = True
         except:
