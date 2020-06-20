@@ -60,7 +60,100 @@ def first_turn(game):
             bot.send_message(game['id'], 'Игрок '+player['name']+' не открыл со мной ЛС!')
         #del games[game['id']]
         
+  
+def see_pos(player, loc, code):
+    pos = player['pos']
+    
+    x = int(pos.split('_')[0])
+    y = int(pos.split('_')[0])
+    i = 0
+    see = False
+    
+    while i < 11:
+        dot = str(x+i)+'_'+str(y)
+        if code == dot:
+            see = True
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1
         
+    while i < 11:
+        dot = str(x-i)+'_'+str(y)
+        if code == dot:
+            see = True
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1  
+        
+    i = 0    
+    while i < 11:
+        dot = str(x)+'_'+str(y+i)
+        if code == dot:
+            see = True
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1
+        
+    i = 0        
+    while i < 11:
+        dot = str(x)+'_'+str(y-i)
+        if code == dot:
+            see = True
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1
+    i = 0    
+        
+    while i < 11:
+        dot = str(x+i)+'_'+str(y+i)
+        if code == dot:
+            see = True
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1
+    i = 0    
+    
+    while i < 11:
+        dot = str(x+i)+'_'+str(y-i)
+        if code == dot:
+            see = True
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1
+    i = 0   
+    
+    while i < 11:
+        dot = str(x-i)+'_'+str(y+i)
+        if code == dot:
+            see = True
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1
+    i = 0   
+    
+    while i < 11:
+        dot = str(x-i)+'_'+str(y-i)
+        if code == dot:
+            see = True
+        if dot in loc:
+            if 'wall' in loc[dot]['objects']:
+                break
+        i+=1
+    i = 0   
+    
+    return see
+        
+    
+        
+        
+
         
 def show_map(player, loc, game):
     radius = player['radius']
@@ -81,7 +174,11 @@ def show_map(player, loc, game):
             code = str(start_x) + '_' + str(start_y)
             print(code)
             if code in loc:
-                kb_list.append(types.InlineKeyboardButton(text = loctext(loc[code]), callback_data = 'act?'+code+'?'+str(game['id'])))
+                if see_pos(player, loc, code):
+                    button = loctext(loc[code])
+                else:
+                    button = '❓'
+                kb_list.append(types.InlineKeyboardButton(text = button, callback_data = 'act?'+code+'?'+str(game['id'])))
             
             else:
                 kb_list.append(types.InlineKeyboardButton(text = '⬛', callback_data = 'out_map'))
@@ -240,3 +337,5 @@ def createuser(user1):
         users.insert_one(insertuser(user1))
         user = users.find_one({'id':user1.id})
     return user
+
+print('7777')
