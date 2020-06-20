@@ -291,7 +291,7 @@ def calls(call):
         medit('Тестовое отображение карты', call.message.chat.id, call.message.message_id, reply_markup = kb)
     except:
         bot.answer_callback_query(call.id, 'Ошибка!')
-        bot.send_message(441399484, traceback.format_exc())
+        #bot.send_message(441399484, traceback.format_exc())
 
 def creategame(m):
     return {m.chat.id:{
