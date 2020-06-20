@@ -4,10 +4,16 @@ from botutil import BotUtil
 bot = BotUtil(config.environ['hi'], config.admins[1])
 if 'DYNO' in config.environ:
     heroku = True
-    bot.report('Heroku initialization...')
+    try:
+        bot.report('Heroku initialization...')
+    except:
+        pass
 else:
     heroku = False
-    bot.report('Local initialization...')
+    try:
+        bot.report('Local initialization...')
+    except:
+        pass
 
 from timeit import default_timer as timer
 start_time = timer()
