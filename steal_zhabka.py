@@ -104,7 +104,18 @@ def loctext(loc):
     
     return 'ᅠ'
     
-    
+   
+@bot.message_handler(commands=['del'])
+def dell(m):
+    if bot.get_chat_member(m.chat.id, m.from_user.id).status in ['administrator', 'creator'] or m.from_user.id == m.chat.id:
+        try:
+            del games[m.chat.id]
+            bot.send_message(m.chat.id, 'Игра была удалена!')
+        except:
+            pass
+    else:
+        bot.send_message(m.chat.id, 'Только администратор чата может удалить игру!')
+
 @bot.message_handler(commands=['start'])
 def start(m):
     if m.from_user.id != m.chat.id:
