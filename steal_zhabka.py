@@ -50,7 +50,7 @@ def first_turn(game):
         free_places.remove(x)
     for ids in game['players']:
         player = game['players'][ids]
-        kb = show_map(player, game['map'])
+        kb = show_map(player, game['map'], game)
         try:
             bot.send_message(player['id'], 'Тестовое отображение карты', reply_markup = kb)
         except:
@@ -59,7 +59,7 @@ def first_turn(game):
         
         
         
-def show_map(player, loc):
+def show_map(player, loc, game):
     radius = player['radius']
     x = int(player['pos'].split('_')[0])
     y = int(player['pos'].split('_')[1])
@@ -78,7 +78,7 @@ def show_map(player, loc):
             code = str(start_x) + '_' + str(start_y)
             print(code)
             if code in loc:
-                kb_list.append(types.InlineKeyboardButton(text = loctext(loc[code]), callback_data = 'act?'+code))
+                kb_list.append(types.InlineKeyboardButton(text = loctext(loc[code]), callback_data = 'act?'+code+'?'+str(game['id'])))
             
             else:
                 kb_list.append(types.InlineKeyboardButton(text = '⬛', callback_data = 'out_map'))
@@ -160,6 +160,23 @@ def go(m):
         threading.Timer(0.1, first_turn, args=[game]).start()
         
      
+@bot.callback_query_handler(func = lambda call: True)
+def calls(call):
+    if int(call.data.split('?')[2]) not in games:
+        return
+    try:
+        player = game['players'][call.from_user.id]
+        game = games[int(call.data.split('?')[2])]
+    
+        game['map'][player['loc']]['players'].remove(call.from_user.id)
+
+        game['players'][call.from_user.id]['loc'] = call.data.split('?')[1]
+        game['map'][call.data.split('?')[1]]['players'].append(call.from_user.id)
+        kb = show_map(player, game['map'], game)
+        medit('Тестовое отображение карты', call.message.chat.id, call.message.message_id, reply_markup = kb)
+    except:
+        bot.answer_callback_query(call.id, 'Ошибка!')
+
 def creategame(m):
     return {m.chat.id:{
         'id':m.chat.id,
