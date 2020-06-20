@@ -25,6 +25,8 @@ walls = ['0_3', '0_7', '1_1', '1_3', '1_7', '1_9', '2_1', '2_5', '2_9', '3_0', '
         '3_5', '3_7', '3_9', '3_10', '5_2', '5_3', '5_7', '5_8', '7_0', '7_1', '7_3', '7_5', '7_7',
         '7_9', '7_10', '8_1', '8_5', '8_9', '9_1', '9_3', '9_7', '9_9', '10_3', '10_7']
 
+zhab = ['5_5']
+
 locs = {}
 
 x = 0
@@ -48,6 +50,7 @@ def first_turn(game):
         player['pos'] = x
         game['map'][x]['players'].append(player['id'])
         free_places.remove(x)
+    game['map'][zhab[0]]['objects'].append('zhabka')
     for ids in game['players']:
         player = game['players'][ids]
         kb = show_map(player, game['map'], game)
