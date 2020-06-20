@@ -89,6 +89,7 @@ def show_map(player, loc):
             if code in loc:
                 kb_list.append(types.InlineKeyboardButton(text = loctext(loc[code]), callback_data = 'act?'+code))
             start_y+=1
+        print(len(kb_list))
         kb.add(*kb_list)
         start_x += 1
     return kb
