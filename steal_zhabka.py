@@ -81,6 +81,7 @@ def show_map(player, loc):
     kb = types.InlineKeyboardMarkup(amount)
     
     while start_x <= end_x:
+        start_y = y-radius
         while start_y <= end_y:
             code = str(start_x) + '_' + str(start_y)
             print(code)
