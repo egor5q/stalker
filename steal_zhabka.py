@@ -46,6 +46,7 @@ def first_turn(game):
         player = game['players'][ids]
         x = random.choice(free_places)
         player['pos'] = x
+        game['map'][x]['players'].append(player['id'])
         free_places.remove(x)
     for ids in game['players']:
         player = game['players'][ids]
@@ -84,11 +85,9 @@ def show_map(player, loc):
             start_y+=1
 
         print(len(kb_list))
-        try:
-            bot.send_message(441399484,len(kb_list))
-            kb.add(*kb_list)
-        except:
-            pass
+          
+        kb.add(*kb_list)
+           
         start_x += 1
     return kb
     
