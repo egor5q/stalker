@@ -26,5 +26,8 @@ bots_to_start = {
 runner = BotsRunner(admins=config.admins, show_traceback=True)
 runner.add_bots(bots_to_start)
 runner.set_main_bot(hi.bot, 'status')
-bot.report('Готово! Боты запущены и готовы к работе.\nВремени использовано: {} секунд.'.format(timer() - start_time))
+try:
+    bot.report('Готово! Боты запущены и готовы к работе.\nВремени использовано: {} секунд.'.format(timer() - start_time))
+except:
+    pass
 runner.run()
