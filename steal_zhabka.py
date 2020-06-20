@@ -162,12 +162,16 @@ def go(m):
      
 @bot.callback_query_handler(func = lambda call: True)
 def calls(call):
-    if int(call.data.split('?')[2]) not in games:
+    try:
+        if int(call.data.split('?')[2]) not in games:
+            bot.answer_callback_query(call.id, 'Игры не существует!')
+            return
+
+    except:
         return
     try:
-        player = game['players'][call.from_user.id]
         game = games[int(call.data.split('?')[2])]
-    
+        player = game['players'][call.from_user.id]
         game['map'][player['loc']]['players'].remove(call.from_user.id)
 
         game['players'][call.from_user.id]['loc'] = call.data.split('?')[1]
