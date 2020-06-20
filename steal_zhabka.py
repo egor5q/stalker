@@ -7,6 +7,7 @@ from telebot import types
 from pymongo import MongoClient
 import traceback
 
+
 db = MongoClient(os.environ['database']).steal_zhabka
 users = db.users
 bot = telebot.TeleBot(os.environ['zhabka'])
