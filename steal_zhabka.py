@@ -89,7 +89,10 @@ def show_map(player, loc):
             print('amount = '+str(amount))
             bot.send_message(441399484, 'amount = '+str(amount))
         print(len(kb_list))
-        kb.add(*kb_list)
+        try:
+            kb.add(*kb_list)
+        except:
+            pass
         start_x += 1
     return kb
     
