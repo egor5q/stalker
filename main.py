@@ -1,7 +1,7 @@
 import config
 from botutil import BotUtil
 
-bot = BotUtil(config.environ['TELEGRAM_TOKEN'], config.admins[1])
+bot = BotUtil(config.environ['hi'], config.admins[1])
 if 'DYNO' in config.environ:
     heroku = True
     bot.report('Heroku initialization...')
