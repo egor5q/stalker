@@ -77,7 +77,8 @@ def see_pos(player, loc, code):
             if 'wall' in loc[dot]['objects']:
                 break
         i+=1
-        
+    
+    i = 0
     while i < 11:
         dot = str(x-i)+'_'+str(y)
         if code == dot:
@@ -106,8 +107,8 @@ def see_pos(player, loc, code):
             if 'wall' in loc[dot]['objects']:
                 break
         i+=1
-    i = 0    
         
+    i = 0    
     while i < 11:
         dot = str(x+i)+'_'+str(y+i)
         if code == dot:
@@ -116,8 +117,8 @@ def see_pos(player, loc, code):
             if 'wall' in loc[dot]['objects']:
                 break
         i+=1
+        
     i = 0    
-    
     while i < 11:
         dot = str(x+i)+'_'+str(y-i)
         if code == dot:
@@ -126,8 +127,8 @@ def see_pos(player, loc, code):
             if 'wall' in loc[dot]['objects']:
                 break
         i+=1
+        
     i = 0   
-    
     while i < 11:
         dot = str(x-i)+'_'+str(y+i)
         if code == dot:
@@ -136,8 +137,8 @@ def see_pos(player, loc, code):
             if 'wall' in loc[dot]['objects']:
                 break
         i+=1
+        
     i = 0   
-    
     while i < 11:
         dot = str(x-i)+'_'+str(y-i)
         if code == dot:
@@ -145,8 +146,7 @@ def see_pos(player, loc, code):
         if dot in loc:
             if 'wall' in loc[dot]['objects']:
                 break
-        i+=1
-    i = 0   
+        i+=1 
     
     return see
         
