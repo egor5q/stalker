@@ -78,7 +78,7 @@ def show_map(player, loc):
     #if code not in loc:
     #    amount -= 1
 
-    kb = types.InlineKeyboardMarkup(amount)
+    kb = types.InlineKeyboardMarkup(6)
     
     while start_x <= end_x:
         start_y = y-radius
