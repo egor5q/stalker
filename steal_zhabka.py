@@ -55,7 +55,7 @@ def first_turn(game):
             bot.send_message(player['id'], 'Тестовое отображение карты', reply_markup = kb)
         except:
             bot.send_message(game['id'], 'Игрок '+player['name']+' не открыл со мной ЛС!')
-        del games[game['id']]
+        #del games[game['id']]
         
         
         
