@@ -172,9 +172,9 @@ def calls(call):
     try:
         game = games[int(call.data.split('?')[2])]
         player = game['players'][call.from_user.id]
-        game['map'][player['loc']]['players'].remove(call.from_user.id)
+        game['map'][player['pos']]['players'].remove(call.from_user.id)
 
-        game['players'][call.from_user.id]['loc'] = call.data.split('?')[1]
+        game['players'][call.from_user.id]['pos'] = call.data.split('?')[1]
         game['map'][call.data.split('?')[1]]['players'].append(call.from_user.id)
         kb = show_map(player, game['map'], game)
         medit('Тестовое отображение карты', call.message.chat.id, call.message.message_id, reply_markup = kb)
