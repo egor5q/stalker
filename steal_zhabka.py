@@ -40,13 +40,16 @@ while x < 11:
 
     
 def first_turn(game):
+    print('a')
     free_places = ['5_0', '0_5', '5_10', '10_5']
     for ids in game['players']:
+        print('b')
         player = game['players'][ids]
         x = random.choice(free_places)
         player['pos'] = x
         free_places.remove(x)
     for ids in game['players']:
+        print('c')
         player = game['players'][ids]
         kb = show_map(player, game['map'])
         try:
