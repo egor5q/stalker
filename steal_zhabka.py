@@ -115,8 +115,11 @@ def see_pos(player, loc, code):
             see = True
             
         try:
+            print('here')
             if 'wall' not in loc[str(x+i-1)+'_'+str(y+i)]['objects'] and 'wall' not in loc[dot]['objects']:
+                print('here2')
                 if code == str(x+i)+'_'+str(y+i+1):
+                    print('here3')
                     see = True
         except:
             pass
