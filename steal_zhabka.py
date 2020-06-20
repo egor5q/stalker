@@ -53,6 +53,7 @@ def first_turn(game):
             bot.send_message(player['id'], 'Тестовое отображение карты', reply_markup = kb)
         except:
             bot.send_message(game['id'], 'Игрок '+player['name']+' не открыл со мной ЛС!')
+        del games[game['id']]
         
         
         
@@ -157,7 +158,7 @@ def go(m):
         game['started'] = True
 
         bot.send_message(m.chat.id, 'Игра начинается!')
-        threading.Timer(2, first_turn, args=[game]).start()
+        threading.Timer(0.1, first_turn, args=[game]).start()
         
      
 def creategame(m):
