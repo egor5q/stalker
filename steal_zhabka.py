@@ -67,23 +67,25 @@ def show_map(player, loc):
     
     amount = radius*2
     code = str(start_x) + '_' + str(start_y)
-    if code not in loc:
-        amount -= 1
-        
-    code = str(start_x+1) + '_' + str(start_y)
-    if code not in loc:
-        amount -= 1
-        
-    code = str(start_x+2) + '_' + str(start_y)
-    if code not in loc:
-        amount -= 1
+    #if code not in loc:
+    #    amount -= 1
+    #    
+    #code = str(start_x+1) + '_' + str(start_y)
+    #if code not in loc:
+    #    amount -= 1
+    #    
+    #code = str(start_x+2) + '_' + str(start_y)
+    #if code not in loc:
+    #    amount -= 1
 
     kb = types.InlineKeyboardMarkup(amount)
     
     while start_x <= end_x:
         while start_y <= end_y:
             code = str(start_x) + '_' + str(start_y)
+            print(code)
             if code in loc:
+                print('in')
                 kb.add(types.InlineKeyboardButton(text = loctext(loc[code]), callback_data = 'act?'+code))
             start_y+=1
         start_x += 1
