@@ -65,7 +65,7 @@ def see_pos(player, loc, code):
     pos = player['pos']
     
     x = int(pos.split('_')[0])
-    y = int(pos.split('_')[0])
+    y = int(pos.split('_')[1])
     i = 0
     see = False
     
