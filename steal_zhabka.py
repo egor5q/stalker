@@ -122,7 +122,7 @@ def see_pos(player, loc, code):
                     see = True
         except:
             bot.send_message(441399484, traceback.format_exc())
-            time.sleep(1)
+            time.sleep(0.1)
         
         try:
             if 'wall' not in loc[str(x+i-1)+'_'+str(y+i)]['objects'] and 'wall' not in loc[dot]['objects']:       # проверка влево
