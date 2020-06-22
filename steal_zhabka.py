@@ -368,6 +368,8 @@ def calls(call):
         #bot.send_message(441399484, traceback.format_exc())
 
 def creategame(m):
+    dict_to_copy = {}
+    dict_to_copy.update(locs)
     return {m.chat.id:{
         'id':m.chat.id,
         'players':{},
@@ -375,7 +377,7 @@ def creategame(m):
         'text':'',
         'started':False,
         'limit':4,
-        'map':locs.copy()
+        'map':dict_to_copy
         
     }
            }
