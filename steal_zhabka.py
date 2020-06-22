@@ -27,19 +27,22 @@ walls = ['0_3', '0_7', '1_1', '1_3', '1_7', '1_9', '2_1', '2_5', '2_9', '3_0', '
 
 zhab = ['5_5']
 
-locs = {}
 
-x = 0
-while x < 11:
-    y = 0
-    while y < 11:
-        obj = []
-        if str(x)+'_'+str(y) in walls:
-            obj = ['wall']
-        locs.update({str(x)+'_'+str(y):createpos(obj)})
+def create_map():
+    locs = {}
+    x = 0
+    while x < 11:
+        y = 0
+        while y < 11:
+            obj = []
+            if str(x)+'_'+str(y) in walls:
+                obj = ['wall']
+            locs.update({str(x)+'_'+str(y):createpos(obj)})
         
-        y+=1
-    x+=1
+            y+=1
+        x+=1
+
+    return locs
 
     
 def first_turn(game):
@@ -368,8 +371,7 @@ def calls(call):
         #bot.send_message(441399484, traceback.format_exc())
 
 def creategame(m):
-    dict_to_copy = {}
-    dict_to_copy.update(locs)
+    
     return {m.chat.id:{
         'id':m.chat.id,
         'players':{},
@@ -377,7 +379,7 @@ def creategame(m):
         'text':'',
         'started':False,
         'limit':4,
-        'map':dict_to_copy
+        'map':create_map()
         
     }
            }
