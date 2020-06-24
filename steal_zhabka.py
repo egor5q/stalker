@@ -398,12 +398,14 @@ def calls(call):
                     for ids in game['players']:
                         try:
                             kb = show_map(game['players'][ids], game['map'], game)
-                            if game['players'][ids]['new_msg'] == False:
-                                medit('Тестовое отображение карты', game['players'][ids]['id'], game['players'][ids]['msg'].message_id, reply_markup = kb)
-                            else:
-                                msg = bot.send_message(game['players'][ids]['id'], 'Тестовое отображение карты', reply_markup = kb)
-                                game['players'][ids]['msg'] = msg
-                                game['players'][ids]['new_msg'] = False
+                            if game['players'][ids]['callback'] != '':
+                                try:
+                                    bot.answer_callback_query(call.id, 'Новости:\n\n'+game['players'][ids]['callback'], show_alert = True)
+                                except:
+                                    bot.answer_callback_query(call.id, 'Новости:\n\n'+'Слишком много текста!', show_alert = True)
+                                game['players'][ids]['callback'] = ''
+                            medit('Тестовое отображение карты', game['players'][ids]['id'], game['players'][ids]['msg'].message_id, reply_markup = kb)
+
                         except:
                             pass
                 else:
@@ -445,7 +447,8 @@ def fight(loc, game):
             new_pos = str(new_x+x)+'_'+str(new_y+y)
             try:
                 if 'wall' not in game['map'][new_pos]['objects']:
-                    a_pos.append(new_pos)
+                    if new_pos != looser['pos']:
+                        a_pos.append(new_pos)
             except:
                 pass
             y+=1
@@ -458,20 +461,17 @@ def fight(loc, game):
     looser['pos'] = pos
     looser['can_move'] = False
     threading.Timer(5, can_move, args = [looser]).start()
-    
-    bot.send_message(looser['id'], winner['name']+' столкнул вас с вашей позиции на соседнюю клетку!')
-    bot.send_message(winner['id'], 'Вы столкнули '+looser['name']+' на соседнюю клетку!')
-    winner['new_msg'] = True
-    looser['new_msg'] = True
+    looser['callback'] += winner['name']+' столкнул вас с вашей позиции на соседнюю клетку!\n\n'
+    winner['callback'] += 'Вы столкнули '+looser['name']+' на соседнюю клетку!\n\n'
     
     if 'zhabka' in looser['inventory']:
         looser['inventory'].remove('zhabka')
         game['map'][zhab[0]]['objects'].append('zhabka')
         for ids in game['players']:
-            bot.send_message(game['players'][ids], looser['name']+' потерял жабку! Она вернулась на изначальную позицию.')
-            game['players'][ids]['new_msg'] = True
+            game['players'][ids]['callback'] += looser['name']+' потерял жабку! Она вернулась на изначальную позицию.\n\n'
     
     fight(loc, game)
+    fight(game['map'][looser['pos']])
         
             
     
@@ -510,7 +510,8 @@ def createplayer(user):
         'msg':None,
         'symbol':'🔵',
         'inventory':[],
-        'new_msg':False
+        'new_msg':False,
+        'callback':''
     }
            }
     
