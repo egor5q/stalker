@@ -363,11 +363,9 @@ def calls(call):
         y = int(player['pos'].split('_')[1])
         avalaible = [str(x+1)+'_'+str(y), str(x+1)+'_'+str(y+1), str(x+1)+'_'+str(y-1), str(x)+'_'+str(y+1), str(x)+'_'+str(y-1), 
                     str(x-1)+'_'+str(y), str(x-1)+'_'+str(y+1), str(x-1)+'_'+str(y-1)]
-        print(player['pos'])
-        for ids in avalaible:
-            print(ids)
+
         if player['can_move']:
-            if player['pos'] in avalaible:
+            if call.data.split('?')[1] in avalaible:
                 if 'wall' not in game['map'][call.data.split('?')[1]]['objects']:
                     game['map'][player['pos']]['players'].remove(call.from_user.id)
                     game['players'][call.from_user.id]['pos'] = call.data.split('?')[1]
