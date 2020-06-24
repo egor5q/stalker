@@ -397,7 +397,7 @@ def calls(call):
                     for ids in game['players']:
                         try:
                             kb = show_map(game['players'][ids], game['map'], game)
-                            if game['players'][ids]['callback'] != '':
+                            if game['players'][ids]['callback'] != '' and game['players'][ids]['id'] == call.from_user.id:
                                 try:
                                     bot.answer_callback_query(call.id, 'Новости:\n\n'+game['players'][ids]['callback'], show_alert = True)
                                 except:
