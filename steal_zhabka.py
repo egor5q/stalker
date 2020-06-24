@@ -388,10 +388,9 @@ def calls(call):
                         for ids in game['players']:
                             p = game['players'][ids]
                             if p['id'] != player['id']:
-                                bot.send_message(p['id'], player['name']+' сп*здил жабку!')
+                                p['callback'] += player['name']+' сп*здил жабку!\n\n'
                             else:
-                                bot.send_message(p['id'], 'Вы сп*здили жабку!')
-                            p['new_msg'] = True
+                                p['callback'] += 'Вы сп*здили жабку!\n\n'
 
                     if len(new_loc['players']) > 1:
                         fight(new_loc, game)
