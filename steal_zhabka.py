@@ -510,7 +510,6 @@ def createplayer(user):
         'msg':None,
         'symbol':'🔵',
         'inventory':[],
-        'new_msg':False,
         'callback':''
     }
            }
