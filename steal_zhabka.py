@@ -58,10 +58,12 @@ def first_turn(game):
         player = game['players'][ids]
         kb = show_map(player, game['map'], game)
         try:
-            bot.send_message(player['id'], 'Тестовое отображение карты', reply_markup = kb)
+            msg = bot.send_message(player['id'], 'Тестовое отображение карты', reply_markup = kb)
+            player['msg'] = msg
         except:
             bot.send_message(game['id'], 'Игрок '+player['name']+' не открыл со мной ЛС!')
-        #del games[game['id']]
+            del games[game['id']]
+            return
         
   
 def see_pos(player, loc, code):
@@ -360,12 +362,33 @@ def calls(call):
     try:
         game = games[int(call.data.split('?')[2])]
         player = game['players'][call.from_user.id]
-        game['map'][player['pos']]['players'].remove(call.from_user.id)
-
-        game['players'][call.from_user.id]['pos'] = call.data.split('?')[1]
-        game['map'][call.data.split('?')[1]]['players'].append(call.from_user.id)
-        kb = show_map(player, game['map'], game)
-        medit('Тестовое отображение карты', call.message.chat.id, call.message.message_id, reply_markup = kb)
+        x = int(player['pos'].split('_')[0])
+        y = int(player['pos'].split('_')[1])
+        avalaible = [str(x+1)+'_'+str(y), str(x+1)+'_'+str(y+1), str(x+1)+'_'+str(y-1), str(x)+'_'+str(y+1), str(x)+'_'+str(y-1), 
+                    str(x-1)+'_'+str(y), str(x-1)+'_'+str(y+1), str(x-1)+'_'+str(y-1)]
+        
+        if player['can_move']:
+            if player['pos'] in avalaible:
+                if 'wall' not in game['map'][call.data.split('?')[1]]['objects']:
+                    game['map'][player['pos']]['players'].remove(call.from_user.id)
+                    game['players'][call.from_user.id]['pos'] = call.data.split('?')[1]
+                    game['map'][call.data.split('?')[1]]['players'].append(call.from_user.id)
+                    for ids in game['players']:
+                        try:
+                            kb = show_map(game['players'][ids], game['map'], game)
+                            medit('Тестовое отображение карты', game['players'][ids]['id'], game['players'][ids]['msg'].message_id, reply_markup = kb)
+                        except:
+                            pass
+                else:
+                    bot.answer_callback_query(call.id, 'Вы не можете зайти в стену!')
+                    return
+            else:
+                bot.answer_callback_query(call.id, 'Вы не можете шагнуть так далеко!')
+                return
+        else:
+            bot.answer_callback_query(call.id, 'Вы ещё не можете ходить!')
+            return
+        
     except:
         bot.answer_callback_query(call.id, 'Ошибка!')
         #bot.send_message(441399484, traceback.format_exc())
@@ -391,7 +414,9 @@ def createplayer(user):
         'name':user.first_name,
         'pos':None,
         'current_act':'move',
-        'radius':3
+        'radius':3,
+        'can_move':True,
+        'msg':None
     }
            }
     
