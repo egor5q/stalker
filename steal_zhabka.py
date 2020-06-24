@@ -46,7 +46,7 @@ def create_map():
 
     
 def first_turn(game):
-    free_places = ['5_0', '0_5', '5_10', '10_5']
+    free_places = ['5_0', '0_5', '5_10', '10_5', '5_1', '0_6', '6_0', '4_0']
     for ids in game['players']:
         player = game['players'][ids]
         x = random.choice(free_places)
@@ -253,7 +253,7 @@ def show_map(player, loc, game):
             code = str(start_x) + '_' + str(start_y)
             if code in loc:
                 if see_pos(player, loc, code):
-                    button = loctext(loc[code])
+                    button = loctext(loc[code], game)
                 else:
                     button = '❓'
                 kb_list.append(types.InlineKeyboardButton(text = button, callback_data = 'act?'+code+'?'+str(game['id'])))
@@ -267,11 +267,12 @@ def show_map(player, loc, game):
         start_x += 1
     return kb
     
-def loctext(loc):
+def loctext(loc, game):
     if 'wall' in loc['objects']:
         return '⬛'
     if loc['players'] != []:
-        return '🔵'
+        em = game['players'][loc['players'][0]]['symbol'] 
+        return em
     if 'zhabka' in loc['objects']:
         return '🐸'
     
@@ -346,6 +347,18 @@ def go(m):
         bot.send_message(m.chat.id, 'Игра начинается!')
         threading.Timer(0.1, first_turn, args=[game]).start()
         
+@bot.message_handler(content_types = ['text'])
+def texts(m):
+    try:
+        game = games[m.chat.id]
+    except:
+        return
+    if len(m.text) == 1:
+        try:
+            game['players'][m.from_user.id]['symbol'] = m.text
+            bot.send_message(m.chat.id, 'Вы сменили свое отображение!')
+        except:
+            pass
      
 @bot.callback_query_handler(func = lambda call: True)
 def calls(call):
@@ -398,7 +411,7 @@ def creategame(m):
         'turn':1,
         'text':'',
         'started':False,
-        'limit':4,
+        'limit':8,
         'map':create_map()
         
     }
@@ -413,7 +426,8 @@ def createplayer(user):
         'current_act':'move',
         'radius':3,
         'can_move':True,
-        'msg':None
+        'msg':None,
+        'symbol':'🔵'
     }
            }
     
