@@ -470,7 +470,7 @@ def fight(loc, game):
             game['players'][ids]['callback'] += looser['name']+' потерял жабку! Она вернулась на изначальную позицию.\n\n'
     
     fight(loc, game)
-    fight(game['map'][looser['pos']])
+    fight(game['map'][looser['pos']], game)
         
             
     
