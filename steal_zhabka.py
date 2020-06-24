@@ -15,12 +15,7 @@ bot = telebot.TeleBot(os.environ['zhabka'])
 games = {}
 
 def is_emoji(x):
-    count = 0
-    for em in UNICODE_EMOJI:
-        count += x.count(em)
-        if count > 1:
-            return False
-    return bool(count)
+    return x in UNICODE_EMOJI
 
 def createpos(objs = []):
 
