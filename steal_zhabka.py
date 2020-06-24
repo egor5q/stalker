@@ -7,7 +7,6 @@ from telebot import types
 from pymongo import MongoClient
 import traceback
 
-
 db = MongoClient(os.environ['database']).steal_zhabka
 users = db.users
 bot = telebot.TeleBot(os.environ['zhabka'])
@@ -376,17 +375,35 @@ def calls(call):
         y = int(player['pos'].split('_')[1])
         avalaible = [str(x+1)+'_'+str(y), str(x+1)+'_'+str(y+1), str(x+1)+'_'+str(y-1), str(x)+'_'+str(y+1), str(x)+'_'+str(y-1), 
                     str(x-1)+'_'+str(y), str(x-1)+'_'+str(y+1), str(x-1)+'_'+str(y-1)]
-
+        new_loc = game['map'][call.data.split('?')[1]]
         if player['can_move']:
             if call.data.split('?')[1] in avalaible:
                 if 'wall' not in game['map'][call.data.split('?')[1]]['objects']:
                     game['map'][player['pos']]['players'].remove(call.from_user.id)
                     game['players'][call.from_user.id]['pos'] = call.data.split('?')[1]
-                    game['map'][call.data.split('?')[1]]['players'].append(call.from_user.id)
+                    new_loc['players'].append(call.from_user.id)
+                    if 'zhabka' in new_loc['objects']:
+                        player['inventory'].append('zhabka')
+                        new_loc['objects'].remove('zhabka')
+                        for ids in game['players']:
+                            p = game['players'][ids]
+                            if p['id'] != player['id']:
+                                bot.send_message(p['id'], player['name']+' сп*здил жабку!')
+                            else:
+                                bot.send_message(p['id'], 'Вы сп*здили жабку!')
+                            p['new_msg'] = True
+
+                    if len(new_loc['players']) > 1:
+                        fight(new_loc, game)
                     for ids in game['players']:
                         try:
                             kb = show_map(game['players'][ids], game['map'], game)
-                            medit('Тестовое отображение карты', game['players'][ids]['id'], game['players'][ids]['msg'].message_id, reply_markup = kb)
+                            if game['players'][ids]['new_msg'] == False:
+                                medit('Тестовое отображение карты', game['players'][ids]['id'], game['players'][ids]['msg'].message_id, reply_markup = kb)
+                            else:
+                                msg = bot.send_message(game['players'][ids]['id'], 'Тестовое отображение карты', reply_markup = kb)
+                                game['players'][ids]['msg'] = msg
+                                game['players'][ids]['new_msg'] = False
                         except:
                             pass
                 else:
@@ -403,6 +420,70 @@ def calls(call):
         bot.answer_callback_query(call.id, 'Ошибка!')
         #bot.send_message(441399484, traceback.format_exc())
 
+def fight(loc, game):
+    if len(loc['players']) <= 1:
+        return
+    f1 = game['players'][loc['players'][0]]
+    f2 = game['players'][loc['players'][1]]
+    
+    if random.randint(1, 2) == 1:
+        looser = f1
+        winner = f2
+    else:
+        looser = f2
+        winner = f1
+    
+    a_pos = []
+    
+    new_x = int(looser['pos'].split('_')[0])
+    new_y = int(looser['pos'].split('_')[1])
+    
+    x = -1
+    while x <= 1:
+        y = -1
+        while y <= 1:
+            new_pos = str(new_x+x)+'_'+str(new_y+y)
+            try:
+                if 'wall' not in game['map'][new_pos]['objects']:
+                    a_pos.append(new_pos)
+            except:
+                pass
+            y+=1
+        x+=1
+     
+    
+    pos = random.choice(a_pos)
+    game['map'][looser['pos']]['players'].remove(looser['id'])
+    game['map'][pos]['players'].append(looser['id'])
+    looser['pos'] = pos
+    looser['can_move'] = False
+    threading.Timer(5, can_move, args = [looser]).start()
+    
+    bot.send_message(looser['id'], winner['name']+' столкнул вас с вашей позиции на соседнюю клетку!')
+    bot.send_message(winner['id'], 'Вы столкнули '+looser['name']+' на соседнюю клетку!')
+    winner['new_msg'] = True
+    looser['new_msg'] = True
+    
+    if 'zhabka' in looser['inventory']:
+        looser['inventory'].remove('zhabka')
+        game['map'][zhab[0]]['objects'].append('zhabka')
+        for ids in game['players']:
+            bot.send_message(game['players'][ids], looser['name']+' потерял жабку! Она вернулась на изначальную позицию.')
+            game['players'][ids]['new_msg'] = True
+    
+    fight(loc, game)
+        
+            
+    
+        
+    
+def can_move(player):
+    try:
+        player['can_move'] = True
+    except:
+        pass
+        
+        
 def creategame(m):
     
     return {m.chat.id:{
@@ -427,7 +508,9 @@ def createplayer(user):
         'radius':3,
         'can_move':True,
         'msg':None,
-        'symbol':'🔵'
+        'symbol':'🔵',
+        'inventory':[],
+        'new_msg':False
     }
            }
     
