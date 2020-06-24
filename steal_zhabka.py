@@ -423,7 +423,6 @@ def calls(call):
                 bot.answer_callback_query(call.id, 'Вы не можете шагнуть так далеко!')
                 return
         else:
-            bot.answer_callback_query(call.id, 'Вы ещё не можете ходить!')
             if player['callback'] != '':
                 try:
                     bot.answer_callback_query(call.id, 'Новости:\n\n'+game['players'][ids]['callback'], show_alert = True)
@@ -431,6 +430,9 @@ def calls(call):
                 except:
                     bot.answer_callback_query(call.id, 'Новости:\n\n'+'Слишком много текста!', show_alert = True)
                 player['callback'] = ''
+                
+            else:
+                bot.answer_callback_query(call.id, 'Вы ещё не можете ходить!')
                 
             return
         
