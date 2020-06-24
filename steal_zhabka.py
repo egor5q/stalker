@@ -419,7 +419,7 @@ def calls(call):
         
     except:
         bot.answer_callback_query(call.id, 'Ошибка!')
-        #bot.send_message(441399484, traceback.format_exc())
+        print(traceback.format_exc())
 
 def fight(loc, game):
     if len(loc['players']) <= 1:
