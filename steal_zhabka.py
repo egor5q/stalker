@@ -6,12 +6,21 @@ import threading
 from telebot import types
 from pymongo import MongoClient
 import traceback
+from emoji import UNICODE_EMOJI
 
 db = MongoClient(os.environ['database']).steal_zhabka
 users = db.users
 bot = telebot.TeleBot(os.environ['zhabka'])
 
 games = {}
+
+def is_emoji(x):
+    count = 0
+    for em in UNICODE_EMOJI:
+        count += x.count(em)
+        if count > 1:
+            return False
+    return bool(count)
 
 def createpos(objs = []):
 
@@ -352,7 +361,7 @@ def texts(m):
         game = games[m.chat.id]
     except:
         return
-    if len(m.text) == 1:
+    if is_emoji(m.text) or len(m.text) == 1:
         try:
             game['players'][m.from_user.id]['symbol'] = m.text
             bot.send_message(m.chat.id, 'Вы сменили свое отображение!')
