@@ -251,7 +251,6 @@ def show_map(player, loc, game):
         
         while start_y <= end_y:
             code = str(start_x) + '_' + str(start_y)
-            print(code)
             if code in loc:
                 if see_pos(player, loc, code):
                     button = loctext(loc[code])
@@ -262,8 +261,6 @@ def show_map(player, loc, game):
             else:
                 kb_list.append(types.InlineKeyboardButton(text = '⬛', callback_data = 'out_map'))
             start_y+=1
-
-        print(len(kb_list))
           
         kb.add(*kb_list)
            
@@ -366,7 +363,9 @@ def calls(call):
         y = int(player['pos'].split('_')[1])
         avalaible = [str(x+1)+'_'+str(y), str(x+1)+'_'+str(y+1), str(x+1)+'_'+str(y-1), str(x)+'_'+str(y+1), str(x)+'_'+str(y-1), 
                     str(x-1)+'_'+str(y), str(x-1)+'_'+str(y+1), str(x-1)+'_'+str(y-1)]
-        
+        print(player['pos'])
+        for ids in avalaible:
+            print(ids)
         if player['can_move']:
             if player['pos'] in avalaible:
                 if 'wall' not in game['map'][call.data.split('?')[1]]['objects']:
