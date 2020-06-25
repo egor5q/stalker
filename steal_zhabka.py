@@ -380,12 +380,13 @@ def calls(call):
         avalaible = [str(x+1)+'_'+str(y), str(x+1)+'_'+str(y+1), str(x+1)+'_'+str(y-1), str(x)+'_'+str(y+1), str(x)+'_'+str(y-1), 
                     str(x-1)+'_'+str(y), str(x-1)+'_'+str(y+1), str(x-1)+'_'+str(y-1)]
         new_loc = game['map'][call.data.split('?')[1]]
-        if player['can_move']:
+        if player['move_cd'] <= 0:
             if call.data.split('?')[1] in avalaible:
                 if 'wall' not in game['map'][call.data.split('?')[1]]['objects']:
                     game['map'][player['pos']]['players'].remove(call.from_user.id)
                     game['players'][call.from_user.id]['pos'] = call.data.split('?')[1]
                     new_loc['players'].append(call.from_user.id)
+                    player['move_cd'] += 6
                     if 'zhabka' in new_loc['objects']:
                         player['inventory'].append('zhabka')
                         new_loc['objects'].remove('zhabka')
@@ -447,6 +448,14 @@ def fight(loc, game):
     else:
         looser = f2
         winner = f1
+        
+    if 'zhabka' in f1['inventory']:
+        winner = f2
+        looser = f1
+        
+    if 'zhabka' in f2['inventory']:
+        winner = f1
+        looser = f2
     
     a_pos = []
     
@@ -472,13 +481,13 @@ def fight(loc, game):
     game['map'][looser['pos']]['players'].remove(looser['id'])
     game['map'][pos]['players'].append(looser['id'])
     looser['pos'] = pos
-    looser['can_move'] = False
-    threading.Timer(5, can_move, args = [looser]).start()
+    looser['move_cd'] += 6
     looser['callback'] += winner['name']+' столкнул вас с вашей позиции на соседнюю клетку!\n\n'
     winner['callback'] += 'Вы столкнули '+looser['name']+' на соседнюю клетку!\n\n'
     
     if 'zhabka' in looser['inventory']:
         looser['inventory'].remove('zhabka')
+        looser['before_win'] = 120
         game['map'][zhab[0]]['objects'].append('zhabka')
         for ids in game['players']:
             game['players'][ids]['callback'] += looser['name']+' потерял жабку! Она вернулась на изначальную позицию.\n\n'
@@ -486,15 +495,6 @@ def fight(loc, game):
     fight(loc, game)
     fight(game['map'][looser['pos']], game)
         
-            
-    
-        
-    
-def can_move(player):
-    try:
-        player['can_move'] = True
-    except:
-        pass
         
         
 def creategame(m):
@@ -515,18 +515,37 @@ def creategame(m):
 def createplayer(user):
     return {user.id:{
         'id':user.id,
-        'name':user.first_name,
+        'name':user.first_name.split(' ')[0][:10],
         'pos':None,
         'current_act':'move',
         'radius':3,
-        'can_move':True,
+        'move_cd':0,
         'msg':None,
         'symbol':'🔵',
         'inventory':[],
-        'callback':''
+        'callback':'',
+        'before_win':120
     }
            }
     
+def gametimer():
+    threading.Timer(1, gametimer).start()
+    for ids in games:
+        for idss in games[ids]['players']:
+            player = games[ids]['players'][idss]
+            game = games[ids]
+            if player['move_cd'] > 0:
+                player['move_cd'] -= 1
+            if 'zhabka' in player['inventory']:
+                player['before_win'] -= 1
+                if player['before_win'] == 60:
+                    for p in game['players']:
+                        if game['players'][p]['id'] != player['id']:
+                            game['players'][p]['callback'] += 'До победы игрока "'+player['name']+'" осталось 60 секунд! Быстрее заберите у него жабку!\n\n'
+                if player['before_win'] <= 0:
+                    end_game(games[ids])
+    
+gametimer()
     
 def medit(message_text, chat_id, message_id, reply_markup=None, parse_mode=None):
     return bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=message_text,
