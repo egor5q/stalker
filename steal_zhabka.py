@@ -389,7 +389,7 @@ def calls(call):
                     game['map'][player['pos']]['players'].remove(call.from_user.id)
                     game['players'][call.from_user.id]['pos'] = call.data.split('?')[1]
                     new_loc['players'].append(call.from_user.id)
-                    player['move_cd'] += 6
+                    player['move_cd'] += 0
                     if 'zhabka' in new_loc['objects']:
                         player['inventory'].append('zhabka')
                         new_loc['objects'].remove('zhabka')
@@ -485,15 +485,15 @@ def fight(loc, game):
     game['map'][pos]['players'].append(looser['id'])
     looser['pos'] = pos
     looser['move_cd'] += 6
-    looser['callback'] += winner['name']+' столкнул вас с вашей позиции на соседнюю клетку!\n\n'
-    winner['callback'] += 'Вы столкнули '+looser['name']+' на соседнюю клетку!\n\n'
+    looser['callback'] += winner['name']+' ⚠ вас!\n'
+    winner['callback'] += 'Вы ⚠ '+looser['name']+'!\n'
     
     if 'zhabka' in looser['inventory']:
         looser['inventory'].remove('zhabka')
-        looser['before_win'] = 120
+        looser['before_win'] = 60
         game['map'][zhab[0]]['objects'].append('zhabka')
         for ids in game['players']:
-            game['players'][ids]['callback'] += looser['name']+' потерял жабку! Она вернулась на изначальную позицию.\n\n'
+            game['players'][ids]['callback'] += looser['name']+' ⚠ 🐸!\n'
     
     fight(loc, game)
     fight(game['map'][looser['pos']], game)
@@ -515,7 +515,8 @@ def creategame(m):
         'text':'',
         'started':False,
         'limit':8,
-        'map':create_map()
+        'map':create_map(),
+        'launched':False
         
     }
            }
@@ -533,8 +534,7 @@ def createplayer(user):
         'symbol':'🔵',
         'inventory':[],
         'callback':'',
-        'before_win':120,
-        'launched':False
+        'before_win':60
     }
            }
     
@@ -549,10 +549,9 @@ def gametimer():
                     player['move_cd'] -= 1
                 if 'zhabka' in player['inventory']:
                     player['before_win'] -= 1
-                    if player['before_win'] == 60:
+                    if player['before_win'] == 30:
                         for p in game['players']:
-                            if game['players'][p]['id'] != player['id']:
-                                game['players'][p]['callback'] += 'До победы игрока "'+player['name']+'" осталось 60 секунд! Быстрее заберите у него жабку!\n\n'
+                            game['players'][p]['callback'] += 'До победы игрока "'+player['name']+'" осталось 30 секунд! Быстрее заберите у него жабку!\n\n'
                     if player['before_win'] <= 0 and games[ids]['launched'] == True:
                         games[ids]['launched'] = False
                         threading.Thread(target = end_game, args = [games[ids], player]).start()
