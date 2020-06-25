@@ -424,7 +424,7 @@ def calls(call):
         else:
             if player['callback'] != '':
                 try:
-                    bot.answer_callback_query(call.id, 'Новости:\n\n'+game['players'][ids]['callback'], show_alert = True)
+                    bot.answer_callback_query(call.id, 'Новости:\n\n'+player['callback'], show_alert = True)
                 
                 except:
                     print(traceback.format_exc())
