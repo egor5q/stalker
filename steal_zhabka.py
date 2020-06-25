@@ -427,6 +427,7 @@ def calls(call):
                     bot.answer_callback_query(call.id, 'Новости:\n\n'+game['players'][ids]['callback'], show_alert = True)
                 
                 except:
+                    print(traceback.format_exc())
                     bot.answer_callback_query(call.id, 'Новости:\n\n'+'Слишком много текста!', show_alert = True)
                 player['callback'] = ''
                 
