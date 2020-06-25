@@ -396,9 +396,9 @@ def calls(call):
                         for ids in game['players']:
                             p = game['players'][ids]
                             if p['id'] != player['id']:
-                                p['callback'] += player['name']+' сп*здил жабку!\n\n'
+                                p['callback'] += player['name']+' сп*здил жабку!\n'
                             else:
-                                p['callback'] += 'Вы сп*здили жабку!\n\n'
+                                p['callback'] += 'Вы сп*здили жабку!\n'
 
                     if len(new_loc['players']) > 1:
                         fight(new_loc, game)
@@ -502,7 +502,7 @@ def fight(loc, game):
        
 def end_game(game, player):
     for ids in game['players']:
-        bot.send_message(game['players'][ids]['id'], player['name']+' выиграл, удержав жабку 120 секунд! Игра окончена.')
+        bot.send_message(game['players'][ids]['id'], player['name']+' выиграл, удержав жабку 60 секунд! Игра окончена.')
     del games[game['id']]
     
     
@@ -552,7 +552,7 @@ def gametimer():
                     player['before_win'] -= 1
                     if player['before_win'] == 30:
                         for p in game['players']:
-                            game['players'][p]['callback'] += 'До победы игрока "'+player['name']+'" осталось 30 секунд! Быстрее заберите у него жабку!\n\n'
+                            game['players'][p]['callback'] += 'До победы игрока "'+player['name']+'" осталось 30 секунд! Быстрее заберите у него жабку!\n'
                     if player['before_win'] <= 0 and games[ids]['launched'] == True:
                         games[ids]['launched'] = False
                         threading.Thread(target = end_game, args = [games[ids], player]).start()
