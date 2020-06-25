@@ -49,6 +49,7 @@ def create_map():
 
     
 def first_turn(game):
+    game['launched'] = True
     free_places = ['5_0', '0_5', '5_10', '10_5', '5_1', '0_6', '6_0', '4_0']
     for ids in game['players']:
         player = game['players'][ids]
@@ -374,6 +375,8 @@ def calls(call):
         return
     try:
         game = games[int(call.data.split('?')[2])]
+        if not game['launched']:
+            return
         player = game['players'][call.from_user.id]
         x = int(player['pos'].split('_')[0])
         y = int(player['pos'].split('_')[1])
@@ -495,7 +498,13 @@ def fight(loc, game):
     fight(loc, game)
     fight(game['map'][looser['pos']], game)
         
-        
+       
+def end_game(game, player):
+    for ids in game['players']:
+        bot.send_message(game['players'][ids]['id'], player['name']+' выиграл, удержав жабку 120 секунд! Игра окончена.')
+    del games[game['id']]
+    
+    
         
 def creategame(m):
     
@@ -524,26 +533,29 @@ def createplayer(user):
         'symbol':'🔵',
         'inventory':[],
         'callback':'',
-        'before_win':120
+        'before_win':120,
+        'launched':False
     }
            }
     
 def gametimer():
     threading.Timer(1, gametimer).start()
     for ids in games:
-        for idss in games[ids]['players']:
-            player = games[ids]['players'][idss]
-            game = games[ids]
-            if player['move_cd'] > 0:
-                player['move_cd'] -= 1
-            if 'zhabka' in player['inventory']:
-                player['before_win'] -= 1
-                if player['before_win'] == 60:
-                    for p in game['players']:
-                        if game['players'][p]['id'] != player['id']:
-                            game['players'][p]['callback'] += 'До победы игрока "'+player['name']+'" осталось 60 секунд! Быстрее заберите у него жабку!\n\n'
-                if player['before_win'] <= 0:
-                    end_game(games[ids])
+        if games[ids]['launched'] != False:
+            for idss in games[ids]['players']:
+                player = games[ids]['players'][idss]
+                game = games[ids]
+                if player['move_cd'] > 0:
+                    player['move_cd'] -= 1
+                if 'zhabka' in player['inventory']:
+                    player['before_win'] -= 1
+                    if player['before_win'] == 60:
+                        for p in game['players']:
+                            if game['players'][p]['id'] != player['id']:
+                                game['players'][p]['callback'] += 'До победы игрока "'+player['name']+'" осталось 60 секунд! Быстрее заберите у него жабку!\n\n'
+                    if player['before_win'] <= 0 and games[ids]['launched'] == True:
+                        games[ids]['launched'] = False
+                        threading.Thread(target = end_game, args = [games[ids], player]).start()
     
 gametimer()
     
