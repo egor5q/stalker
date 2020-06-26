@@ -159,7 +159,7 @@ def dialogue(m, companion):
     elif m.voice != None:
         msg = bot.send_voice(companion, m.voice.file_id)
         
-    user['msgs'].update(len(user['msgs']:m))
-    users[companion]['msgs'].update(len(user['msgs']:msg))
+    user['msgs'].update(len(user['msgs']):m)
+    users[companion]['msgs'].update(len(user['msgs']):msg)
             
         
