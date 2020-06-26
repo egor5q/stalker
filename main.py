@@ -26,7 +26,8 @@ import steal_zhabka
 bots_to_start = {
     'Hi': hi.bot,
     'Wen': wen.bot,
-    'Жабка':steal_zhabka.bot
+    'Жабка':steal_zhabka.bot,
+    'test':testchat.bot
 }
 
 runner = BotsRunner(admins=config.admins, show_traceback=True)
