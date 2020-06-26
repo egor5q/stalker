@@ -43,7 +43,7 @@ def createuser(user):
             }
         }
   
-@bot.message_handler(func = lambda m: m.text.lower() in ['!поиск', '!стоп'])
+@bot.message_handler(func = lambda m: m.text != None and m.text.lower() in ['!поиск', '!стоп'])
 def command(m):
     if m.text.lower() == '!поиск':
         if m.from_user.id in users:
