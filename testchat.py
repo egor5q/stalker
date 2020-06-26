@@ -118,8 +118,9 @@ def texts(m):
 def dialogue(m, companion):
     try:
         user = users[m.from_user]
-        users[companion]
+        x = users[companion]
     except:
+        print(traceback.format_exc()
         return
     
     if m.text != None:
@@ -160,6 +161,6 @@ def dialogue(m, companion):
         msg = bot.send_voice(companion, m.voice.file_id)
         
     user['msgs'].update({len(user['msgs']):m})
-    users[companion]['msgs'].update({len(user['msgs']):msg})
+    users[companion]['msgs'].update({len(users[companion]['msgs']):msg})
             
         
