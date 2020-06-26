@@ -132,7 +132,7 @@ def dialogue(m, companion):
                 m_to_reply = None
                 for ids in user['msgs']:
                     current_m = user['msgs'][ids]
-                    if current_m == m.reply_to_message:
+                    if current_m.message_id == m.reply_to_message.message_id:
                         m_to_reply = users[companion]['msgs'][i].message_id
                     i+=1
                     
