@@ -116,8 +116,11 @@ def texts(m):
             
 def dialogue(m, companion):
     if m.text != None:
-        bot.send_message(companion, m.text)
-    
+        if m.reply_to_message == None:
+            bot.send_message(companion, m.text)
+        else:
+            bot.send_message(companion, m.text, reply_to_message_id = m.reply_to_message.message_id)
+        
     elif m.photo != None:
         bot.send_photo(companion, m.photo[-1].file_id, caption = m.caption)
         
