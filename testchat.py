@@ -117,7 +117,7 @@ def texts(m):
             
 def dialogue(m, companion):
     try:
-        user = users[m.from_user]
+        user = users[m.from_user.id]
         x = users[companion]
     except:
         print(traceback.format_exc())
