@@ -22,6 +22,7 @@ from manybotslib import BotsRunner
 import hi
 import wen
 import steal_zhabka
+import testchat
 
 bots_to_start = {
     'Hi': hi.bot,
