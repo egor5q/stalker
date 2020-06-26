@@ -31,7 +31,7 @@ def start(m):
     
     hello_text = "Найди себе анонимного собеседника!\nЧтобы начать поиск напиши: !поиск\nЧтобы остановить поиск напиши: !стоп\n"+\
                   "Обязательно прочитай правила использования чата: vk.cc/av2Dau"
-    bot.send_message(m.chat.id, hello_text)
+    bot.send_message(m.chat.id, hello_text, reply_markup = kb)
     
   
 def createuser(user):
