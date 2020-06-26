@@ -39,7 +39,8 @@ def createuser(user):
         user.id:{
             'name':user.first_name,
             'id':user.id,
-            'companion':None
+            'companion':None,
+            'msgs':{}
             }
         }
   
@@ -115,31 +116,50 @@ def texts(m):
 
             
 def dialogue(m, companion):
+    try:
+        user = users[m.from_user]
+        users[companion]
+    except:
+        return
+    
     if m.text != None:
         if m.reply_to_message == None:
-            bot.send_message(companion, m.text)
+            msg = bot.send_message(companion, m.text)
         else:
-            print(m.reply_to_message)
-            print(m.reply_to_message.message_id)
-            bot.send_message(companion, m.text, reply_to_message_id = m.reply_to_message.message_id)
+            try:
+                i = 0
+                m_to_reply = None
+                for ids in user['msgs']:
+                    current_m = user['msgs'][ids]
+                    if current_m == m.reply_to_message:
+                        m_to_reply = users[companion]['msgs'][i].message_id
+                    i+=1
+                    
+                msg = bot.send_message(companion, m.text, reply_to_message_id = m_to_reply)
+            except:
+                print(traceback.format_exc())
+                msg = bot.send_message(companion, m.text)
         
         
     elif m.photo != None:
-        bot.send_photo(companion, m.photo[-1].file_id, caption = m.caption)
+        msg = bot.send_photo(companion, m.photo[-1].file_id, caption = m.caption)
         
     elif m.document != None:
-        bot.send_document(companion, m.document.file_id, caption = m.caption)
+        msg = bot.send_document(companion, m.document.file_id, caption = m.caption)
         
     elif m.animation != None:
-        bot.send_document(companion, m.animation.file_id, caption = m.caption)
+        msg = bot.send_document(companion, m.animation.file_id, caption = m.caption)
         
     elif m.sticker != None:
-        bot.send_sticker(companion, m.sticker.file_id)
+        msg = bot.send_sticker(companion, m.sticker.file_id)
         
     elif m.audio != None:
-        bot.send_audio(companion, m.audio.file_id, caption = m.caption)
+        msg = bot.send_audio(companion, m.audio.file_id, caption = m.caption)
         
     elif m.voice != None:
-        bot.send_voice(companion, m.voice.file_id)
+        msg = bot.send_voice(companion, m.voice.file_id)
+        
+    user['msgs'].update(len(user['msgs']:m))
+    users[companion]['msgs'].update(len(user['msgs']:msg))
             
         
