@@ -120,7 +120,7 @@ def dialogue(m, companion):
         user = users[m.from_user]
         x = users[companion]
     except:
-        print(traceback.format_exc()
+        print(traceback.format_exc())
         return
     
     if m.text != None:
