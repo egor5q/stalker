@@ -122,16 +122,16 @@ def dialogue(m, companion):
         bot.send_photo(companion, m.photo[-1].file_id, caption = m.caption)
         
     elif m.document != None:
-        bot.send_document(companion, m.document.file_id, caption = m.document.caption)
+        bot.send_document(companion, m.document.file_id, caption = m.caption)
         
     elif m.animation != None:
-        bot.send_document(companion, m.animation.file_id, caption = m.animation.caption)
+        bot.send_document(companion, m.animation.file_id, caption = m.caption)
         
     elif m.sticker != None:
         bot.send_sticker(companion, m.sticker.file_id)
         
     elif m.audio != None:
-        bot.send_audio(companion, m.audio.file_id, caption = m.audio.caption)
+        bot.send_audio(companion, m.audio.file_id, caption = m.caption)
         
     elif m.voice != None:
         bot.send_voice(companion, m.voice.file_id)
