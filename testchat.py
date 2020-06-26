@@ -119,7 +119,7 @@ def dialogue(m, companion):
         bot.send_message(companion, m.text)
     
     elif m.photo != None:
-        bot.send_photo(companion, m.photo[-1].file_id, caption = m.photo.caption)
+        bot.send_photo(companion, m.photo[-1].file_id, caption = m.caption)
         
     elif m.document != None:
         bot.send_document(companion, m.document.file_id, caption = m.document.caption)
