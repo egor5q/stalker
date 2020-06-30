@@ -19,21 +19,15 @@ from timeit import default_timer as timer
 start_time = timer()
 
 from manybotslib import BotsRunner
-import hi
-import wen
-import steal_zhabka
-import testchat
+import stalker
 
 bots_to_start = {
-    'Hi': hi.bot,
-    'Wen': wen.bot,
-    'Жабка':steal_zhabka.bot,
-    'test':testchat.bot
+    'Сталкер':stalker.bot
 }
 
 runner = BotsRunner(admins=config.admins, show_traceback=True)
 runner.add_bots(bots_to_start)
-runner.set_main_bot(hi.bot, 'status')
+runner.set_main_bot(stalker.bot, 'status')
 try:
     bot.report('Готово! Боты запущены и готовы к работе.\nВремени использовано: {} секунд.'.format(timer() - start_time))
 except:
